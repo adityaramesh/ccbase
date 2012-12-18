@@ -6,11 +6,11 @@
 */
 
 #include <cstdlib>
-#include <format.hpp>
+#include <xutil/format.hpp>
 
 int main()
 {
-	sf::println("These are three arguments: {0}, {1}, and {0}.", "Hello", 0.995);
-	sf::println("Escaping curly backets: {{, }}, {{{{, }}}}.");
+	xu::println("These are three arguments: {0}, {1}, and {0}.", "Hello", 0.995);
+	xu::println("Escaping curly backets: {{, }}, {{{{, }}}}.");
 	return EXIT_SUCCESS;
 }

@@ -32,7 +32,7 @@
 #include <iostream>
 #include <stdexcept>
 
-namespace sf
+namespace xu
 {
 
 static bool initialize()
@@ -60,7 +60,7 @@ struct format_error : std::runtime_error
 
 void write_arg(std::ostream& os, const unsigned n)
 {
-	throw sf::format_error{"Argument cardinality too high."};
+	throw xu::format_error{"Argument cardinality too high."};
 }
 
 template <class T, class... Ts>
@@ -87,7 +87,7 @@ void write(std::ostream& os, const char* s, const Ts... ts)
 				i = 10 * i + (*l++ - '0');
 			}
 			if (!*l) {
-				throw sf::format_error{"Unmatched curly bracket."};
+				throw xu::format_error{"Unmatched curly bracket."};
 			}
 			write_arg(os, i, ts...);
 			++l;

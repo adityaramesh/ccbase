@@ -14,8 +14,8 @@ else ifeq ($(uname),Linux)
 	cxx = g++
 endif
 
-cxxflags := -std=c++11 -Wall -Ofast -march=native -Iinclude
-objects  := out/format_test.run
+cxxflags := -std=c++11 -Wall -Ofast -march=native -Ixutil
+objects  := out/format_test.run out/unit_test_test.run
 
 all : $(objects)
 
