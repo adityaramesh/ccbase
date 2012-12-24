@@ -38,7 +38,7 @@
 
 namespace xu {
 namespace unit_test {
-	using result_type = std::tuple<size_t, size_t, std::string>;
+	using result_type = std::tuple<std::size_t, std::size_t, std::string>;
 	using result_list = std::vector<result_type>;
 }}
 
@@ -61,7 +61,7 @@ namespace unit_test {
 			std::get<1>(x), std::get<2>(x));                              \
 	}                                                                             \
 	xu::println("Exiting module \"{0}\"; {1} of {2} assertions passed.",          \
-		#name, successes, size(results));                                     \
+		#name, successes, results.size());                                    \
 }
 
 #define XU_BEGIN_SUITE(name)                               \
