@@ -11,17 +11,17 @@
 namespace xu
 {
 
-template <std::size_t Count, std::size_t Index, class... Ts>
+template <std::size_t Index, std::size_t MaxIndex, class... Ts>
 struct switch_impl;
 
-template <std::size_t Count, std::size_t Index, class T, class... Ts>
-struct switch_impl<Count, Index, T, Ts...>
+template <std::size_t Index, std::size_t MaxIndex, class T, class... Ts>
+struct switch_impl<Index, MaxIndex, T, Ts...>
 {
-	using type = typename switch_impl<Count + 1, Index, Ts...>::type;
+	using type = typename switch_impl<Index + 1, MaxIndex, Ts...>::type;
 };
 
-template <std::size_t Count, class T, class... Ts>
-struct switch_impl<Count, Count, T, Ts...>
+template <std::size_t MaxIndex, class T, class... Ts>
+struct switch_impl<MaxIndex, MaxIndex, T, Ts...>
 {
 	using type = T;
 };
@@ -29,7 +29,7 @@ struct switch_impl<Count, Count, T, Ts...>
 template <std::size_t Index, class... Ts>
 struct switch_
 {
-	using type = typename switch_impl<0, sizeof...(Ts), Ts...>::type;
+	using type = typename switch_impl<0, sizeof...(Ts) - 1, Ts...>::type;
 };
 
 }
