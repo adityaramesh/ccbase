@@ -5,17 +5,24 @@
 # Contact:	_@adityaramesh.com
 #
 
-
-uname := $(shell uname)
-
-ifeq ($(uname),Darwin)
-	cxx = g++-mp-4.7
-else ifeq ($(uname),Linux)
+ifeq ($(CXX),)
 	cxx = g++
+else
+	cxx = $(CXX)
 endif
 
-cxxflags := -std=c++11 -Wall -Ofast -march=native -Ixutil
-objects  := out/format_test.run out/unit_test_test.run
+ifeq ($(findstring clang,$(cxx)),)
+	optflags := -Ofast
+else
+	optflags := -O3
+endif
+
+stdflags  := -std=c++11
+incflags  := -I. -I$(XUTIL_INCLUDE_PATH)
+wflags    := -Wall
+archflags := -march=native
+cxxflags  := $(stdflags) $(incflags) $(wflags) $(optflags) $(archflags)
+objects   := $(foreach i,$(shell ls test),out/$(basename $(notdir $(i))).run)
 
 all : $(objects)
 
