@@ -20,6 +20,12 @@ arguments as variadic templates, and invoke `operator<<(ostream&, ...)` to print
 out each argument specified in the format string. This header requires a
 C++11-conformant compiler.
 
+# `mpl.hpp`
+
+This header contains some useful, general-purpose metafunctions such as
+`xu::switch_<std::size_t, class...>`, which can be used to select one of many
+types, based on an index.
+
 # `unit_test.hpp`
 
 This header provides some utilties for very basic unit testing. Tests are
