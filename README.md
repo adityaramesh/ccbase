@@ -13,6 +13,11 @@ compromising on efficiencty or legibility. Examples of these common tasks
 include printing and parsing data, or writing unit tests. This library requires
 a C++11-conformant compiler.
 
+# `expected.hpp`
+
+This is an implementation of `expected<T>` based on Alexandrescu's, with some
+modifications.
+
 # `format.hpp`
 
 This very small header (125 line) header implements FastFormat's nifty
