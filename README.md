@@ -7,9 +7,11 @@
 
 # Introduction
 
-This library is a collection of utilties (distinct from the standard `utility`
-library) which provides a collection of useful header files that make life
-easier. A description of each header file is provieded below.
+This library is a collection of utilties that aim to minimize the complexity of
+code that needs to be written in order to accomplish some common tasks, without
+compromising on efficiencty or legibility. Examples of these common tasks
+include printing and parsing data, or writing unit tests. This library requires
+a C++11-conformant compiler.
 
 # `format.hpp`
 
@@ -17,8 +19,7 @@ This very small header (125 line) header implements FastFormat's nifty
 formatting syntax, without the monolithic frameworks that come with FastFormat,
 and its dependency, STLSoft. The functions in this header accept the format
 arguments as variadic templates, and invoke `operator<<(ostream&, ...)` to print
-out each argument specified in the format string. This header requires a
-C++11-conformant compiler.
+out each argument specified in the format string.
 
 # `unit_test.hpp`
 
