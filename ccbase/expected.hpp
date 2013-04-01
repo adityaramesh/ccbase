@@ -37,6 +37,9 @@
 ** changed to `attempt`. The return type has been wrapped in an
 ** `std::enable_if`, so that if the user-provided functor returns void (as a
 ** result of a programming error), the compiler barfs less.
+**
+** 3. There is a specialization for `expected<void>`, with the obvious
+** modifications.
 */
 
 #ifndef Z9F71ED6B_DBA6_4FFD_83F7_2D168D140002
@@ -222,6 +225,8 @@ class expected<void>
 	std::exception_ptr p_;
 	bool valid_;
 public:
+	expected(bool) : valid_{true} {}
+
 	/*
 	** These constructors are used to create `expected` objects in invalid
 	** states.
