@@ -17,7 +17,7 @@ enum byte_order
 	big_endian
 };
 
-#if defined(__APPLE__) || defined(__linux__)
+#if defined(__DARWIN__) || defined(__linux__)
 	#include <sys/param.h>
 	
 	#if !defined(__BYTE_ORDER) || \

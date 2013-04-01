@@ -190,6 +190,116 @@ public:
 		}
 	}
 
+	/*
+	** Checks whether this object has an exception of type `E`.
+	*/
+	template <class E>
+	bool has_exception() const
+	{
+		try {
+			if (!valid_) std::rethrow_exception(p_);
+		}
+		catch (const E& e) {
+			return true;
+		}
+		catch (...) {}
+		return false;
+	}
+};
+
+/*
+** You should use this specialization when you want to return an expected object
+** from a method that would otherwise return `void`. This specialization does
+** not store any expected type, and so it lacks the `get` member functions.
+** Other functions also have the code involving the expected type stripped from
+** them. Of course, this object will use less memory and fewer instructions than
+** `expected<bool>`.
+*/
+
+template <>
+class expected<void>
+{
+	std::exception_ptr p_;
+	bool valid_;
+public:
+	/*
+	** These constructors are used to create `expected` objects in invalid
+	** states.
+	*/
+
+	expected() : valid_{false}
+	{
+		new (&p_) std::exception_ptr{std::move(std::current_exception())};
+	}
+	
+	expected(std::exception_ptr p) : valid_{false}
+	{
+		new (&p_) std::exception_ptr{std::move(p)};
+	}
+
+	template <class E>
+	expected(const E& e,
+		typename std::enable_if<
+			std::is_base_of<std::exception, E>::value, E
+		>::type* = 0
+	) : valid_{false}
+	{
+		if (typeid(e) != typeid(E)) {
+			throw std::invalid_argument{"Slicing detected."};
+		}
+		new (&p_) std::exception_ptr{std::move(std::make_exception_ptr(e))};
+	}
+
+	expected(const expected& rhs) : valid_{rhs.valid_}
+	{
+		if (!valid_) new(&p_) std::exception_ptr{rhs.p_};
+	}
+
+	expected(expected&& rhs) : valid_{rhs.valid_}
+	{
+		if (!valid_) new(&p_) std::exception_ptr{std::move(rhs.p_)};
+	}
+
+	~expected()
+	{
+		// We need the `using` statement here, because `::~` does not
+		// parse, so we would not be able to not write
+		// `p_.::~exception_ptr()`.
+		using std::exception_ptr;
+		if (!valid_) p_.~exception_ptr();
+	}
+
+	bool valid() const
+	{
+		return valid_;
+	}
+
+	void swap(expected& rhs)
+	{
+		if (valid_) {
+			// If both `rhs` and `lhs` are valid, then we do not
+			// have to do anything.
+			if (!rhs.valid_) {
+				new (&p_) std::exception_ptr{rhs.p_};
+				valid_ = false;
+				rhs.valid_ = true;
+			}
+		}
+		else {
+			if (rhs.valid_) {
+				new (&rhs.p_) std::exception_ptr{p_};
+				rhs.valid_ = false;
+				valid_ = true;
+			}
+			else {
+				p_.swap(rhs.p_);
+			}
+		}
+	}
+
+	/*
+	** Checks whether this object has an exception of type `E`.
+	*/
 	template <class E>
 	bool has_exception() const
 	{
