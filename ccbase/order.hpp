@@ -14,43 +14,36 @@ namespace cc
 enum byte_order
 {
 	little_endian,
-	big_endian
+	big_endian,
+	pdp_endian
 };
 
-#if defined(__DARWIN__) || defined(__linux__)
-	#include <sys/param.h>
-	
-	#if !defined(__BYTE_ORDER) || \
-	    (!defined(__BIG_ENDIAN) && !defined(__LITTLE_ENDIAN)) || \
-            (defined(__BIG_ENDIAN) && !defined(__LITTLE_ENDIAN) && __BYTE_ORDER != __BIG_ENDIAN) || \
-	    (defined(__LITTLE_ENDIAN) && !defined(__BIG_ENDIAN) && __BYTE_ORDER != __LITTLE_ENDIAN)
-		#error "Error: apparently, I found and included the file " \
-		"'sys/param.h', but because certain macros I was looking for " \
-		"were not defined, I could not determine the byte order of " \
-		"your system. If your system is little-endian or big-endian, " \
-		"an easy fix would be to set the constant 'order' in this " \
-		"header manually. I am not equipped to handle other kinds of " \
-		"byte orders."
+#if defined(__APPLE__)
+	#include <machine/endian.h>
+
+	#if BYTE_ORDER == LITTLE_ENDIAN
+		static constexpr byte_order order{byte_order::little_endian};
+	#elif BYTE_ORDER == BIG_ENDIAN
+		static constexpr byte_order order{byte_order::big_endian};
+	#elif BYTE_ORDER == PDP_ENDIAN
+		static constexpr byte_order order{byte_order::pdp_endian};
+	#else
+		#error Cannot determine machine byte order.
 	#endif
+#elif defined(__linux__)
+	#include <sys/param.h>
 
 	#if __BYTE_ORDER == __LITTLE_ENDIAN
 		static constexpr byte_order order{byte_order::little_endian};
 	#elif __BYTE_ORDER == __BIG_ENDIAN
 		static constexpr byte_order order{byte_order::big_endian};
+	#elif __BYTE_ORDER == __PDP_ENDIAN
+		static constexpr byte_order order{byte_order::pdp_endian};
 	#else
-		#error "Error: I could not determine the byte order of your " \
-		"system because '__BYTE_ORDER' was neither set to " \
-		"'__BIG_ENDIAN' nor '__LITTLE_ENDIAN'. If your system is " \
-		"little-endian or big-endian, an easy fix would be to set " \
-		"the constant 'byte_order' in this header manually. I am not " \
-		"equipped to handle other kinds of byte orders."
+		#error Cannot determine machine byte order.
 	#endif
 #else
-	#error "Error: I could not determine the byte order of your " \
-	"system because I do not know where or how your system defines it. " \
-	"If your system is little-endian or big-endian, an easy fix would " \
-	"be to set the constant 'order' in this header manually. I am not " \
-	"equipped to handle other kinds of byte orders."
+	#error Cannot determine machine byte order.
 #endif
 
 }
