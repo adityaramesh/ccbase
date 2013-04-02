@@ -9,6 +9,7 @@
 #define Z759404CD_C2FF_45EE_A125_85ABCEF5CF82
 
 #include <stdexcept>
+#include <string>
 #include <ccbase/unsync.hpp>
 
 namespace cc
@@ -107,6 +108,28 @@ template <class... Ts>
 void println(const char* s, const Ts... ts)
 {
 	writeln(std::cout, s, ts...);
+}
+
+/*
+** Returns a formatted std::string.
+*/
+template <class... Ts>
+std::string format(const char* s, const Ts... ts)
+{
+	std::ostringstream ss;
+	write(ss, s, ts...);
+	return ss.str();
+}
+
+/*
+** Returns a formatted std::string, appending a newline at the end.
+*/
+template <class... Ts>
+std::string formatln(const char* s, const Ts... ts)
+{
+	std::ostringstream ss;
+	writeln(ss, s, ts...);
+	return ss.str();
 }
 
 }
