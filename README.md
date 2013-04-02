@@ -58,7 +58,10 @@ modifications. As stated by Alexanderscu, `expected<T>` is either `T`, or the
 exception that prevented the creation of `T`. In a sense, expected types allow
 you to use arbitrarily-rich error codes. If a method returns an expected type,
 you can postpone the error-handling until you reach a place in your program
-where it is convenient to do so.
+where it is convenient to do so. You can learn more about `expected<T>` by
+watching [Alexandresu's
+talk](http://channel9.msdn.com/Shows/Going+Deep/C-and-Beyond-2012-Andrei-Alexandrescu-Systematic-Error-Handling-in-C)
+on systematic error handling.
 
 # `unit_test.hpp`
 
