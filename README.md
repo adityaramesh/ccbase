@@ -20,7 +20,8 @@ formatting syntax. The functions in this header accept the format arguments as
 variadic templates, and invoke `operator<<(ostream&, ...)` to print out each
 argument specified in the format string. This means that you can print out
 arbitrary types using this curly-brace syntax by defining `operator<<(ostream&,
-...)` for them.
+...)` for them. The convenient syntax makes it a good replacement for many
+common stream operations, including `std::cout` statements.
 
 ## Example
 
@@ -29,9 +30,10 @@ arbitrary types using this curly-brace syntax by defining `operator<<(ostream&,
 	ss << "Error parsing header: expected " << a << " at line " << line <<
 	", column " << col << ", but got " << b << " instead." << std::endl;
 	throw parse_error{ss.str()};
+
 	// New way:
-	throw parse_error(cc::format(os, "Error parsing header: expected {0} "
-	"at line {1}, column {2}, but got {3} instead.", a, line, col, b));
+	throw parse_error(cc::format("Error parsing header: expected {0} at "
+	"line {1}, column {2}, but got {3} instead.", a, line, col, b));
 
 # `order.hpp`
 
