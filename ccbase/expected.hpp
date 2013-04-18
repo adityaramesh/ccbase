@@ -278,6 +278,11 @@ public:
 	{
 		return valid_;
 	}
+	
+	void get() const
+	{
+		if (!valid_) std::rethrow_exception(p_);
+	}
 
 	void swap(expected& rhs)
 	{
