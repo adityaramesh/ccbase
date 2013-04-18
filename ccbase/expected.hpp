@@ -214,10 +214,11 @@ public:
 /*
 ** You should use this specialization when you want to return an expected object
 ** from a method that would otherwise return `void`. This specialization does
-** not store any expected type, and so it lacks the `get` member functions.
-** Other functions also have the code involving the expected type stripped from
-** them. Of course, this object will use less memory and fewer instructions than
-** `expected<bool>`.
+** not store any expected type, and so the `get` member returns void, and throws
+** in the case that this object is invalid.  Other functions also have the code
+** involving the expected type stripped from them. Because this object does not
+** store any value type, it will use slightly less memory and fewer instructions
+** than `expected<bool>`.
 */
 
 template <>
