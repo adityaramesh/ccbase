@@ -9,19 +9,20 @@
 ** This class is based on Andrei Alexandrescu's implementation of `expected<T>`,
 ** which he discussed in a talk at C++ Next 2012 called "Systematic Error
 ** Handling". The video and slides of the talk (which contain his code) are
-** available online.
+** available
+** [here](http://channel9.msdn.com/Shows/Going+Deep/C-and-Beyond-2012-Andrei-Alexandrescu-Systematic-Error-Handling-in-C).
 **
 ** # Introduction
 ** 
 ** From the horse's mouth: `expected<T>` is a variant type that either contains
 ** `T` or the exception that prevented its creation. It allows you to perform
 ** some action that may raise an exception, and postpone dealing with the
-** exception until it is convenient. This approach gives you both the benefits
-** error codes and exceptions. See Alexandrescu's talk for a great discussion of
-** its uses, as well as a walkthrough through the design.
+** exception until it is convenient. This approach essentially gives you the
+** ability to return "arbitrarily rich error codes." See Alexandrescu's talk for
+** a great discussion of its uses, as well as a walkthrough of the design.
 **
 ** This implementation of `expected<T>` is based on Alexandrescu's, but it has
-** some modifications, namely
+** some modifications, namely:
 **
 ** 1. It is assumed that the stored `std::exception_ptr` references a subclass
 ** of `std::exception`. This allows the user to construct `expected` objects
@@ -29,7 +30,7 @@
 ** arise if both constructors that accepted `T` and the exception type are
 ** provided. In particular, if `T` is implicitly convertible to the type of the
 ** exception (or vice versa), there would be an ambiguous constructor overload
-** resolution. This issue is circumvented with the assumption, so that the
+** resolution. This issue is circumvented with this assumption, so that the
 ** constructors work as intended in all situations.
 **
 ** 2. I made Alexandrescu's `fromCode` function global, and used `decltype` to
