@@ -54,7 +54,7 @@ compile-time error is raised.
 ## `expected.hpp`
 
 This is an implementation of `expected<T>` based on Alexandrescu's, with some
-modifications. As stated by Alexanderscu, `expected<T>` is either `T`, or the
+modifications. As stated by Alexandrescu, `expected<T>` is either `T`, or the
 exception that prevented the creation of `T`. In a sense, expected types allow
 you to use arbitrarily-rich error codes. If a method returns an expected type,
 you can postpone the error-handling until you reach a place in your program
