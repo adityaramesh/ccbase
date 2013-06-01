@@ -23,8 +23,6 @@ arbitrary types using this curly-brace syntax by defining `operator<<(ostream&,
 ...)` for them. The convenient syntax makes it a good replacement for many
 common stream operations, including `std::cout` statements.
 
-### Example
-
 	// Old way:
 	std::ostringstream ss;
 	ss << "Error parsing header: expected " << a << " at line " << line <<
@@ -40,8 +38,6 @@ common stream operations, including `std::cout` statements.
 This header enables cross-platform (currently OS X and GNU/Linux only)
 endian-detection. If you include the header on an unsupported platform, a
 compile-time error is raised.
-
-### Example
 
 	switch (cc::order) {
 	case cc::byte_order::little_endian:
@@ -67,8 +63,48 @@ watching [Alexandresu's
 talk](http://channel9.msdn.com/Shows/Going+Deep/C-and-Beyond-2012-Andrei-Alexandrescu-Systematic-Error-Handling-in-C)
 on systematic error handling.
 
+This implementation of `expected<T>` defines a specialization for `void`. In the
+future, specializations for `T&` and `const T&` will also be added. The
+specializations for references are necessary, because unrestricted unions cannot
+contain references as members. See [this blog
+post](http://anto-nonco.blogspot.com/2013/03/extending-expected-to-deal-with.html)
+for more information.
+
 ## `unit_test.hpp`
 
 This header provides some utilties for very basic unit testing. Tests are
 implemented as modules, and a set of related modules is gathered in a suite.
 Each suite is tied to a particular file; there can only be one suite per file.
+Here is an example of a file called `test.cpp` which uses the unit testing
+functionality.
+
+	#include <ccbase/unit_test.hpp>
+
+	CC_BEGIN_MODULE(test1)
+		CC_ASSERT(1);
+	CC_END_MODULE(test1)
+
+	CC_BEGIN_MODULE(test2)
+		CC_ASSERT(0);
+	CC_END_MODULE(test2)
+
+	CC_BEGIN_SUITE(suite_name)
+		test1();
+		test2();
+	CC_END_SUITE(suite_name)
+
+By default, compiling `test.cpp` and running the resulting executable will
+output the following.
+
+	Failure in file "test.cpp", module "test2", at line 15: 0.
+
+If `CC_UNIT_TEST_VERBOSE` is defined, then the output will be more descriptive.
+
+	Entering suite example.
+	Entering module test1.
+	Success in file "test.cpp", module "test1", at line 11: 1.
+	Exiting module "test1"; 1 of 1 assertions passed.
+	Entering module test2.
+	Failure in file "test.cpp", module "test2", at line 15: 0.
+	Exiting module "test2"; 0 of 1 assertions passed.
+	Exiting suite example.
