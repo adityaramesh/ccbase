@@ -8,23 +8,23 @@
 ** are composed of file-based suites, in which each suite contains a set of
 ** modules. Suites are designed to encapsulate a set of related tests, where
 ** each test is implemented within a module block. By default, assertion
-** information is printed only when assertions fail. If XU_UNIT_TEST_VERBOSE is
+** information is printed only when assertions fail. If CC_UNIT_TEST_VERBOSE is
 ** defined, information will be printed about every assertion in the suite,
 ** regardless of whether each assertion passed or failed. A typical test file
 ** would be structured as follows:
 **
-**	XU_BEGIN_MODULE(test1)
-**		XU_ASSERT(1);
-**	XU_END_MODULE(test1)
+**	CC_BEGIN_MODULE(test1)
+**		CC_ASSERT(1);
+**	CC_END_MODULE(test1)
 **	
-**	XU_BEGIN_MODULE(test2)
-**		XU_ASSERT(0);
-**	XU_END_MODULE(test2)
+**	CC_BEGIN_MODULE(test2)
+**		CC_ASSERT(0);
+**	CC_END_MODULE(test2)
 **	
-**	XU_BEGIN_SUITE(example)
+**	CC_BEGIN_SUITE(example)
 **		test1();
 **		test2();
-**	XU_END_SUITE(example)
+**	CC_END_SUITE(example)
 */
 
 #ifndef Z474488B0_98AB_4098_886B_372A345C5121
@@ -36,24 +36,26 @@
 #include <vector>
 #include <ccbase/format.hpp>
 
-namespace cc {
-namespace unit_test {
+namespace cc
+{
+namespace unit_test
+{
 	using result_type = std::tuple<std::size_t, std::size_t, std::string>;
 	using result_list = std::vector<result_type>;
 }}
 
-#define XU_ASSERT(x) results.push_back(std::make_tuple((x), __LINE__, #x))
+#define CC_ASSERT(x) results.push_back(std::make_tuple((x), __LINE__, #x))
 
-#ifdef XU_UNIT_TEST_VERBOSE
+#ifdef CC_UNIT_TEST_VERBOSE
 
-#define XU_BEGIN_MODULE(name)                               \
+#define CC_BEGIN_MODULE(name)                               \
 	static void name()                                  \
 	{                                                   \
 		std::size_t successes = 0;                  \
 		cc::unit_test::result_list results;         \
 		cc::println("Entering module {0}.", #name);
 
-#define XU_END_MODULE(name)                                                           \
+#define CC_END_MODULE(name)                                                           \
 	for (const auto& x : results) {                                               \
 		successes += std::get<0>(x);                                          \
 		cc::println("{0} in file \"{1}\", module \"{2}\", at line {3}: {4}.", \
@@ -64,24 +66,24 @@ namespace unit_test {
 		#name, successes, results.size());                                    \
 }
 
-#define XU_BEGIN_SUITE(name)                               \
+#define CC_BEGIN_SUITE(name)                               \
 	int main()                                         \
 	{                                                  \
 		cc::println("Entering suite {0}.", #name);
 
-#define XU_END_SUITE(name)                                \
+#define CC_END_SUITE(name)                                \
 		cc::println("Exiting suite {0}.", #name); \
 		return EXIT_SUCCESS;                      \
 	}
 
 #else
 
-#define XU_BEGIN_MODULE(name)                       \
+#define CC_BEGIN_MODULE(name)                       \
 	static void name()                          \
 	{                                           \
 		cc::unit_test::result_list results; \
 			
-#define XU_END_MODULE(name)                                                               \
+#define CC_END_MODULE(name)                                                               \
 	for (const auto& x : results) {                                                   \
 		if (std::get<0>(x)) continue;                                             \
 		cc::println("Failure in file \"{0}\", module \"{1}\", at line {2}: {3}.", \
@@ -89,11 +91,11 @@ namespace unit_test {
 	}                                                                                 \
 }
 
-#define XU_BEGIN_SUITE(name) \
+#define CC_BEGIN_SUITE(name) \
 	int main()           \
 	{
 
-#define XU_END_SUITE(name)           \
+#define CC_END_SUITE(name)           \
 		return EXIT_SUCCESS; \
 	}
 

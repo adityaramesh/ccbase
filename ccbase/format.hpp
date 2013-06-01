@@ -8,6 +8,7 @@
 #ifndef Z759404CD_C2FF_45EE_A125_85ABCEF5CF82
 #define Z759404CD_C2FF_45EE_A125_85ABCEF5CF82
 
+#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <ccbase/unsync.hpp>
