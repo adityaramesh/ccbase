@@ -339,7 +339,7 @@ struct platform
 #if defined __MACH__
 	#define kernel_value    mach
 	#define kernel_mach     1
-	#define PLATFORM_KERNEL MACH
+	#define PLATFORM_KERNEL PLATFORM_KERNEL_MACH
 #endif
 
 #if defined __APPLE__
