@@ -13,9 +13,9 @@ compromising on efficiency or legibility. Examples of these common tasks include
 printing and parsing data, or writing unit tests. This library requires a
 C++11-conformant compiler.
 
-## Upcoming updates.
+# Planned updates
 
-- Add support for references in `expected.hpp`
+- Add support for references to `expected.hpp`.
 
 # Documentation
 
@@ -76,8 +76,13 @@ Here is some example usage:
 	case cc::linux_distribution: // ...
 	case cc::macos: // ...
 	case cc::windows: // ...
-	default:
+	default: // Either none of the above or the identification failed.
 	}
+
+	/*
+	** Identification failure can be checked for explicitly by checking
+	** whether `cc::platform::os == cc::unknown`.
+	*/
 
 	// Where necessary, macros can be used.
 	#if PLATFORM_OS == PLATFORM_OS_LINUX_DISTRIBUTION
@@ -87,8 +92,18 @@ Here is some example usage:
 	#elif PLATFORM_OS == PLATFORM_OS_WINDOWS
 		// ...
 	#else
-		// ...
+		// Either none of the above or the identification failed.
 	#endif
+
+	/*
+	** Identification failure can be checked for explicitly by checking
+	** whether `PLATFORM_OS` is defined. Comparisons involving `PLATFORM_OS`
+	** will work even if `PLATFORM_OS` is not defined, because the standard
+	** dictates that undefined macros evaluate to zero in such cases.
+	*/
+
+Enum values and macros are defined analogously for the other platform features
+in the list above.
 
 ## `expected.hpp`
 
