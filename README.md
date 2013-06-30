@@ -13,6 +13,10 @@ compromising on efficiency or legibility. Examples of these common tasks include
 printing and parsing data, or writing unit tests. This library requires a
 C++11-conformant compiler.
 
+## TODO
+
+- Update `expected.hpp`
+
 ## `format.hpp`
 
 This very small header (125 line) header implements C#'s nify curly-brace string
@@ -33,7 +37,57 @@ common stream operations, including `std::cout` statements.
 	throw parse_error(cc::format("Error parsing header: expected {0} at "
 	"line {1}, column {2}, but got {3} instead.", a, line, col, b));
 
-## `order.hpp`
+## `platform.hpp`
+
+This header allows you to identify various features of the host platform.
+Because preprocessor macros are used to perform the detection, the header is not
+guaranteed to successfully define all of the features in the list below.
+However, the GNU/Linux, Mac OS, and Windows operating systems are supported,
+along with the major C++ compilers and widely-used CPU architectures.
+
+The header attempts to identify the following features of the host platform.
+- Compiler
+- Processor architecture
+- Processor ABI
+- Operating system
+- Kernel
+- Integer byte order (the floating-point byte order can potentially be different
+  from the integer byte order, but the header makes no attempt to identify the
+  latter).
+
+The header defines various feature macros, as well as the following structure:
+
+	struct platform
+	{
+		static constexpr auto compiler = // ...
+		static constexpr auto arch = // ...
+		static constexpr auto abi = // ...
+		static constexpr auto os = // ...
+		static constexpr auto kernel = // ...
+		static constexpr auto integer_byte_order = // ...
+	};
+
+Here is some example usage:
+
+	// Use of enums, which is encouraged where possible.
+	switch (cc::platform::os) {
+	case cc::linux_distribution: // ...
+	case cc::macos: // ...
+	case cc::windows: // ...
+	default:
+	}
+
+	// Where necessary, macros can be used.
+	#if PLATFORM_OS == PLATFORM_OS_LINUX_DISTRIBUTION
+		// ...
+	#elif PLATFORM_OS == PLATFORM_OS_MACOS
+		// ...
+	#elif PLATFORM_OS == PLATFORM_OS_WINDOWS
+		// ...
+	#else
+		// ...
+	#endif
+
 
 This header enables cross-platform (currently OS X and GNU/Linux only)
 endian-detection. If you include the header on an unsupported platform, a
