@@ -17,7 +17,9 @@ C++11-conformant compiler.
 
 - Update `expected.hpp`
 
-## `format.hpp`
+# Documentation
+
+### `format.hpp`
 
 This very small header (125 line) header implements C#'s nify curly-brace string
 formatting syntax. The functions in this header accept the format arguments as
@@ -37,7 +39,7 @@ common stream operations, including `std::cout` statements.
 	throw parse_error(cc::format("Error parsing header: expected {0} at "
 	"line {1}, column {2}, but got {3} instead.", a, line, col, b));
 
-## `platform.hpp`
+### `platform.hpp`
 
 This header allows you to identify various features of the host platform.
 Because preprocessor macros are used to perform the detection, the header is not
@@ -46,14 +48,14 @@ However, the GNU/Linux, Mac OS, and Windows operating systems are supported,
 along with the major C++ compilers and widely-used CPU architectures.
 
 The header attempts to identify the following features of the host platform.
-- Compiler
-- Processor architecture
-- Processor ABI
-- Operating system
-- Kernel
-- Integer byte order (the floating-point byte order can potentially be different
-  from the integer byte order, but the header makes no attempt to identify the
-  latter).
+- The compiler.
+- The processor architecture.
+- The processor ABI.
+- The operating system.
+- The kernel.
+- The integer byte order (the floating-point byte order can potentially be
+  different from the integer byte order, but the header makes no attempt to
+  identify the latter).
 
 The header defines various feature macros, as well as the following structure:
 
@@ -88,24 +90,7 @@ Here is some example usage:
 		// ...
 	#endif
 
-
-This header enables cross-platform (currently OS X and GNU/Linux only)
-endian-detection. If you include the header on an unsupported platform, a
-compile-time error is raised.
-
-	switch (cc::order) {
-	case cc::byte_order::little_endian:
-		/* Little-endian code. */
-		break;
-	case cc::byte_order::pdp_endian:
-		/* PDP-endian code. */
-		break;
-	case cc::byte_order::big_endian:
-		/* Big-endian code. */
-		break;
-	}
-
-## `expected.hpp`
+### `expected.hpp`
 
 This is an implementation of `expected<T>` based on Alexandrescu's, with some
 modifications. As stated by Alexandrescu, `expected<T>` is either `T`, or the
@@ -124,9 +109,9 @@ contain references as members. See [this blog
 post](http://anto-nonco.blogspot.com/2013/03/extending-expected-to-deal-with.html)
 for more information.
 
-## `unit_test.hpp`
+### `unit_test.hpp`
 
-This header provides some utilties for very basic unit testing. Tests are
+This header provides some utilities for very basic unit testing. Tests are
 implemented as modules, and a set of related modules is gathered in a suite.
 Each suite is tied to a particular file; there can only be one suite per file.
 Here is an example of a file called `test.cpp` which uses the unit testing
