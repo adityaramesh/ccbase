@@ -5,7 +5,7 @@
   ** Contact:	_@adityaramesh.com
 -->
 
-## Introduction
+# Introduction
 
 This library is a collection of utilties that help to minimize the complexity of
 code that needs to be written in order to accomplish some common tasks, without
@@ -13,13 +13,13 @@ compromising on efficiency or legibility. Examples of these common tasks include
 printing and parsing data, or writing unit tests. This library requires a
 C++11-conformant compiler.
 
-## TODO
+## Upcoming updates.
 
-- Update `expected.hpp`
+- Add support for references in `expected.hpp`
 
 # Documentation
 
-### `format.hpp`
+## `format.hpp`
 
 This very small header (125 line) header implements C#'s nify curly-brace string
 formatting syntax. The functions in this header accept the format arguments as
@@ -39,7 +39,7 @@ common stream operations, including `std::cout` statements.
 	throw parse_error(cc::format("Error parsing header: expected {0} at "
 	"line {1}, column {2}, but got {3} instead.", a, line, col, b));
 
-### `platform.hpp`
+## `platform.hpp`
 
 This header allows you to identify various features of the host platform.
 Because preprocessor macros are used to perform the detection, the header is not
@@ -90,7 +90,7 @@ Here is some example usage:
 		// ...
 	#endif
 
-### `expected.hpp`
+## `expected.hpp`
 
 This is an implementation of `expected<T>` based on Alexandrescu's, with some
 modifications. As stated by Alexandrescu, `expected<T>` is either `T`, or the
@@ -109,7 +109,7 @@ contain references as members. See [this blog
 post](http://anto-nonco.blogspot.com/2013/03/extending-expected-to-deal-with.html)
 for more information.
 
-### `unit_test.hpp`
+## `unit_test.hpp`
 
 This header provides some utilities for very basic unit testing. Tests are
 implemented as modules, and a set of related modules is gathered in a suite.
