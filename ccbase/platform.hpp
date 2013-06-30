@@ -69,8 +69,8 @@ enum
 	x86,
 
 	// ABI
-	// 32
-	// 64
+	bits_32,
+	bits_64,
 	
 	// OS
 	linux_distribution,
@@ -300,13 +300,13 @@ struct platform
 */
 
 #if defined _ILP32 || defined __ILP32__
-	#define abi_value    32
+	#define abi_value    bits_32
 	#define abi_32       1
 	#define PLATFORM_ABI 32
 #endif
 
 #if defined _LP64 || defined __LP64__
-	#define abi_value    64
+	#define abi_value    bits_64
 	#define abi_64       1
 	#define PLATFORM_ABI 64
 #endif
