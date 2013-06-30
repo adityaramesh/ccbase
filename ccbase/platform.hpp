@@ -46,7 +46,7 @@ namespace cc
 #define PLATFORM_BYTE_ORDER_BIG         2
 #define PLATFORM_BYTE_ORDER_LITTLE_WORD 3
 
-enum
+enum system
 {
 	// Compiler
 	clang,
