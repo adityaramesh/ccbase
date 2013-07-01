@@ -349,7 +349,8 @@ struct platform
 #endif
 
 #if defined _WIN16 || defined _WIN32 || defined _WIN64 || defined __WIN32__ || \
-    defined __TOS_WIN__ || defined __WINDOWS__
+    defined __TOS_WIN__ || defined __WINDOWS__ || defined __CYGWIN__ || \
+    defined __CYGWIN32__
 	#define os_value          windows
 	#define os_windows        1
 	#define kernel_value      windows_nt
