@@ -13,9 +13,11 @@ compromising on efficiency or legibility. Examples of these common tasks include
 printing and parsing data, or writing unit tests. This library requires a
 C++11-conformant compiler.
 
-# Planned updates
+## Planned updates
 
 - Add support for references to `expected.hpp`.
+- Test `platform.hpp` on Cygwin.
+- Add example code for `expected.hpp`.
 
 # Documentation
 
