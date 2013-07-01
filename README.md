@@ -16,6 +16,8 @@ C++11-conformant compiler.
 ## Planned updates
 
 - Add support for references to `expected.hpp`.
+- Add support for compiler version detection.
+- Add support for kernel version detection.
 - Test `platform.hpp` on Cygwin.
 - Add example code for `expected.hpp`.
 
