@@ -123,7 +123,7 @@ post][extending_expected], and the approach taken to rectify the problem is
 adapted from the one given in the blog post.
 
 [error_handling]: http://channel9.msdn.com/Shows/Going+Deep/C-and-Beyond-2012-Andrei-Alexandrescu-Systematic-Error-Handling-in-C "Alexandrescu's Talk on Systematic Error Handling"
-[extending_expected] : http://anto-nonco.blogspot.com/2013/03/extending-expected-to-deal-with.html "Extending `expected<T>` to Deal with References"
+[extending_expected]: http://anto-nonco.blogspot.com/2013/03/extending-expected-to-deal-with.html "Extending `expected<T>` to Deal with References"
 
 ## `unit_test.hpp`
 
