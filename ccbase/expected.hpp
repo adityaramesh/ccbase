@@ -51,7 +51,7 @@
 ** described by [this blog post][extending_expected].
 **
 ** [error_handling]: http://channel9.msdn.com/Shows/Going+Deep/C-and-Beyond-2012-Andrei-Alexandrescu-Systematic-Error-Handling-in-C "Alexandrescu's Talk on Systematic Error Handling"
-** [extending_expected] : http://anto-nonco.blogspot.com/2013/03/extending-expected-to-deal-with.html "Extending `expected<T>` to Deal with References"
+** [extending_expected]: http://anto-nonco.blogspot.com/2013/03/extending-expected-to-deal-with.html "Extending `expected<T>` to Deal with References"
 */
 
 #ifndef Z9F71ED6B_DBA6_4FFD_83F7_2D168D140002
