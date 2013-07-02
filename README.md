@@ -7,11 +7,11 @@
 
 # Introduction
 
-This library is a collection of utilties that help to minimize the complexity of
-code that needs to be written in order to accomplish some common tasks, without
-compromising on efficiency or legibility. Examples of these common tasks include
-printing and parsing data, or writing unit tests. This library requires a
-C++11-conformant compiler.
+This library is a collection of utilities that help to minimize the complexity
+of code that needs to be written in order to accomplish some common tasks,
+without compromising on efficiency or legibility. Examples of these common tasks
+include printing and parsing data, or writing unit tests. This library requires
+a C++11-conformant compiler.
 
 ## Planned updates
 
@@ -25,13 +25,13 @@ C++11-conformant compiler.
 
 ## `format.hpp`
 
-This very small header (125 line) header implements C#'s nify curly-brace string
-formatting syntax. The functions in this header accept the format arguments as
-variadic templates, and invoke `operator<<(ostream&, ...)` to print out each
-argument specified in the format string. This means that you can print out
-arbitrary types using this curly-brace syntax by defining `operator<<(ostream&,
-...)` for them. The convenient syntax makes it a good replacement for many
-common stream operations, including `std::cout` statements.
+This very small header (125 line) header implements C#'s nifty curly-brace
+string formatting syntax. The functions in this header accept the format
+arguments as variadic templates, and invoke `operator<<(std::ostream&, ...)` to
+print out each argument specified in the format string. This means that you can
+print out arbitrary types using this curly-brace syntax by defining
+`operator<<(std::ostream&, ...)` for them. The convenient syntax makes it a good
+replacement for many common stream operations, including `std::cout` statements.
 
 	// Old way:
 	std::ostringstream ss;
@@ -42,6 +42,77 @@ common stream operations, including `std::cout` statements.
 	// New way:
 	throw parse_error(cc::format("Error parsing header: expected {0} at "
 	"line {1}, column {2}, but got {3} instead.", a, line, col, b));
+
+## `dynamic.hpp`
+
+This header allows you to load functions and data from dynamic libraries using
+convenient C++11 syntax. Suppose that you have a library called `test.dll`,
+which defines two symbols of interest: `msg`, a `const std::string` and `test`,
+a function with the signature `std::string(std::string, std::string)`. Assuming
+that both symbols have C linkage, then you could load them as follows:
+
+	cc::image i{"test.dll", cc::lazy};
+	using signature = std::string(std::string, std::string);
+	auto f = cc::get_function<signature>("test", i).get();
+	auto& s = cc::get_data<std::string>("msg", i).get();
+
+Both methods return `expected` objects, which either contain the objects loaded
+from the symbols, or the exceptions that prevented them from being loaded.
+Notice that the `get_data` method returns a reference to the object at the
+symbol's address, so mutating the reference will also change the data at the
+symbol's address in memory.
+
+Information about the symbols can be queried using the `get_info` method, which
+returns an `expected<symbol_information>` structure. The `symbol_information`
+structure defines the following methods:
+	
+	// Returns the path to the loaded image.
+	const char* path();
+	// Returns the base address of the image.
+	const void* base_address();
+	// Returns the name of the symbol.
+	const char* name();
+	// Returns the address of the symbol.
+	const void* address();
+
+With the variables `f` and `s` as defined in the previous code sample, the
+`get_info` method is used as follows:
+
+	auto fi = cc::get_info(f).get();
+	auto si = cc::get_info(s).get();
+
+## `visibility.hpp`
+
+This header defines macros that can be used to set symbol visibility when
+compiling shared libraries in a cross-platform manner. To this end, the
+following macros are defined:
+
+	// Used for public symbols in a header for a shared library that is to
+	// be implicitly linked into the final executable.
+	IMPORT_SYMBOL
+	// Used for public symbols in source code that is to be compiled into a
+	// shared library.
+	EXPORT_SYMBOL
+	// Used to hide symbols in source code that is to be compiled into a
+	// shared library.
+	HIDDEN_SYMBOL
+
+Often times, it is the case that the same header file is used both by the source
+code that is compiled into the shared library, and by the source code that links
+to the shared library. In the first case, public symbols should be prefixed by
+`EXPORT_SYMBOL`; in the second case, public symbols should be prefixed by
+`IMPORT_SYMBOL`. In both cases, private symbols that are not included in the
+shared library should be prefixed by `HIDDEN_SYMBOL`. The following macros are
+provided to make this task easier:
+
+	PUBLIC_SYMBOL
+	PRIVATE_SYMBOL
+
+`PUBLIC_SYMBOL` expands to `IMPORT_SYMBOL` if `CCBASE_IMPORT_SYMBOLS` is
+defined, or `EXPORT_SYMBOL` if `CCBASE_EXPORT_SYMBOLS` is defined. If neither of
+the two macros is defined, then `PUBLIC_SYMBOL` expands to nothing.
+`PRIVATE_SYMBOL` expands to `HIDDEN_SYMBOL` if either of the two macros is
+defined, and nothing otherwise.
 
 ## `platform.hpp`
 
