@@ -15,7 +15,7 @@ C++11-conformant compiler.
 
 ## Planned updates
 
-- Add support for references to `expected.hpp`.
+- Generate HTML documentation from code.
 - Add support for compiler version detection.
 - Add support for kernel version detection.
 - Test `platform.hpp` on Cygwin.
@@ -111,22 +111,19 @@ in the list above.
 
 ## `expected.hpp`
 
-This is an implementation of `expected<T>` based on Alexandrescu's, with some
-modifications. As stated by Alexandrescu, `expected<T>` is either `T`, or the
-exception that prevented the creation of `T`. In a sense, expected types allow
-you to use arbitrarily-rich error codes. If a method returns an expected type,
-you can postpone the error-handling until you reach a place in your program
-where it is convenient to do so. You can learn more about `expected<T>` by
-watching [Alexandresu's
-talk](http://channel9.msdn.com/Shows/Going+Deep/C-and-Beyond-2012-Andrei-Alexandrescu-Systematic-Error-Handling-in-C)
-on systematic error handling.
+This class is based on Andrei Alexandrescu's implementation of `expected<T>`,
+which he discussed in a talk at C++ Next 2012 called "Systematic Error
+Handling". The video and slides of the talk (which contain his code) are
+available [here][error_handling]. Support was later added for `expected<void>`,
+so that methods that return void can still take advantage of the this idiom.
+Finally, support for references was added, so that objects of type
+`expected<T&>` and `expected<const T&>` can now be created. The fact that
+generalized unions cannot contain references was alluded to in [this blog
+post][extending_expected], and the approach taken to rectify the problem is
+adapted from the one given in the blog post.
 
-This implementation of `expected<T>` defines a specialization for `void`. In the
-future, specializations for `T&` and `const T&` will also be added. The
-specializations for references are necessary, because unrestricted unions cannot
-contain references as members. See [this blog
-post](http://anto-nonco.blogspot.com/2013/03/extending-expected-to-deal-with.html)
-for more information.
+[error_handling]: http://channel9.msdn.com/Shows/Going+Deep/C-and-Beyond-2012-Andrei-Alexandrescu-Systematic-Error-Handling-in-C "Alexandrescu's Talk on Systematic Error Handling"
+[extending_expected] : http://anto-nonco.blogspot.com/2013/03/extending-expected-to-deal-with.html "Extending `expected<T>` to Deal with References"
 
 ## `unit_test.hpp`
 
