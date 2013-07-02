@@ -8,27 +8,37 @@
 #ifndef ZF27C7D32_9AB4_45CF_97E5_F4103C824B40
 #define ZF27C7D32_9AB4_45CF_97E5_F4103C824B40
 
-#if defined(__GNUG__) || defined(__clang__)
+#include <ccbase/platform.hpp>
+
+#if PLATFORM_COMPILER == PLATFORM_COMPILER_GCC || \
+    PLATFORM_COMPILER == PLATFORM_COMPILER_CLANG
 	#define CC_ALWAYS_INLINE __attribute__((always_inline))
 	#define CC_NEVER_INLINE  __attribute__((noinline))
 	#define CC_CONST         __attribute__((const))
 	#define CC_PURE          __attribute__((pure))
 	#define CC_UNUSED        __attribute__((unused))
 	#define CC_RESTRICT      __restrict__
-#elif defined(__INTEL_COMPILER)
+#elif PLATFORM_COMPILER == PLATFORM_COMPILER_ICC
 	#define CC_ALWAYS_INLINE __attribute__((always_inline))
 	#define CC_NEVER_INLINE  __attribute__((noinline))
 	#define CC_CONST         __attribute__((const))
 	#define CC_PURE          __attribute__((pure))
 	#define CC_UNUSED        __attribute__((unused))
 	#define CC_RESTRICT      restrict
-#elif defined(_MSC_VER)
+#elif PLATFORM_COMPILER == PLATFORM_COMPILER_MSVC
 	#define CC_ALWAYS_INLINE __forceinline
 	#define CC_NEVER_INLINE  __declspec(noinline)
 	#define CC_CONST
 	#define CC_PURE
 	#define CC_UNUSED
 	#define CC_RESTRICT      __restrict
+#else
+	#define CC_ALWAYS_INLINE
+	#define CC_NEVER_INLINE
+	#define CC_CONST
+	#define CC_PURE
+	#define CC_UNUSED
+	#define CC_RESTRICT
 #endif
 
 #endif
