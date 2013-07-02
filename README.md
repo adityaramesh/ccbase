@@ -10,8 +10,8 @@
 This library is a collection of utilities that help to minimize the complexity
 of code that needs to be written in order to accomplish some common tasks,
 without compromising on efficiency or legibility. Examples of these common tasks
-include printing and parsing data, or writing unit tests. This library requires
-a C++11-conformant compiler.
+include printing and parsing data, loading dynamic libraries, or writing unit
+tests. This library requires a C++11-conformant compiler.
 
 ## Planned updates
 
