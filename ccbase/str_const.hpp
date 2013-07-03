@@ -35,6 +35,11 @@ public:
 		return n < s_ ? p_[n] : throw std::out_of_range{""};
 	}
 
+	constexpr std::size_t length()
+	{
+		return s_;
+	}
+
 	constexpr std::size_t size()
 	{
 		return s_;
