@@ -5,7 +5,7 @@
 ** Contact:	_@adityaramesh.com
 **
 ** This header defines a static class called `platform` with various constants
-** defined based on the information available from the preprocessor.  The
+** defined based on the information available from the preprocessor. The
 ** information used to create this header was taken from [this
 ** website](http://sourceforge.net/p/predef/wiki/).
 */
@@ -334,6 +334,7 @@ struct platform
 	#define kernel_linux          1
 	#define PLATFORM_OS           PLATFORM_OS_LINUX_DISTRIBUTION
 	#define PLATFORM_KERNEL       PLATFORM_KERNEL_LINUX
+	#define PLATFORM_NEWLINE      "\n"
 #endif
 
 #if defined __MACH__
@@ -342,10 +343,15 @@ struct platform
 	#define PLATFORM_KERNEL PLATFORM_KERNEL_MACH
 #endif
 
-#if defined __APPLE__
+#if defined macintosh || defined Macintosh || defined __APPLE__
 	#define os_value    macos
 	#define os_macos    1
 	#define PLATFORM_OS PLATFORM_OS_MACOS
+	#if defined macintosh || defined Macintosh
+		#define PLATFORM_NEWLINE "\r"
+	#else
+		#define PLATFORM_NEWLINE "\n"
+	#endif
 #endif
 
 #if defined _WIN16 || defined _WIN32 || defined _WIN64 || defined __WIN32__ || \
@@ -357,6 +363,7 @@ struct platform
 	#define kernel_windows_nt 1
 	#define PLATFORM_OS       PLATFORM_OS_WINDOWS
 	#define PLATFORM_KERNEL   PLATFORM_KERNEL_WINDOWS_NT
+	#define PLATFORM_NEWLINE  "\r\n"
 #endif
 
 #define os_list os_linux_distribution, os_macos, os_windows
@@ -365,9 +372,11 @@ struct platform
 #if sum(os_list) > 1
 	#error "Conflicting OS macros are defined."
 #elif sum(os_list) == 1
-	static constexpr auto os = os_value;
+	static constexpr auto os      = os_value;
+	static constexpr auto newline = PLATFORM_NEWLINE;
 #else
-	static constexpr auto os = unknown;
+	static constexpr auto os       = unknown;
+	static constexpr char* newline = nullptr;
 #endif
 
 #if sum(kernel_list) > 1

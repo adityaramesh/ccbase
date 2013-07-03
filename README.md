@@ -131,6 +131,7 @@ The header attempts to identify the following features of the host platform.
 - The integer byte order (the floating-point byte order can potentially be
   different from the integer byte order, but the header makes no attempt to
   identify the latter).
+- The platform newline character.
 
 The header defines various feature macros, as well as the following structure:
 
