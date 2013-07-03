@@ -20,6 +20,9 @@
 
 #include <stdexcept>
 
+namespace cc
+{
+
 class str_const
 {
 private:
@@ -50,5 +53,7 @@ public:
 		return p_;
 	}
 };
+
+}
 
 #endif
