@@ -13,6 +13,8 @@
 #ifndef Z559D8FFC_E3C4_459B_BFFD_063900DAAF55
 #define Z559D8FFC_E3C4_459B_BFFD_063900DAAF55
 
+#include <ccbase/str_const.hpp>
+
 namespace cc
 {
 
@@ -328,13 +330,14 @@ struct platform
 */
 
 #if defined __linux__
-	#define os_value              linux_distribution
-	#define os_linux_distribution 1
-	#define kernel_value          linux
-	#define kernel_linux          1
-	#define PLATFORM_OS           PLATFORM_OS_LINUX_DISTRIBUTION
-	#define PLATFORM_KERNEL       PLATFORM_KERNEL_LINUX
-	#define PLATFORM_NEWLINE      "\n"
+	#define os_value                linux_distribution
+	#define os_linux_distribution   1
+	#define kernel_value            linux
+	#define kernel_linux            1
+	#define PLATFORM_OS             PLATFORM_OS_LINUX_DISTRIBUTION
+	#define PLATFORM_KERNEL         PLATFORM_KERNEL_LINUX
+	#define PLATFORM_NEWLINE        "\n"
+	#define PLATFORM_NEWLINE_LENGTH 1
 #endif
 
 #if defined __MACH__
@@ -344,9 +347,10 @@ struct platform
 #endif
 
 #if defined macintosh || defined Macintosh || defined __APPLE__
-	#define os_value    macos
-	#define os_macos    1
-	#define PLATFORM_OS PLATFORM_OS_MACOS
+	#define os_value                macos
+	#define os_macos                1
+	#define PLATFORM_OS             PLATFORM_OS_MACOS
+	#define PLATFORM_NEWLINE_LENGTH 1
 	#if defined macintosh || defined Macintosh
 		#define PLATFORM_NEWLINE "\r"
 	#else
@@ -357,13 +361,14 @@ struct platform
 #if defined _WIN16 || defined _WIN32 || defined _WIN64 || defined __WIN32__ || \
     defined __TOS_WIN__ || defined __WINDOWS__ || defined __CYGWIN__ || \
     defined __CYGWIN32__
-	#define os_value          windows
-	#define os_windows        1
-	#define kernel_value      windows_nt
-	#define kernel_windows_nt 1
-	#define PLATFORM_OS       PLATFORM_OS_WINDOWS
-	#define PLATFORM_KERNEL   PLATFORM_KERNEL_WINDOWS_NT
-	#define PLATFORM_NEWLINE  "\r\n"
+	#define os_value                windows
+	#define os_windows              1
+	#define kernel_value            windows_nt
+	#define kernel_windows_nt       1
+	#define PLATFORM_OS             PLATFORM_OS_WINDOWS
+	#define PLATFORM_KERNEL         PLATFORM_KERNEL_WINDOWS_NT
+	#define PLATFORM_NEWLINE        "\r\n"
+	#define PLATFORM_NEWLINE_LENGTH 2
 #endif
 
 #define os_list os_linux_distribution, os_macos, os_windows
@@ -373,10 +378,10 @@ struct platform
 	#error "Conflicting OS macros are defined."
 #elif sum(os_list) == 1
 	static constexpr auto os      = os_value;
-	static constexpr auto newline = PLATFORM_NEWLINE;
+	static constexpr auto newline = str_const{PLATFORM_NEWLINE};
 #else
-	static constexpr auto os       = unknown;
-	static constexpr char* newline = nullptr;
+	static constexpr auto os      = unknown;
+	static constexpr auto newline = str_const{""};
 #endif
 
 #if sum(kernel_list) > 1
