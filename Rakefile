@@ -19,7 +19,18 @@ headers = FileList["ccbase/*"]
 tests   = FileList["test/*"].map{|f| f.sub("test", "out").ext("run")}
 libs    = FileList["lib/src/*"].map{|f| f.sub("src", "out").ext("dll")}
 
-task :default => libs + tests
+task :default => tests
+
+task "tests" => tests do
+	tests.each do |f|
+		sh "./#{f}"
+	end
+end
+
+task :clobber => outdirs do
+	tests.each{ |f| File.delete(f) }
+	libs.each{ |f| File.delete(f) }
+end
 
 outdirs.each do |d|
 	directory d
@@ -35,9 +46,4 @@ tests.each do |f|
 	file f => libs + headers + outdirs do
 		sh "#{cxx} #{cxxflags} -o #{f} #{f.sub('out', 'test').ext('cpp')}"
 	end
-end
-
-task :clobber => :out do
-	tests.each{ |f| File.delete(f) }
-	libs.each{ |f| File.delete(f) }
 end
