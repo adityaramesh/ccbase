@@ -24,6 +24,12 @@ tests. This library requires a C++11-conformant compiler.
 - Test `platform.hpp` on Cygwin.
 - Add example code for `expected.hpp`.
 
+# Installation
+
+Click the "Download ZIP" button on the right-hand side of the screen, extract
+the `ccbase_master` archive, and move the `ccbase_master/ccbase` directory to
+your desired include directoy.
+
 # Documentation
 
 ## `format.hpp`
