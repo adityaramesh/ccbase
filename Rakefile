@@ -1,4 +1,3 @@
-require 'fileutils'
 require 'rake/clean'
 
 cxx       = ENV['CXX']
