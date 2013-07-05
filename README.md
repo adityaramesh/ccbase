@@ -17,8 +17,8 @@ tests. This library requires a C++11-conformant compiler.
 
 - Generate HTML documentation from code.
 - Structure the documentation so that each file has an associated tutorial page.
-  The summary of each header given in this page should be taken from the a
-  summary provided in the tutorial page for the header.
+  The summary of each header given in this page should be taken from the summary
+  provided in the tutorial page for the header.
 - Add support for compiler version detection.
 - Add support for kernel version detection.
 - Test `platform.hpp` on Cygwin.
@@ -47,7 +47,8 @@ proceed to move the `ccbase_master/ccbase` directory to your include path.
 Otherwise, some tests must have failed on your system. I apologize for this, and
 would appreciate it if you file a bug report with the output of the unit tests
 and your platform details (in particular, your OS and compiler, along with their
-corresponding versions) either via Github or by email at `_@adityaramesh.com`. 
+corresponding versions) either via Github or by email at `_@adityaramesh.com`.
+Thanks!
 
 # Documentation
 
