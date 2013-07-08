@@ -189,10 +189,13 @@ template <class Signature>
 cc::expected<function<Signature>>
 get_function(const char* name, const image& i)
 {
+	if (cc::platform::kernel == cc::linux) {
+		::dlerror();
+	}
 	auto t = ::dlsym(i, name);
 	switch (cc::platform::kernel) {
 	case cc::linux:
-		if (::dlerror() == nullptr) {
+		if (::dlerror() != nullptr) {
 			return std::runtime_error{"Symbol not found."};
 		}
 	case cc::mach:
@@ -213,10 +216,13 @@ template <class T>
 cc::expected<T&>
 get_data(const char* name, const image& i)
 {
+	if (cc::platform::kernel == cc::linux) {
+		::dlerror();
+	}
 	auto t = ::dlsym(i, name);
 	switch (cc::platform::kernel) {
 	case cc::linux:
-		if (::dlerror() == nullptr) {
+		if (::dlerror() != nullptr) {
 			return std::runtime_error{"Symbol not found."};
 		}
 	case cc::mach:

@@ -1,0 +1,571 @@
+
+;; Function std::string test(std::string, std::string) (test, funcdef_no=819, decl_uid=20173, cgraph_uid=265)
+
+std::string test(std::string, std::string) (struct string & restrict a, struct string & restrict b)
+{
+  void * D.22037;
+  struct allocator_type D.22029;
+  char * _6;
+  struct _Rep * _7;
+
+;;   basic block 2, loop depth 0
+;;    pred:       ENTRY
+  std::basic_string<char>::basic_string (_2(D), a_3(D));
+  std::basic_string<char>::append (_2(D), b_4(D));
+  goto <bb 4>;
+;;    succ:       4
+;;                3
+
+;;   basic block 3, loop depth 0
+;;    pred:       2
+<L1>:
+  _6 = MEM[(const struct basic_string *)_2(D)]._M_dataplus._M_p;
+  _7 = &MEM[(void *)_6 + -24B];
+  std::basic_string<char>::_Rep::_M_dispose (_7, &D.22029);
+  _11 = __builtin_eh_pointer (1);
+  __builtin_unwind_resume (_11);
+;;    succ:      
+
+;;   basic block 4, loop depth 0
+;;    pred:       2
+  return _2(D);
+;;    succ:       EXIT
+
+}
+
+
+
+Partition map 
+
+Partition 2 (_2(D) - 2 )
+Partition 3 (a_3(D) - 3 )
+Partition 4 (b_4(D) - 4 )
+Partition 6 (_6 - 6 )
+Partition 7 (_7 - 7 )
+Partition 11 (_11 - 11 )
+
+
+Partition map 
+
+Partition 0 (_2(D) - 2 )
+Partition 1 (a_3(D) - 3 )
+Partition 2 (b_4(D) - 4 )
+
+
+Live on entry to BB2 : _2(D)  a_3(D)  b_4(D)  
+
+Live on entry to BB3 : _2(D)  
+
+Live on entry to BB4 : _2(D)  
+
+Conflict graph:
+
+After sorting:
+Coalesce List:
+
+Partition map 
+
+Partition 0 (_2(D) - 2 )
+Partition 1 (a_3(D) - 3 )
+Partition 2 (b_4(D) - 4 )
+
+After Coalescing:
+
+Partition map 
+
+Partition 0 (_2(D) - 2 )
+Partition 1 (a_3(D) - 3 )
+Partition 2 (b_4(D) - 4 )
+Partition 3 (_6 - 6 )
+Partition 4 (_7 - 7 )
+Partition 5 (_11 - 11 )
+
+
+Replacing Expressions
+_6 replace with --> _6 = MEM[(const struct basic_string *)_2(D)]._M_dataplus._M_p;
+
+_7 replace with --> _7 = &MEM[(void *)_6 + -24B];
+
+
+std::string test(std::string, std::string) (struct string & restrict a, struct string & restrict b)
+{
+  void * D.22037;
+  struct allocator_type D.22029;
+  char * _6;
+  struct _Rep * _7;
+
+;;   basic block 2, loop depth 0
+;;    pred:       ENTRY
+  std::basic_string<char>::basic_string (_2(D), a_3(D));
+  std::basic_string<char>::append (_2(D), b_4(D));
+  goto <bb 4>;
+;;    succ:       4
+;;                3
+
+;;   basic block 3, loop depth 0
+;;    pred:       2
+<L1>:
+  _6 = MEM[(const struct basic_string *)_2(D)]._M_dataplus._M_p;
+  _7 = &MEM[(void *)_6 + -24B];
+  std::basic_string<char>::_Rep::_M_dispose (_7, &D.22029);
+  _11 = __builtin_eh_pointer (1);
+  __builtin_unwind_resume (_11);
+;;    succ:      
+
+;;   basic block 4, loop depth 0
+;;    pred:       2
+  return _2(D);
+;;    succ:       EXIT
+
+}
+
+
+Partition 0: size 1 align 1
+	D.22029
+
+;; Generating RTL for gimple basic block 2
+
+;; std::basic_string<char>::basic_string (_2(D), a_3(D));
+
+(insn 8 7 9 (set (reg:DI 4 si)
+        (reg/v/f:DI 63 [ a ])) /usr/include/c++/4.8.1/bits/basic_string.h:2368 -1
+     (nil))
+
+(insn 9 8 10 (set (reg:DI 5 di)
+        (reg/f:DI 62 [ <retval> ])) /usr/include/c++/4.8.1/bits/basic_string.h:2368 -1
+     (nil))
+
+(call_insn 10 9 0 (call (mem:QI (symbol_ref:DI ("_ZNSsC1ERKSs") [flags 0x41]  <function_decl 0x7f9b22ae1f00 __comp_ctor >) [0 __comp_ctor  S1 A8])
+        (const_int 0 [0])) /usr/include/c++/4.8.1/bits/basic_string.h:2368 -1
+     (nil)
+    (expr_list:REG_FRAME_RELATED_EXPR (use (reg:DI 5 di))
+        (expr_list:REG_FRAME_RELATED_EXPR (use (reg:DI 4 si))
+            (nil))))
+
+;; std::basic_string<char>::append (_2(D), b_4(D));
+
+(insn 11 10 12 (set (reg:DI 4 si)
+        (reg/v/f:DI 64 [ b ])) /usr/include/c++/4.8.1/bits/basic_string.h:2369 -1
+     (nil))
+
+(insn 12 11 13 (set (reg:DI 5 di)
+        (reg/f:DI 62 [ <retval> ])) /usr/include/c++/4.8.1/bits/basic_string.h:2369 -1
+     (nil))
+
+(call_insn 13 12 0 (set (reg:DI 0 ax)
+        (call (mem:QI (symbol_ref:DI ("_ZNSs6appendERKSs") [flags 0x41]  <function_decl 0x7f9b22aa7400 append>) [0 append S1 A8])
+            (const_int 0 [0]))) /usr/include/c++/4.8.1/bits/basic_string.h:2369 -1
+     (expr_list:REG_EH_REGION (const_int 1 [0x1])
+        (nil))
+    (expr_list:REG_FRAME_RELATED_EXPR (use (reg:DI 5 di))
+        (expr_list:REG_FRAME_RELATED_EXPR (use (reg:DI 4 si))
+            (nil))))
+
+;; Generating RTL for gimple basic block 3
+
+;; <L1>:
+
+(code_label 16 15 17 3 "" [0 uses])
+
+(note 17 16 0 NOTE_INSN_BASIC_BLOCK)
+
+;; std::basic_string<char>::_Rep::_M_dispose (_7, &D.22029);
+
+(insn 18 17 19 (parallel [
+            (set (reg:DI 65)
+                (plus:DI (reg/f:DI 54 virtual-stack-vars)
+                    (const_int -1 [0xffffffffffffffff])))
+            (clobber (reg:CC 17 flags))
+        ]) /usr/include/c++/4.8.1/bits/basic_string.h:539 -1
+     (nil))
+
+(insn 19 18 20 (set (reg/f:DI 67)
+        (mem/f:DI (reg/f:DI 62 [ <retval> ]) [6 MEM[(const struct basic_string *)_2(D)]._M_dataplus._M_p+0 S8 A64])) /usr/include/c++/4.8.1/bits/basic_string.h:539 -1
+     (nil))
+
+(insn 20 19 21 (parallel [
+            (set (reg:DI 66 [ D.22039 ])
+                (plus:DI (reg/f:DI 67)
+                    (const_int -24 [0xffffffffffffffe8])))
+            (clobber (reg:CC 17 flags))
+        ]) /usr/include/c++/4.8.1/bits/basic_string.h:539 -1
+     (expr_list:REG_EQUAL (plus:DI (mem/f:DI (reg/f:DI 62 [ <retval> ]) [6 MEM[(const struct basic_string *)_2(D)]._M_dataplus._M_p+0 S8 A64])
+            (const_int -24 [0xffffffffffffffe8]))
+        (nil)))
+
+(insn 21 20 22 (set (reg:DI 4 si)
+        (reg:DI 65)) /usr/include/c++/4.8.1/bits/basic_string.h:539 -1
+     (nil))
+
+(insn 22 21 23 (set (reg:DI 5 di)
+        (reg:DI 66 [ D.22039 ])) /usr/include/c++/4.8.1/bits/basic_string.h:539 -1
+     (nil))
+
+(call_insn 23 22 0 (call (mem:QI (symbol_ref:DI ("_ZNSs4_Rep10_M_disposeERKSaIcE") [flags 0x41]  <function_decl 0x7f9b2295d200 _M_dispose>) [0 _M_dispose S1 A8])
+        (const_int 0 [0])) /usr/include/c++/4.8.1/bits/basic_string.h:539 -1
+     (expr_list:REG_EH_REGION (const_int 0 [0])
+        (nil))
+    (expr_list:REG_FRAME_RELATED_EXPR (use (reg:DI 5 di))
+        (expr_list:REG_FRAME_RELATED_EXPR (use (reg:DI 4 si))
+            (nil))))
+
+;; _11 = __builtin_eh_pointer (1);
+
+(insn 24 23 0 (set (reg/f:DI 61 [ D.22037 ])
+        (reg:DI 68)) -1
+     (nil))
+
+;; __builtin_unwind_resume (_11);
+
+(insn 25 24 26 (set (reg:DI 5 di)
+        (reg/f:DI 61 [ D.22037 ])) -1
+     (nil))
+
+(call_insn 26 25 27 (call (mem:QI (symbol_ref:DI ("_Unwind_Resume") [flags 0x41]  <function_decl 0x7f9b235d1200 __builtin_unwind_resume>) [0 __builtin_unwind_resume S1 A8])
+        (const_int 0 [0])) -1
+     (expr_list:REG_NORETURN (const_int 0 [0])
+        (nil))
+    (expr_list:REG_FRAME_RELATED_EXPR (use (reg:DI 5 di))
+        (nil)))
+
+(barrier 27 26 0)
+
+;; Generating RTL for gimple basic block 4
+
+;; 
+
+(code_label 28 27 29 2 "" [0 uses])
+
+(note 29 28 0 NOTE_INSN_BASIC_BLOCK)
+
+;; return _2(D);
+
+(jump_insn 30 29 31 (set (pc)
+        (label_ref 0)) lib/src/test.cpp:20 -1
+     (nil))
+
+(barrier 31 30 0)
+Purged edges from bb 7
+deleting block 6
+
+
+try_optimize_cfg iteration 1
+
+Merging block 3 into block 2...
+Merged blocks 2 and 3.
+Merged 2 and 3 without moving.
+Forwarding edge 2->4 to 8 failed.
+Forwarding edge 2->4 to 8 failed.
+Redirecting jump 14 from 7 to 8.
+Merging block 6 into block 5...
+Merged blocks 5 and 6.
+Merged 5 and 6 without moving.
+deleting block 7
+
+
+try_optimize_cfg iteration 2
+
+Forwarding edge 2->4 to 8 failed.
+
+
+;;
+;; Full RTL generated for this function:
+;;
+(note 1 0 6 NOTE_INSN_DELETED)
+;; basic block 2, loop depth 0, count 0, freq 10000, maybe hot
+;;  prev block 0, next block 4, flags: (NEW, REACHABLE, RTL, MODIFIED)
+;;  pred:       ENTRY [100.0%]  (FALLTHRU)
+(note 6 1 2 2 [bb 2] NOTE_INSN_BASIC_BLOCK)
+(insn 2 6 3 2 (set (reg/f:DI 62 [ <retval> ])
+        (reg:DI 5 di [ .result_ptr ])) lib/src/test.cpp:19 -1
+     (nil))
+(insn 3 2 4 2 (set (reg/v/f:DI 63 [ a ])
+        (reg:DI 4 si [ a ])) lib/src/test.cpp:19 -1
+     (nil))
+(insn 4 3 5 2 (set (reg/v/f:DI 64 [ b ])
+        (reg:DI 1 dx [ b ])) lib/src/test.cpp:19 -1
+     (nil))
+(note 5 4 8 2 NOTE_INSN_FUNCTION_BEG)
+(insn 8 5 9 2 (set (reg:DI 4 si)
+        (reg/v/f:DI 63 [ a ])) /usr/include/c++/4.8.1/bits/basic_string.h:2368 -1
+     (nil))
+(insn 9 8 10 2 (set (reg:DI 5 di)
+        (reg/f:DI 62 [ <retval> ])) /usr/include/c++/4.8.1/bits/basic_string.h:2368 -1
+     (nil))
+(call_insn 10 9 11 2 (call (mem:QI (symbol_ref:DI ("_ZNSsC1ERKSs") [flags 0x41]  <function_decl 0x7f9b22ae1f00 __comp_ctor >) [0 __comp_ctor  S1 A8])
+        (const_int 0 [0])) /usr/include/c++/4.8.1/bits/basic_string.h:2368 -1
+     (nil)
+    (expr_list:REG_FRAME_RELATED_EXPR (use (reg:DI 5 di))
+        (expr_list:REG_FRAME_RELATED_EXPR (use (reg:DI 4 si))
+            (nil))))
+(insn 11 10 12 2 (set (reg:DI 4 si)
+        (reg/v/f:DI 64 [ b ])) /usr/include/c++/4.8.1/bits/basic_string.h:2369 -1
+     (nil))
+(insn 12 11 13 2 (set (reg:DI 5 di)
+        (reg/f:DI 62 [ <retval> ])) /usr/include/c++/4.8.1/bits/basic_string.h:2369 -1
+     (nil))
+(call_insn 13 12 39 2 (set (reg:DI 0 ax)
+        (call (mem:QI (symbol_ref:DI ("_ZNSs6appendERKSs") [flags 0x41]  <function_decl 0x7f9b22aa7400 append>) [0 append S1 A8])
+            (const_int 0 [0]))) /usr/include/c++/4.8.1/bits/basic_string.h:2369 -1
+     (expr_list:REG_EH_REGION (const_int 1 [0x1])
+        (nil))
+    (expr_list:REG_FRAME_RELATED_EXPR (use (reg:DI 5 di))
+        (expr_list:REG_FRAME_RELATED_EXPR (use (reg:DI 4 si))
+            (nil))))
+;;  succ:       5 (ABNORMAL,ABNORMAL_CALL,EH)
+;;              4 [100.0%]  (FALLTHRU)
+
+;; basic block 4, loop depth 0, count 0, freq 10000, maybe hot
+;;  prev block 2, next block 5, flags: (NEW, REACHABLE, RTL, MODIFIED)
+;;  pred:       2 [100.0%]  (FALLTHRU)
+(note 39 13 14 4 [bb 4] NOTE_INSN_BASIC_BLOCK)
+(jump_insn 14 39 15 4 (set (pc)
+        (label_ref:DI 32)) /usr/include/c++/4.8.1/bits/basic_string.h:2369 659 {jump}
+     (nil)
+ -> 32)
+;;  succ:       8 [100.0%] 
+
+(barrier 15 14 41)
+;; basic block 5, loop depth 0, count 0, freq 0
+;;  prev block 4, next block 8, flags: (NEW, REACHABLE, RTL)
+;;  pred:       2 (ABNORMAL,ABNORMAL_CALL,EH)
+(code_label/s 41 15 43 5 4 "" [1 uses])
+(note 43 41 42 5 [bb 5] NOTE_INSN_BASIC_BLOCK)
+(insn 42 43 18 5 (set (reg:DI 68)
+        (reg:DI 0 ax)) -1
+     (nil))
+(insn 18 42 19 5 (parallel [
+            (set (reg:DI 65)
+                (plus:DI (reg/f:DI 54 virtual-stack-vars)
+                    (const_int -1 [0xffffffffffffffff])))
+            (clobber (reg:CC 17 flags))
+        ]) /usr/include/c++/4.8.1/bits/basic_string.h:539 -1
+     (nil))
+(insn 19 18 20 5 (set (reg/f:DI 67)
+        (mem/f:DI (reg/f:DI 62 [ <retval> ]) [6 MEM[(const struct basic_string *)_2(D)]._M_dataplus._M_p+0 S8 A64])) /usr/include/c++/4.8.1/bits/basic_string.h:539 -1
+     (nil))
+(insn 20 19 21 5 (parallel [
+            (set (reg:DI 66 [ D.22039 ])
+                (plus:DI (reg/f:DI 67)
+                    (const_int -24 [0xffffffffffffffe8])))
+            (clobber (reg:CC 17 flags))
+        ]) /usr/include/c++/4.8.1/bits/basic_string.h:539 -1
+     (expr_list:REG_EQUAL (plus:DI (mem/f:DI (reg/f:DI 62 [ <retval> ]) [6 MEM[(const struct basic_string *)_2(D)]._M_dataplus._M_p+0 S8 A64])
+            (const_int -24 [0xffffffffffffffe8]))
+        (nil)))
+(insn 21 20 22 5 (set (reg:DI 4 si)
+        (reg:DI 65)) /usr/include/c++/4.8.1/bits/basic_string.h:539 -1
+     (nil))
+(insn 22 21 23 5 (set (reg:DI 5 di)
+        (reg:DI 66 [ D.22039 ])) /usr/include/c++/4.8.1/bits/basic_string.h:539 -1
+     (nil))
+(call_insn 23 22 24 5 (call (mem:QI (symbol_ref:DI ("_ZNSs4_Rep10_M_disposeERKSaIcE") [flags 0x41]  <function_decl 0x7f9b2295d200 _M_dispose>) [0 _M_dispose S1 A8])
+        (const_int 0 [0])) /usr/include/c++/4.8.1/bits/basic_string.h:539 -1
+     (expr_list:REG_EH_REGION (const_int 0 [0])
+        (nil))
+    (expr_list:REG_FRAME_RELATED_EXPR (use (reg:DI 5 di))
+        (expr_list:REG_FRAME_RELATED_EXPR (use (reg:DI 4 si))
+            (nil))))
+(insn 24 23 25 5 (set (reg/f:DI 61 [ D.22037 ])
+        (reg:DI 68)) -1
+     (nil))
+(insn 25 24 26 5 (set (reg:DI 5 di)
+        (reg/f:DI 61 [ D.22037 ])) -1
+     (nil))
+(call_insn 26 25 27 5 (call (mem:QI (symbol_ref:DI ("_Unwind_Resume") [flags 0x41]  <function_decl 0x7f9b235d1200 __builtin_unwind_resume>) [0 __builtin_unwind_resume S1 A8])
+        (const_int 0 [0])) -1
+     (expr_list:REG_NORETURN (const_int 0 [0])
+        (nil))
+    (expr_list:REG_FRAME_RELATED_EXPR (use (reg:DI 5 di))
+        (nil)))
+;;  succ:      
+
+(barrier 27 26 32)
+;; basic block 8, loop depth 0, count 0, freq 20000, maybe hot
+;; Invalid sum of incoming frequencies 10000, should be 20000
+;;  prev block 5, next block 1, flags: (NEW, REACHABLE, RTL)
+;;  pred:       4 [100.0%] 
+(code_label 32 27 40 8 1 "" [1 uses])
+(note 40 32 33 8 [bb 8] NOTE_INSN_BASIC_BLOCK)
+(insn 33 40 34 8 (set (reg/i:DI 0 ax)
+        (reg/f:DI 62 [ <retval> ])) lib/src/test.cpp:21 -1
+     (nil))
+(insn 34 33 37 8 (set (reg/i:DI 0 ax)
+        (reg/f:DI 62 [ <retval> ])) lib/src/test.cpp:21 -1
+     (nil))
+(insn 37 34 0 8 (use (reg/i:DI 0 ax)) lib/src/test.cpp:21 -1
+     (nil))
+;;  succ:       EXIT [100.0%]  (FALLTHRU)
+
+
+;; Function (static initializers for lib/src/test.cpp) (_GLOBAL__sub_I_msg, funcdef_no=968, decl_uid=21547, cgraph_uid=430) (executed once)
+
+(static initializers for lib/src/test.cpp) ()
+{
+  struct allocator D.22043;
+
+;;   basic block 2, loop depth 0
+;;    pred:       ENTRY
+  std::basic_string<char>::basic_string (&msg, "Original contents.", &D.22043);
+  D.22043 ={v} {CLOBBER};
+  __cxa_atexit (__comp_dtor , &msg, &__dso_handle);
+  return;
+;;    succ:       EXIT
+
+}
+
+
+
+Partition map 
+
+
+After Coalescing:
+
+Partition map 
+
+
+(static initializers for lib/src/test.cpp) ()
+{
+  struct allocator D.22043;
+
+;;   basic block 2, loop depth 0
+;;    pred:       ENTRY
+  std::basic_string<char>::basic_string (&msg, "Original contents.", &D.22043);
+  D.22043 ={v} {CLOBBER};
+  __cxa_atexit (__comp_dtor , &msg, &__dso_handle);
+  return;
+;;    succ:       EXIT
+
+}
+
+
+Partition 0: size 1 align 1
+	D.22043
+
+;; Generating RTL for gimple basic block 2
+
+;; std::basic_string<char>::basic_string (&msg, "Original contents.", &D.22043);
+
+(insn 5 4 6 (parallel [
+            (set (reg:DI 59)
+                (plus:DI (reg/f:DI 54 virtual-stack-vars)
+                    (const_int -1 [0xffffffffffffffff])))
+            (clobber (reg:CC 17 flags))
+        ]) lib/src/test.cpp:15 -1
+     (nil))
+
+(insn 6 5 7 (set (reg:DI 1 dx)
+        (reg:DI 59)) lib/src/test.cpp:15 -1
+     (nil))
+
+(insn 7 6 8 (set (reg:DI 4 si)
+        (symbol_ref/f:DI ("*.LC0") [flags 0x2]  <var_decl 0x7f9b2272b1c8 *.LC0>)) lib/src/test.cpp:15 -1
+     (nil))
+
+(insn 8 7 9 (set (reg:DI 5 di)
+        (symbol_ref:DI ("msg") [flags 0x2]  <var_decl 0x7f9b2258bed8 msg>)) lib/src/test.cpp:15 -1
+     (nil))
+
+(call_insn 9 8 0 (call (mem:QI (symbol_ref:DI ("_ZNSsC1EPKcRKSaIcE") [flags 0x41]  <function_decl 0x7f9b22ae1700 __comp_ctor >) [0 __comp_ctor  S1 A8])
+        (const_int 0 [0])) lib/src/test.cpp:15 -1
+     (nil)
+    (expr_list:REG_FRAME_RELATED_EXPR (use (reg:DI 5 di))
+        (expr_list:REG_FRAME_RELATED_EXPR (use (reg:DI 4 si))
+            (expr_list:REG_FRAME_RELATED_EXPR (use (reg:DI 1 dx))
+                (nil)))))
+
+;; D.22043 ={v} {CLOBBER};
+
+(nil)
+
+;; __cxa_atexit (__comp_dtor , &msg, &__dso_handle);
+
+(insn 10 9 11 (set (reg:DI 1 dx)
+        (symbol_ref:DI ("__dso_handle") [flags 0x42]  <var_decl 0x7f9b22664e40 __dso_handle>)) lib/src/test.cpp:15 -1
+     (nil))
+
+(insn 11 10 12 (set (reg:DI 4 si)
+        (symbol_ref:DI ("msg") [flags 0x2]  <var_decl 0x7f9b2258bed8 msg>)) lib/src/test.cpp:15 -1
+     (nil))
+
+(insn 12 11 13 (set (reg:DI 5 di)
+        (symbol_ref:DI ("_ZNSsD1Ev") [flags 0x41]  <function_decl 0x7f9b22ae4500 __comp_dtor >)) lib/src/test.cpp:15 -1
+     (nil))
+
+(call_insn 13 12 0 (set (reg:SI 0 ax)
+        (call (mem:QI (symbol_ref:DI ("__cxa_atexit") [flags 0x41]  <function_decl 0x7f9b226b2100 __cxa_atexit>) [0 __cxa_atexit S1 A8])
+            (const_int 0 [0]))) lib/src/test.cpp:15 -1
+     (expr_list:REG_EH_REGION (const_int 0 [0])
+        (nil))
+    (expr_list:REG_FRAME_RELATED_EXPR (use (reg:DI 5 di))
+        (expr_list:REG_FRAME_RELATED_EXPR (use (reg:DI 4 si))
+            (expr_list:REG_FRAME_RELATED_EXPR (use (reg:DI 1 dx))
+                (nil)))))
+
+
+try_optimize_cfg iteration 1
+
+Merging block 3 into block 2...
+Merged blocks 2 and 3.
+Merged 2 and 3 without moving.
+Merging block 4 into block 2...
+Merged blocks 2 and 4.
+Merged 2 and 4 without moving.
+
+
+try_optimize_cfg iteration 2
+
+
+
+;;
+;; Full RTL generated for this function:
+;;
+(note 1 0 3 NOTE_INSN_DELETED)
+;; basic block 2, loop depth 0, count 0, freq 10000, maybe hot
+;;  prev block 0, next block 1, flags: (NEW, REACHABLE, RTL)
+;;  pred:       ENTRY [100.0%]  (FALLTHRU)
+(note 3 1 2 2 [bb 2] NOTE_INSN_BASIC_BLOCK)
+(note 2 3 5 2 NOTE_INSN_FUNCTION_BEG)
+(insn 5 2 6 2 (parallel [
+            (set (reg:DI 59)
+                (plus:DI (reg/f:DI 54 virtual-stack-vars)
+                    (const_int -1 [0xffffffffffffffff])))
+            (clobber (reg:CC 17 flags))
+        ]) lib/src/test.cpp:15 -1
+     (nil))
+(insn 6 5 7 2 (set (reg:DI 1 dx)
+        (reg:DI 59)) lib/src/test.cpp:15 -1
+     (nil))
+(insn 7 6 8 2 (set (reg:DI 4 si)
+        (symbol_ref/f:DI ("*.LC0") [flags 0x2]  <var_decl 0x7f9b2272b1c8 *.LC0>)) lib/src/test.cpp:15 -1
+     (nil))
+(insn 8 7 9 2 (set (reg:DI 5 di)
+        (symbol_ref:DI ("msg") [flags 0x2]  <var_decl 0x7f9b2258bed8 msg>)) lib/src/test.cpp:15 -1
+     (nil))
+(call_insn 9 8 10 2 (call (mem:QI (symbol_ref:DI ("_ZNSsC1EPKcRKSaIcE") [flags 0x41]  <function_decl 0x7f9b22ae1700 __comp_ctor >) [0 __comp_ctor  S1 A8])
+        (const_int 0 [0])) lib/src/test.cpp:15 -1
+     (nil)
+    (expr_list:REG_FRAME_RELATED_EXPR (use (reg:DI 5 di))
+        (expr_list:REG_FRAME_RELATED_EXPR (use (reg:DI 4 si))
+            (expr_list:REG_FRAME_RELATED_EXPR (use (reg:DI 1 dx))
+                (nil)))))
+(insn 10 9 11 2 (set (reg:DI 1 dx)
+        (symbol_ref:DI ("__dso_handle") [flags 0x42]  <var_decl 0x7f9b22664e40 __dso_handle>)) lib/src/test.cpp:15 -1
+     (nil))
+(insn 11 10 12 2 (set (reg:DI 4 si)
+        (symbol_ref:DI ("msg") [flags 0x2]  <var_decl 0x7f9b2258bed8 msg>)) lib/src/test.cpp:15 -1
+     (nil))
+(insn 12 11 13 2 (set (reg:DI 5 di)
+        (symbol_ref:DI ("_ZNSsD1Ev") [flags 0x41]  <function_decl 0x7f9b22ae4500 __comp_dtor >)) lib/src/test.cpp:15 -1
+     (nil))
+(call_insn 13 12 0 2 (set (reg:SI 0 ax)
+        (call (mem:QI (symbol_ref:DI ("__cxa_atexit") [flags 0x41]  <function_decl 0x7f9b226b2100 __cxa_atexit>) [0 __cxa_atexit S1 A8])
+            (const_int 0 [0]))) lib/src/test.cpp:15 -1
+     (expr_list:REG_EH_REGION (const_int 0 [0])
+        (nil))
+    (expr_list:REG_FRAME_RELATED_EXPR (use (reg:DI 5 di))
+        (expr_list:REG_FRAME_RELATED_EXPR (use (reg:DI 4 si))
+            (expr_list:REG_FRAME_RELATED_EXPR (use (reg:DI 1 dx))
+                (nil)))))
+;;  succ:       EXIT [100.0%]  (FALLTHRU)
+

@@ -7,11 +7,24 @@ archflags = "-march=native"
 incflags  = "-I."
 ppflags   = ""
 optflags  = "-O3"
+ldflags   = ""
+
+if RUBY_PLATFORM.include? "linux"
+	ldflags = "-ldl"
+end
+
 cxxflags  = "#{langflags} #{wflags} #{archflags} #{incflags} #{ppflags} #{optflags}"
 
 dll_ppflags   = "-DCCBASE_EXPORT_SYMBOLS"
-dll_confflags = "-dynamiclib -fvisibility=hidden"
-dll_cxxflags  = "#{cxxflags} #{dll_ppflags} #{dll_confflags}"
+dll_confflags = ""
+
+if RUBY_PLATFORM.include? "linux"
+	dll_confflags = "-shared -fpic -fvisibility=hidden"
+elsif RUBY_PLATFORM.include? "darwin"
+	dll_confflags = "-dynamiclib -fvisibility=hidden"
+end
+
+dll_cxxflags = "#{cxxflags} #{dll_ppflags} #{dll_confflags}"
 
 outdirs = ["out", "lib/out"]
 headers = FileList["ccbase/*"]
@@ -27,8 +40,8 @@ task "tests" => tests do
 end
 
 task :clobber => outdirs do
-	tests.each{ |f| File.delete(f) }
-	libs.each{ |f| File.delete(f) }
+	tests.each{ |f| File.delete(f) if File.exist?(f) }
+	libs.each{ |f| File.delete(f) if File.exist?(f) }
 end
 
 outdirs.each do |d|
@@ -43,6 +56,6 @@ end
 
 tests.each do |f|
 	file f => libs + headers + outdirs do
-		sh "#{cxx} #{cxxflags} -o #{f} #{f.sub('out', 'test').ext('cpp')}"
+		sh "#{cxx} #{cxxflags} -o #{f} #{f.sub('out', 'test').ext('cpp')} #{ldflags}"
 	end
 end
