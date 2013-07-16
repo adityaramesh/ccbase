@@ -229,39 +229,43 @@ adapted from the one given in the blog post.
 
 ## `unit_test.hpp`
 
-This header provides some utilities for very basic unit testing. Tests are
+This header provides some utilities for basic unit testing. Tests are
 implemented as modules, and a set of related modules is gathered in a suite.
-Each suite is tied to a particular file; there can only be one suite per file.
 Here is an example of a file called `test.cpp` which uses the unit testing
 functionality.
 
 	#include <ccbase/unit_test.hpp>
 
-	CC_BEGIN_MODULE(test1)
-		CC_ASSERT(1);
-	CC_END_MODULE(test1)
+	module("test_1", "This module always passes.")
+	{
+		require(1);
+	}
 
-	CC_BEGIN_MODULE(test2)
-		CC_ASSERT(0);
-	CC_END_MODULE(test2)
+	module("test_2", "This module always fails.")
+	{
+		require(0);
+	}
 
-	CC_BEGIN_SUITE(suite_name)
-		test1();
-		test2();
-	CC_END_SUITE(suite_name)
+	// This declaration is required, and should appear at the end of the
+	// test file.
+	suite("This is an example test suite.")
 
 By default, compiling `test.cpp` and running the resulting executable will
 output the following.
 
-	Failure in file "test.cpp", module "test2", at line 15: 0.
+	Summary for module "test_1": 1 of 1 assertions passed.
+	Summary for module "test_2": 0 of 1 assertions passed.
+	Summary for suite "test": 1 of 2 assertions passed.
 
-If `CC_UNIT_TEST_VERBOSE` is defined, then the output will be more descriptive.
+If you wish to see more information about the assertions in the modules, then
+you can control the level of the verbosity using the `-v` flag. For example,
+running the executable with the option `-v medium` displays the following.
 
-	Entering suite example.
-	Entering module test1.
-	Success in file "test.cpp", module "test1", at line 11: 1.
-	Exiting module "test1"; 1 of 1 assertions passed.
-	Entering module test2.
-	Failure in file "test.cpp", module "test2", at line 15: 0.
-	Exiting module "test2"; 0 of 1 assertions passed.
-	Exiting suite example.
+	Summary for module "test_1": 1 of 1 assertions passed.
+	Failure in module "test_2", line 17: "require(false)".
+	Summary for module "test_2": 0 of 1 assertions passed.
+	Summary for suite "unit_test": 1 of 2 assertions passed.
+
+Medium-level logging causes the line number and source code for failed
+assertions within each module to be printed along with the summary statistics.
+For more options, run the executable with the `--help` flag.
