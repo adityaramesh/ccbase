@@ -4,101 +4,251 @@
 ** Date:	12/18/2012
 ** Contact:	_@adityaramesh.com
 **
-** This file implements some very basic unit-testing functionality. Units tests
-** are composed of file-based suites, in which each suite contains a set of
-** modules. Suites are designed to encapsulate a set of related tests, where
-** each test is implemented within a module block. By default, assertion
-** information is printed only when assertions fail. If CC_UNIT_TEST_VERBOSE is
-** defined, information will be printed about every assertion in the suite,
-** regardless of whether each assertion passed or failed. A typical test file
-** would be structured as follows:
+** This file implements some basic unit-testing functionality. Each file
+** functions as a suite, and contains a number of modules. Each module is
+** intended to test the behavior of one component of your software. A typical
+** unit test would look like this:
 **
-**	CC_BEGIN_MODULE(test1)
-**		CC_ASSERT(1);
-**	CC_END_MODULE(test1)
-**	
-**	CC_BEGIN_MODULE(test2)
-**		CC_ASSERT(0);
-**	CC_END_MODULE(test2)
-**	
-**	CC_BEGIN_SUITE(example)
-**		test1();
-**		test2();
-**	CC_END_SUITE(example)
+**	module("Test 1")
+**	{
+**		require(true);
+**	}
+**
+**	module("Test 2", "This module has a description.")
+**	{
+**		require(false);
+**	}
+**
+**	// This declaration must always appear last in the file.
+**	suite("This is an example test suite.")
+**
+** The executable resulting from compiling the unit test source file hasd
+** various command-line options that can be acccessed by specifying the `--help`
+** flag.
 */
 
 #ifndef Z474488B0_98AB_4098_886B_372A345C5121
 #define Z474488B0_98AB_4098_886B_372A345C5121
 
+#include <algorithm>
 #include <cstddef>
-#include <string>
-#include <tuple>
+#include <cstring>
 #include <vector>
 #include <ccbase/format.hpp>
+#include <ccbase/internal/module.hpp>
+#include <ccbase/internal/modules.hpp>
+#include <ccbase/internal/result.hpp>
+#include <boost/preprocessor/cat.hpp>
+#include <boost/preprocessor/repetition/repeat_from_to.hpp>
+
+// Unfortunately, `BOOST_PP_VARIADIC_SIZE` is not enabled for Clang, so we use
+// our own implementation instead. For our use cases, we only need to be able to
+// count a few arguments.
+
+#define CC_COUNT(...) CC_COUNT_IMPL(__VA_ARGS__, 3, 2, 1)
+#define CC_COUNT_IMPL(_1, _2, _3, N, ...) N
+
+#define module(...) \
+	BOOST_PP_CAT(module_impl_, CC_COUNT(__VA_ARGS__))(__VA_ARGS__)
+
+#define module_impl_1(name)                               \
+	static const bool BOOST_PP_CAT(temp_, __LINE__) = \
+	cc::internal::modules::add(name, __LINE__);       \
+	static void BOOST_PP_CAT(module_, __COUNTER__)()
+
+#define module_impl_2(name, description)                         \
+	static const bool BOOST_PP_CAT(temp_, __LINE__) =        \
+	cc::internal::modules::add(name, __LINE__, description); \
+	static void BOOST_PP_CAT(module_, __COUNTER__)()
+
+#define require(x)                                        \
+	static const bool BOOST_PP_CAT(temp_, __LINE__) = \
+	cc::internal::modules::require(__LINE__, #x, (x))
+
+#define DECL(z, n, text) \
+	BOOST_PP_CAT(text, n)();
+
+#define suite(description)                                                     \
+	int main(int argc, char** argv)                                        \
+	{                                                                      \
+		if (                                                           \
+			argc <= 1 || (argc == 3 &&                             \
+			cc::internal::equal(argv[1], "-v") ||                  \
+			cc::internal::equal(argv[1], "--verbosity"))           \
+		) {                                                            \
+			BOOST_PP_REPEAT_FROM_TO(0, __COUNTER__, DECL, module_) \
+		}                                                              \
+		return cc::internal::parse_flags(argc, argv, description);     \
+	}
 
 namespace cc
 {
-namespace unit_test
+namespace internal
 {
-	using result_type = std::tuple<std::size_t, std::size_t, std::string>;
-	using result_list = std::vector<result_type>;
-}}
 
-#define CC_ASSERT(x) results.push_back(std::make_tuple((x), __LINE__, #x))
+enum class verbosity : unsigned
+{
+	low,
+	medium,
+	high
+};
 
-#ifdef CC_UNIT_TEST_VERBOSE
+static constexpr char help_message[] = R"(
+Options:
+-h        --help
+-l        --list-modules
+-v        --verbosity [low, medium, high]
+)";
 
-#define CC_BEGIN_MODULE(name)                               \
-	static void name()                                  \
-	{                                                   \
-		std::size_t successes = 0;                  \
-		cc::unit_test::result_list results;         \
-		cc::println("Entering module {0}.", #name);
-
-#define CC_END_MODULE(name)                                                           \
-	for (const auto& x : results) {                                               \
-		successes += std::get<0>(x);                                          \
-		cc::println("{0} in file \"{1}\", module \"{2}\", at line {3}: {4}.", \
-			std::get<0>(x) ? "Success" : "Failure", __FILE__, #name,      \
-			std::get<1>(x), std::get<2>(x));                              \
-	}                                                                             \
-	cc::println("Exiting module \"{0}\"; {1} of {2} assertions passed.",          \
-		#name, successes, results.size());                                    \
+static bool
+equal(const char* a, const char* b)
+{
+	return std::strcmp(a, b) == 0;
 }
 
-#define CC_BEGIN_SUITE(name)                               \
-	int main()                                         \
-	{                                                  \
-		cc::println("Entering suite {0}.", #name);
-
-#define CC_END_SUITE(name)                                \
-		cc::println("Exiting suite {0}.", #name); \
-		return EXIT_SUCCESS;                      \
+static std::string
+get_suite()
+{
+	std::string s = __FILE__;
+	auto f = s.find_last_of("/\\");
+	if (f == std::string::npos) {
+		f = 0;
 	}
-
-#else
-
-#define CC_BEGIN_MODULE(name)                       \
-	static void name()                          \
-	{                                           \
-		cc::unit_test::result_list results; \
-			
-#define CC_END_MODULE(name)                                                               \
-	for (const auto& x : results) {                                                   \
-		if (std::get<0>(x)) continue;                                             \
-		cc::println("Failure in file \"{0}\", module \"{1}\", at line {2}: {3}.", \
-			__FILE__, #name, std::get<1>(x), std::get<2>(x));                 \
-	}                                                                                 \
+	else {
+		++f;
+	}
+	auto l = s.find_last_of(".");
+	if (l == std::string::npos) {
+		l = s.size();
+	}
+	return s.substr(f, l - f);
 }
 
-#define CC_BEGIN_SUITE(name) \
-	int main()           \
-	{
+static int
+print_error(int argc, char** argv, const std::string msg)
+{
+	cc::writeln(std::cerr, "{0}", msg);
+	cc::writeln(std::cerr, "Please type \"{0} --help\" for a list of "
+		"options.", argv[0]);
+	return EXIT_FAILURE;
+}
 
-#define CC_END_SUITE(name)           \
-		return EXIT_SUCCESS; \
+static int
+run_modules(const verbosity v)
+{
+	unsigned p{0};
+	unsigned t{0};
+	auto suite = get_suite();
+	for (auto& m : modules{}) {
+		p += m.passed();
+		t += m.total();
+		if (v == verbosity::medium) {
+			for (const auto& r : m) {
+				if (!r) {
+					cc::println("Failure in module \"{0}\", "
+					"line {1}: \"{2}\".", m.name(), r.line(),
+					r.source());
+				}
+			}
+		}
+		else if (v == verbosity::high) {
+			for (const auto& r : m) {
+				cc::println("{0} in module \"{1}\", line {2}: "
+				"\"{3}\".", r ? "Success" : "Failure", m.name(),
+				r.line(), r.source());
+			}
+		}
+		cc::println("Summary for module \"{0}\": {1} of {2} "
+			"assertions passed.", m.name(), m.passed(),
+			m.total());
 	}
+	cc::println("Summary for suite \"{0}\": {1} of {2} assertions "
+		"passed.", suite, p, t);
+	return EXIT_SUCCESS;
+}
 
-#endif
+static int
+print_help()
+{
+	print(help_message + 1);
+	return EXIT_SUCCESS;
+}
+
+static int
+list_modules(const char* d)
+{
+	if (d != nullptr) {
+		println("Suite \"{0}\": {1}", get_suite(), d);
+	}
+	else {
+		println("Suite \"{0}\"", get_suite());
+	}
+	for (const auto& m : modules{}) {
+		if (m.description() != nullptr) {
+			println("Module \"{0}\": {1}", m.name(), m.description());
+		}
+		else {
+			println("Module \"{0}\"", m.name(), m.description());
+		}
+	}
+	return EXIT_SUCCESS;
+}
+
+static int
+parse_flags(int argc, char** argv, const char* d = nullptr)
+{
+	if (argc <= 1) {
+		return run_modules(verbosity::low);
+	}
+	else if (argc <= 3) {
+		if (
+			equal(argv[1], "-h") ||
+			equal(argv[1], "--help")
+		) {
+			return print_help();
+		}
+		else if (
+			equal(argv[1], "-l") ||
+			equal(argv[1], "--list-modules")
+		) {
+			return list_modules(d);
+		}
+		else if (
+			equal(argv[1], "-v") ||
+			equal(argv[1], "--verbosity")
+		) {
+			if (argc < 3) {
+				auto s = cc::format("Error: expected verbosity "
+					"level after \"{0}\" flag.", argv[1]);
+				return print_error(argc, argv, s);
+			}
+			if (equal(argv[2], "low")) {
+				return run_modules(verbosity::low);
+			}
+			else if (equal(argv[2], "medium")) {
+				return run_modules(verbosity::medium);
+			}
+			else if (equal(argv[2], "high")) {
+				return run_modules(verbosity::high);
+			}
+			else {
+				auto s = cc::format("Error: invalid verbosity "
+					"level \"{0}\".", argv[2]);
+				return print_error(argc, argv, s);
+			}
+		}
+		else {
+			auto s = cc::format("Error: unrecognized flag \"{0}\".",
+				argv[1]);
+			return print_error(argc, argv, s);
+		}
+	}
+	else {
+		return print_error(argc, argv, "Error: too many flags.");
+	}
+}
+
+}
+}
 
 #endif

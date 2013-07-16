@@ -11,7 +11,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <string>
-#include <ccbase/unsync.hpp>
+#include <ccbase/internal/unsync.hpp>
 
 namespace cc
 {
