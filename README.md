@@ -264,7 +264,7 @@ running the executable with the option `-v medium` displays the following.
 	Summary for module "test_1": 1 of 1 assertions passed.
 	Failure in module "test_2", line 17: "require(false)".
 	Summary for module "test_2": 0 of 1 assertions passed.
-	Summary for suite "unit_test": 1 of 2 assertions passed.
+	Summary for suite "test": 1 of 2 assertions passed.
 
 Medium-level logging causes the line number and source code for failed
 assertions within each module to be printed along with the summary statistics.
