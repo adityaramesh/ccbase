@@ -1,10 +1,11 @@
 require 'rake/clean'
 
 cxx       = ENV['CXX']
-langflags = "-std=c++11"
-wflags    = "-Wall"
+boost     = ENV['BOOST_INCLUDE_PATH']
+langflags = "-std=c++11 -stdlib=libc++"
+wflags    = "-Wall -Wno-return-type-c-linkage"
 archflags = "-march=native"
-incflags  = "-I."
+incflags  = "-I. -I#{boost}"
 ppflags   = ""
 optflags  = "-O3"
 ldflags   = ""
@@ -49,13 +50,15 @@ outdirs.each do |d|
 end
 
 libs.each do |f|
-	file f => headers + outdirs do
-		sh "#{cxx} #{dll_cxxflags} -o #{f} #{f.sub('out', 'src').ext('cpp')}"
+	src = f.sub("out", "src").ext("cpp")
+	file f => [src] + headers + outdirs do
+		sh "#{cxx} #{dll_cxxflags} -o #{f} #{src}"
 	end
 end
 
 tests.each do |f|
-	file f => libs + headers + outdirs do
-		sh "#{cxx} #{cxxflags} -o #{f} #{f.sub('out', 'test').ext('cpp')} #{ldflags}"
+	src = f.sub("out", "test").ext("cpp")
+	file f => [src] + libs + headers + outdirs do
+		sh "#{cxx} #{cxxflags} -o #{f} #{src} #{ldflags}"
 	end
 end

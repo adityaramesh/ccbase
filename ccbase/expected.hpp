@@ -238,7 +238,7 @@ public:
 				valid_ = true;
 			}
 			else {
-				p_.swap(rhs.p_);
+				std::swap(p_, rhs.p_);
 			}
 		}
 	}
@@ -441,7 +441,7 @@ public:
 				valid_ = true;
 			}
 			else {
-				p_.swap(rhs.p_);
+				std::swap(p_, rhs.p_);
 			}
 		}
 	}

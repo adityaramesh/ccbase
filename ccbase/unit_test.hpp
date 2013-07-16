@@ -108,9 +108,9 @@ equal(const char* a, const char* b)
 }
 
 static std::string
-get_suite()
+get_suite(const char* program)
 {
-	std::string s = __FILE__;
+	std::string s{program};
 	auto f = s.find_last_of("/\\");
 	if (f == std::string::npos) {
 		f = 0;
@@ -135,11 +135,11 @@ print_error(int argc, char** argv, const std::string msg)
 }
 
 static int
-run_modules(const verbosity v)
+run_modules(const char* program, const verbosity v)
 {
 	unsigned p{0};
 	unsigned t{0};
-	auto suite = get_suite();
+	auto suite = get_suite(program);
 	for (auto& m : modules{}) {
 		p += m.passed();
 		t += m.total();
@@ -176,13 +176,13 @@ print_help()
 }
 
 static int
-list_modules(const char* d)
+list_modules(const char* program, const char* d)
 {
 	if (d != nullptr) {
-		println("Suite \"{0}\": {1}", get_suite(), d);
+		println("Suite \"{0}\": {1}", get_suite(program), d);
 	}
 	else {
-		println("Suite \"{0}\"", get_suite());
+		println("Suite \"{0}\"", get_suite(program));
 	}
 	for (const auto& m : modules{}) {
 		if (m.description() != nullptr) {
@@ -199,7 +199,7 @@ static int
 parse_flags(int argc, char** argv, const char* d = nullptr)
 {
 	if (argc <= 1) {
-		return run_modules(verbosity::low);
+		return run_modules(argv[0], verbosity::low);
 	}
 	else if (argc <= 3) {
 		if (
@@ -212,7 +212,7 @@ parse_flags(int argc, char** argv, const char* d = nullptr)
 			equal(argv[1], "-l") ||
 			equal(argv[1], "--list-modules")
 		) {
-			return list_modules(d);
+			return list_modules(argv[0], d);
 		}
 		else if (
 			equal(argv[1], "-v") ||
@@ -224,13 +224,13 @@ parse_flags(int argc, char** argv, const char* d = nullptr)
 				return print_error(argc, argv, s);
 			}
 			if (equal(argv[2], "low")) {
-				return run_modules(verbosity::low);
+				return run_modules(argv[0], verbosity::low);
 			}
 			else if (equal(argv[2], "medium")) {
-				return run_modules(verbosity::medium);
+				return run_modules(argv[0], verbosity::medium);
 			}
 			else if (equal(argv[2], "high")) {
-				return run_modules(verbosity::high);
+				return run_modules(argv[0], verbosity::high);
 			}
 			else {
 				auto s = cc::format("Error: invalid verbosity "
