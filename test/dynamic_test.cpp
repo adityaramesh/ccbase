@@ -11,41 +11,40 @@
 #include <ccbase/dynamic.hpp>
 #include <ccbase/unit_test.hpp>
 
-CC_BEGIN_MODULE(test_retrieval)
+module("test_retrieval", "Tests whether getting data works.")
+{
 	using signature = std::string(std::string, std::string);
 	cc::image i{"./lib/out/test.dll", cc::lazy};
 	auto f = cc::get_function<signature>("test", i).get();
-	CC_ASSERT(f("foo", "bar") == "foobar");
+	require(f("foo", "bar") == "foobar");
 	auto& s = cc::get_data<std::string>("msg", i).get();
-	CC_ASSERT(s == "Original contents.");
-CC_END_MODULE(test_retrieval)
+	require(s == "Original contents.");
+}
 
-CC_BEGIN_MODULE(test_mutation)
+module("test_mutation", "Tests whether module data is mutable.")
+{
 	cc::image i{"./lib/out/test.dll", cc::lazy};
 	auto& s1 = cc::get_data<std::string>("msg", i).get();
-	CC_ASSERT(s1 == "Original contents.");
+	require(s1 == "Original contents.");
 	s1 = "New contents.";
 
 	auto& s2 = cc::get_data<std::string>("msg", i).get();
-	CC_ASSERT(s2 == "New contents.");
-CC_END_MODULE(test_mutation)
+	require(s2 == "New contents.");
+}
 
-CC_BEGIN_MODULE(test_info)
+module("test_info", "Tests whether symbol address lookup works.")
+{
 	using signature = std::string(std::string, std::string);
 	cc::image i{"./lib/out/test.dll", cc::lazy};
 	auto f = cc::get_function<signature>("test", i).get();
-	CC_ASSERT(f("foo", "bar") == "foobar");
+	require(f("foo", "bar") == "foobar");
 	auto& s = cc::get_data<std::string>("msg", i).get();
-	CC_ASSERT(s == "Original contents.");
+	require(s == "Original contents.");
 
 	auto fi = cc::get_info(f).get();
 	auto si = cc::get_info(s).get();
-	CC_ASSERT(std::strcmp(fi.name(), "test") == 0);
-	CC_ASSERT(std::strcmp(si.name(), "msg") == 0);
-CC_END_MODULE(test_info)
+	require(std::strcmp(fi.name(), "test") == 0);
+	require(std::strcmp(si.name(), "msg") == 0);
+}
 
-CC_BEGIN_SUITE(dynamic_test)
-	test_retrieval();
-	test_mutation();
-	test_info();
-CC_END_SUITE(dynamic_test)
+suite("Tests dynamic library loading.")

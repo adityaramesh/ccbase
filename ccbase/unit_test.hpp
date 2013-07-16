@@ -34,6 +34,7 @@
 #include <cstddef>
 #include <cstring>
 #include <vector>
+#include <ccbase/attribute.hpp>
 #include <ccbase/format.hpp>
 #include <ccbase/internal/module.hpp>
 #include <ccbase/internal/modules.hpp>
@@ -51,18 +52,18 @@
 #define module(...) \
 	BOOST_PP_CAT(module_impl_, CC_COUNT(__VA_ARGS__))(__VA_ARGS__)
 
-#define module_impl_1(name)                               \
-	static const bool BOOST_PP_CAT(temp_, __LINE__) = \
-	cc::internal::modules::add(name, __LINE__);       \
+#define module_impl_1(name)                                         \
+	static const bool CC_UNUSED BOOST_PP_CAT(temp_, __LINE__) = \
+	cc::internal::modules::add(name, __LINE__);                 \
 	static void BOOST_PP_CAT(module_, __COUNTER__)()
 
-#define module_impl_2(name, description)                         \
-	static const bool BOOST_PP_CAT(temp_, __LINE__) =        \
-	cc::internal::modules::add(name, __LINE__, description); \
+#define module_impl_2(name, description)                            \
+	static const bool CC_UNUSED BOOST_PP_CAT(temp_, __LINE__) = \
+	cc::internal::modules::add(name, __LINE__, description);    \
 	static void BOOST_PP_CAT(module_, __COUNTER__)()
 
-#define require(x)                                        \
-	static const bool BOOST_PP_CAT(temp_, __LINE__) = \
+#define require(x)                                                  \
+	static const bool CC_UNUSED BOOST_PP_CAT(temp_, __LINE__) = \
 	cc::internal::modules::require(__LINE__, #x, (x))
 
 #define DECL(z, n, text) \
@@ -73,8 +74,8 @@
 	{                                                                      \
 		if (                                                           \
 			argc <= 1 || (argc == 3 &&                             \
-			cc::internal::equal(argv[1], "-v") ||                  \
-			cc::internal::equal(argv[1], "--verbosity"))           \
+			(cc::internal::equal(argv[1], "-v") ||                 \
+			cc::internal::equal(argv[1], "--verbosity")))          \
 		) {                                                            \
 			BOOST_PP_REPEAT_FROM_TO(0, __COUNTER__, DECL, module_) \
 		}                                                              \

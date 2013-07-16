@@ -44,15 +44,14 @@
 	#define platform_newline 0
 #endif
 
-CC_BEGIN_MODULE(test_support)
-	CC_ASSERT(platform_compiler);
-	CC_ASSERT(platform_arch);
-	CC_ASSERT(platform_os);
-	CC_ASSERT(platform_kernel);
-	CC_ASSERT(platform_integer_byte_order);
-	CC_ASSERT(platform_newline);
-CC_END_MODULE(test_support)
+module("test_support")
+{
+	require(platform_compiler);
+	require(platform_arch);
+	require(platform_os);
+	require(platform_kernel);
+	require(platform_integer_byte_order);
+	require(platform_newline);
+}
 
-CC_BEGIN_SUITE(platform_test)
-	test_support();
-CC_END_SUITE(platform_test)
+suite("Tests whether the platform identification features work on this platform.")

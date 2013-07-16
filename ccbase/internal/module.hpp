@@ -33,10 +33,10 @@ public:
 	explicit module() noexcept {}
 
 	explicit module(const char* n, const size_type l)
-	noexcept : n{n}, l{l} {}
+	noexcept : l{l}, n{n} {}
 
 	explicit module(const char* n, const size_type l, const char* d)
-	noexcept : n{n}, l{l}, d{d} {}
+	noexcept : l{l}, n{n}, d{d} {}
 
 	size_type line() const { return l; }
 	const char* name() const { return n; }
@@ -77,25 +77,25 @@ public:
 	const_iterator cend() const { return r.cend(); }
 };
 
-static typename module::iterator
+typename module::iterator
 begin(module m)
 {
 	return m.begin();
 }
 
-static typename module::iterator
+typename module::iterator
 end(module m)
 {
 	return m.end();
 }
 
-static typename module::const_iterator
+typename module::const_iterator
 cbegin(const module m)
 {
 	return m.cbegin();
 }
 
-static typename module::const_iterator
+typename module::const_iterator
 cend(const module m)
 {
 	return m.cend();

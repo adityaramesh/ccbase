@@ -50,25 +50,25 @@ public:
 
 std::vector<module> modules::l{};
 
-static typename modules::iterator
+typename modules::iterator
 begin(modules m)
 {
 	return m.begin();
 }
 
-static typename modules::iterator
+typename modules::iterator
 end(modules m)
 {
 	return m.end();
 }
 
-static typename modules::const_iterator
+typename modules::const_iterator
 cbegin(const modules m)
 {
 	return m.cbegin();
 }
 
-static typename modules::const_iterator
+typename modules::const_iterator
 cend(const modules m)
 {
 	return m.cend();
