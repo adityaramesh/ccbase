@@ -179,17 +179,17 @@ static int
 list_modules(const char* program, const char* d)
 {
 	if (d != nullptr) {
-		println("Suite \"{0}\": {1}", get_suite(program), d);
+		println("Suite \"{0}\": {1}.", get_suite(program), d);
 	}
 	else {
-		println("Suite \"{0}\"", get_suite(program));
+		println("Suite \"{0}\".", get_suite(program));
 	}
 	for (const auto& m : modules{}) {
 		if (m.description() != nullptr) {
-			println("Module \"{0}\": {1}", m.name(), m.description());
+			println("Module \"{0}\": {1}.", m.name(), m.description());
 		}
 		else {
-			println("Module \"{0}\"", m.name(), m.description());
+			println("Module \"{0}\".", m.name(), m.description());
 		}
 	}
 	return EXIT_SUCCESS;
