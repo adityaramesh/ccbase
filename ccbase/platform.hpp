@@ -149,7 +149,7 @@ struct platform
 	#define PLATFORM_COMPILER PLATFORM_COMPILER_COMEAU
 #endif
 
-#if defined __GNUC__ && !defined __clang__
+#if defined __GNUC__ && !defined __clang__ && !defined __INTEL_COMPILER
 	#define compiler_value    gcc
 	#define compiler_gcc      1
 	#define PLATFORM_COMPILER PLATFORM_COMPILER_GCC
