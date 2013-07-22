@@ -10,8 +10,14 @@
 
 #include <ccbase/platform.hpp>
 
-#if PLATFORM_COMPILER == PLATFORM_COMPILER_GCC || \
-    PLATFORM_COMPILER == PLATFORM_COMPILER_CLANG
+#if PLATFORM_COMPILER == PLATFORM_COMPILER_GCC
+	#define CC_ALWAYS_INLINE __attribute__((always_inline)) inline
+	#define CC_NEVER_INLINE  __attribute__((noinline))
+	#define CC_CONST         __attribute__((const))
+	#define CC_PURE          __attribute__((pure))
+	#define CC_UNUSED        __attribute__((unused))
+	#define CC_RESTRICT      __restrict__
+#elif PLATFORM_COMPILER == PLATFORM_COMPILER_CLANG
 	#define CC_ALWAYS_INLINE __attribute__((always_inline))
 	#define CC_NEVER_INLINE  __attribute__((noinline))
 	#define CC_CONST         __attribute__((const))
