@@ -68,10 +68,10 @@ replacement for many common stream operations, including `std::cout` statements.
 	throw parse_error{ss.str()};
 
 	// New way:
-	throw parse_error(cc::format("Error parsing header: expected {0} at "
-	"line {1}, column {2}, but got {3} instead.", a, line, col, b));
+	throw parse_error(cc::format("Error parsing header: expected $0 at "
+	"line $1, column $2, but got $3 instead.", a, line, col, b));
 
-## `dynamic.hpp`
+## `platform/dynamic.hpp`
 
 This header allows you to load functions and data from dynamic libraries using
 convenient C++11 syntax. Suppose that you have a library called `test.dll`,
@@ -109,7 +109,7 @@ With the variables `f` and `s` as defined in the previous code sample, the
 	auto fi = cc::get_info(f).get();
 	auto si = cc::get_info(s).get();
 
-## `visibility.hpp`
+## `platform/visibility.hpp`
 
 This header defines macros that can be used to set symbol visibility when
 compiling shared libraries in a cross-platform manner. To this end, the
@@ -148,10 +148,11 @@ This header allows you to identify various features of the host platform.
 Because preprocessor macros are used to perform the detection, the header is not
 guaranteed to successfully define all of the features in the list below.
 However, the GNU/Linux, Mac OS, and Windows operating systems are supported,
-along with the major C++ compilers and widely-used CPU architectures.
+along with the major C++ compilers and several CPU architectures.
 
 The header attempts to identify the following features of the host platform.
 - The compiler.
+- The compiler version.
 - The processor architecture.
 - The processor ABI.
 - The operating system.
@@ -161,38 +162,44 @@ The header attempts to identify the following features of the host platform.
   identify the latter).
 - The platform newline character.
 
-The header defines various feature macros, as well as the following structure:
+The header defines various feature macros, as well as the following structure
+which provides the same information as the macros in a more organized fashion.
+If you do not need to use the preprocessor, then it is recommend that you use
+the `platform` struct instead of the macros.
 
 	struct platform
 	{
-		static constexpr auto compiler = // ...
-		static constexpr auto arch = // ...
-		static constexpr auto abi = // ...
-		static constexpr auto os = // ...
-		static constexpr auto newline = // ...
-		static constexpr auto kernel = // ...
-		static constexpr auto integer_byte_order = // ...
+		static constexpr auto arch = // See `platform/architecture.hpp`.
+		static constexpr auto cc = // See `platform/compiler.hpp`.
+		static constexpr auto os = // See `platform/operating_system.hpp.`
 	};
 
 Here is some example usage:
 
 	// Use of enums, which is encouraged where possible.
-	switch (cc::platform::os) {
-	case cc::linux_distribution: // ...
-	case cc::macos: // ...
-	case cc::windows: // ...
-	default: // Either none of the above or the identification failed.
+
+	if (cc::platform::os == cc::operating_system::linux_distribution) {
+		// ...
+	}
+	else if (cc::platform::os == cc::operating_system::os_x) {
+		// ...
+	}
+	else if (cc::platform::os == cc::operating_system::windows) {
+		// ...
+	}
+	else {
+		// ...
 	}
 
 	/*
 	** Identification failure can be checked for explicitly by checking
-	** whether `cc::platform::os == cc::unknown`.
+	** whether `cc::platform::os == cc::operating_system::unknown`.
 	*/
 
 	// Where necessary, macros can be used.
 	#if PLATFORM_OS == PLATFORM_OS_LINUX_DISTRIBUTION
 		// ...
-	#elif PLATFORM_OS == PLATFORM_OS_MACOS
+	#elif PLATFORM_OS == PLATFORM_OS_OS_X
 		// ...
 	#elif PLATFORM_OS == PLATFORM_OS_WINDOWS
 		// ...
@@ -207,10 +214,10 @@ Here is some example usage:
 	** dictates that undefined macros evaluate to zero in such cases.
 	*/
 
-Enum values and macros are defined analogously for the other platform features
-in the list above.
+Macros are defined analogously for the other platform features in the list
+above.
 
-## `expected.hpp`
+## `utility/expected.hpp`
 
 This class is based on Andrei Alexandrescu's implementation of `expected<T>`,
 which he discussed in a talk at C++ Next 2012 called "Systematic Error
