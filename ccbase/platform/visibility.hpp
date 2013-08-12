@@ -8,7 +8,7 @@
 #ifndef ZBA05AAB6_3F9E_4C1F_8FEB_2F4304CD2335
 #define ZBA05AAB6_3F9E_4C1F_8FEB_2F4304CD2335
 
-#include <ccbase/platform.hpp>
+#include <ccbase/platform/features.hpp>
 
 /*
 ** This part defines the following utility macros:
@@ -36,7 +36,7 @@
 		#error "Cannot determine symbol visibility syntax."
 	#endif
 #elif PLATFORM_KERNEL == PLATFORM_KERNEL_LINUX || \
-      PLATFORM_KERNEL == PLATFORM_KERNEL_MACH
+      PLATFORM_KERNEL == PLATFORM_KERNEL_XNU
 	#if PLATFORM_COMPILER == PLATFORM_COMPILER_CLANG  || \
 	    PLATFORM_COMPILER == PLATFORM_COMPILER_COMEAU || \
 	    PLATFORM_COMPILER == PLATFORM_COMPILER_GCC    || \

@@ -11,8 +11,8 @@
 #include <functional>
 #include <stdexcept>
 #include <type_traits>
-#include <ccbase/expected.hpp>
-#include <ccbase/platform.hpp>
+#include <ccbase/platform/features.hpp>
+#include <ccbase/utility/expected.hpp>
 
 #if PLATFORM_KERNEL == PLATFORM_KERNEL_LINUX || \
     PLATFORM_KERNEL == PLATFORM_KERNEL_MACH

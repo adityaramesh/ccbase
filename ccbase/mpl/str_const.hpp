@@ -52,6 +52,8 @@ public:
 	{
 		return p_;
 	}
+
+	// TODO: Implement operator== and operator!= after C++14.
 };
 
 }
