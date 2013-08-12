@@ -15,7 +15,7 @@
 #include <ccbase/utility/expected.hpp>
 
 #if PLATFORM_KERNEL == PLATFORM_KERNEL_LINUX || \
-    PLATFORM_KERNEL == PLATFORM_KERNEL_MACH
+    PLATFORM_KERNEL == PLATFORM_KERNEL_XNU
 	#include <dlfcn.h>
 #else
 	#error "Unsupported kernel."
@@ -189,16 +189,16 @@ template <class Signature>
 cc::expected<function<Signature>>
 get_function(const char* name, const image& i)
 {
-	if (cc::platform::kernel == cc::linux) {
+	if (cc::platform::os.kernel() == cc::kernel::linux) {
 		::dlerror();
 	}
 	auto t = ::dlsym(i, name);
-	switch (cc::platform::kernel) {
-	case cc::linux:
+	switch (cc::platform::os.kernel()) {
+	case cc::kernel::linux:
 		if (::dlerror() != nullptr) {
 			return std::runtime_error{"Symbol not found."};
 		}
-	case cc::mach:
+	case cc::kernel::xnu:
 		if (t == nullptr) {
 			return std::runtime_error{::dlerror()};
 		}
@@ -216,16 +216,16 @@ template <class T>
 cc::expected<T&>
 get_data(const char* name, const image& i)
 {
-	if (cc::platform::kernel == cc::linux) {
+	if (cc::platform::os.kernel() == cc::kernel::linux) {
 		::dlerror();
 	}
 	auto t = ::dlsym(i, name);
-	switch (cc::platform::kernel) {
-	case cc::linux:
+	switch (cc::platform::os.kernel()) {
+	case cc::kernel::linux:
 		if (::dlerror() != nullptr) {
 			return std::runtime_error{"Symbol not found."};
 		}
-	case cc::mach:
+	case cc::kernel::xnu:
 		if (t == nullptr) {
 			return std::runtime_error{::dlerror()};
 		}

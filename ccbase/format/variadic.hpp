@@ -13,10 +13,7 @@
 #include <ios>
 #include <sstream>
 #include <string>
-
-// TODO
-//#include <ccbase/platform/attribute.hpp>
-#define CC_ALWAYS_INLINE __attribute__((always_inline)) inline
+#include <ccbase/platform/attribute.hpp>
 
 namespace cc
 {

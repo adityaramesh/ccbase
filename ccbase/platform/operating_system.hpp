@@ -14,7 +14,7 @@
 namespace cc
 {
 
-enum kernel_type
+enum class kernel
 {
 	linux      = PLATFORM_KERNEL_LINUX,
 	xnu        = PLATFORM_KERNEL_XNU,
@@ -34,17 +34,17 @@ public:
 	};
 private:
 	const type os;
-	const kernel_type k;
+	const kernel k;
 	const str_const nl;
 public:
 	template <std::size_t N>
 	constexpr operating_system(
 		const type os,
-		const kernel_type k,
+		const kernel k,
 		const char(&nl)[N]
 	) : os{os}, k{k}, nl{nl} {}
 
-	constexpr kernel_type kernel() const
+	constexpr kernel kernel() const
 	{
 		return k;
 	}

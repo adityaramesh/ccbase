@@ -8,7 +8,7 @@
 #ifndef ZF27C7D32_9AB4_45CF_97E5_F4103C824B40
 #define ZF27C7D32_9AB4_45CF_97E5_F4103C824B40
 
-#include <ccbase/platform.hpp>
+#include <ccbase/platform/features.hpp>
 
 #if PLATFORM_COMPILER == PLATFORM_COMPILER_GCC
 	#define CC_ALWAYS_INLINE __attribute__((always_inline)) inline

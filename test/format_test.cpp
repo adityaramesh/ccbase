@@ -6,23 +6,19 @@
 */
 
 #include <iostream>
-#include <ccbase/format/format_variadic.hpp>
+#include <ccbase/format/variadic.hpp>
+#include <ccbase/unit_test.hpp>
 
-int main()
+module("test_repeated_arguments")
 {
-	cc::println("$0 Hello $0 $1 $$ $1 $0", 1, 'a');
+	auto s = cc::format("$0 $1 $0", "A", 1);
+	require(s == "A 1 A");
 }
 
-//module("test_repeated_arguments")
-//{
-//	auto s = cc::format("{0} {1} {0}", "A", 1);
-//	require(s == "A 1 A");
-//}
-//
-//module("test_escape")
-//{
-//	auto s = cc::format("{{}}{{{{}}}}");
-//	require(s == "{}{{}}");
-//}
-//
-//suite("Tests the format header.")
+module("test_escape")
+{
+	auto s = cc::format("$$$$ $$$$ $$ $$");
+	require(s == "$$ $$ $ $");
+}
+
+suite("Tests the format header.")

@@ -8,7 +8,7 @@
 #include <cstring>
 #include <string>
 #include <iostream>
-#include <ccbase/dynamic.hpp>
+#include <ccbase/platform/dynamic.hpp>
 #include <ccbase/unit_test.hpp>
 
 module("test_retrieval", "Tests whether getting data works.")

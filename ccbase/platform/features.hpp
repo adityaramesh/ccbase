@@ -286,7 +286,7 @@ namespace cc
 
 		static constexpr auto os = operating_system{
 			static_cast<operating_system::type>(PLATFORM_OS),
-			static_cast<kernel_type>(PLATFORM_KERNEL),
+			static_cast<kernel>(PLATFORM_KERNEL),
 			PLATFORM_NEWLINE
 		};
 
