@@ -19,10 +19,9 @@ tests. This library requires a C++11-conformant compiler.
 - Structure the documentation so that each file has an associated tutorial page.
   The summary of each header given in this page should be taken from the summary
   provided in the tutorial page for the header.
+- Add support for typesetting paragraphs with a given character width. 
 - Add support for compiler version detection.
 - Add support for kernel version detection.
-- Test `platform.hpp` on Cygwin.
-- Add example code for `expected.hpp`.
 
 # Installation
 

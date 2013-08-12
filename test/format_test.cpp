@@ -5,19 +5,24 @@
 ** Contact:	_@adityaramesh.com
 */
 
-#include <ccbase/format.hpp>
-#include <ccbase/unit_test.hpp>
+#include <iostream>
+#include <ccbase/format/format_variadic.hpp>
 
-module("test_repeated_arguments")
+int main()
 {
-	auto s = cc::format("{0} {1} {0}", "A", 1);
-	require(s == "A 1 A");
+	cc::println("$0 Hello $0 $1 $$ $1 $0", 1, 'a');
 }
 
-module("test_escape")
-{
-	auto s = cc::format("{{}}{{{{}}}}");
-	require(s == "{}{{}}");
-}
-
-suite("Tests the format header.")
+//module("test_repeated_arguments")
+//{
+//	auto s = cc::format("{0} {1} {0}", "A", 1);
+//	require(s == "A 1 A");
+//}
+//
+//module("test_escape")
+//{
+//	auto s = cc::format("{{}}{{{{}}}}");
+//	require(s == "{}{{}}");
+//}
+//
+//suite("Tests the format header.")

@@ -1,135 +1,156 @@
 /*
 ** File Name:	format.hpp
 ** Author:	Aditya Ramesh
-** Date:	12/05/2012
+** Date:	08/12/2013
 ** Contact:	_@adityaramesh.com
 */
 
-#ifndef Z759404CD_C2FF_45EE_A125_85ABCEF5CF82
-#define Z759404CD_C2FF_45EE_A125_85ABCEF5CF82
+#ifndef Z9DCE86DF_558B_497F_B6CC_4DCDFD6070FC
+#define Z9DCE86DF_558B_497F_B6CC_4DCDFD6070FC
 
+#include <cassert>
+#include <cstring>
+#include <ios>
 #include <sstream>
-#include <stdexcept>
 #include <string>
-#include <ccbase/internal/unsync.hpp>
+
+// TODO
+//#include <ccbase/platform/attribute.hpp>
+#define CC_ALWAYS_INLINE __attribute__((always_inline)) inline
 
 namespace cc
 {
 
-struct format_error : std::runtime_error
-{
-	format_error(const std::string& s) : std::runtime_error{s} {}
-};
-
 namespace internal
 {
 
-void write_arg(std::ostream& os, const unsigned n)
-{
-	throw format_error{"Argument cardinality too high."};
-}
-
-template <class T, class... Ts>
-void write_arg(std::ostream& os, const unsigned n, const T t, const Ts... ts)
-{
-	if (n) {
-		return write_arg(os, n - 1, ts...);
-	}
-	os << t;
-}
-
-}
-
 /*
-** Writes formatted text to a stream.
+** We do not use the `isdigit` function from `<cctype>`, because the only
+** characters that we treat as digits for argument indexing purposes are those
+** from 0--9.
 */
-template <class... Ts>
-void write(std::ostream& os, const char* s, const Ts... ts)
+
+template <class T>
+static CC_ALWAYS_INLINE bool
+is_digit(const T t)
+noexcept
 {
+	return T{'0'} <= t && t <= T{'9'};
+}
+
+template <class T, class Traits = std::char_traits<T>>
+static CC_ALWAYS_INLINE void
+write_arg(std::basic_ostream<T, Traits>& os, const std::size_t n)
+noexcept 
+{
+	os.setstate(std::ios::failbit);
+}
+
+template <class T, class Traits = std::char_traits<T>, class U, class... Us>
+static CC_ALWAYS_INLINE void
+write_arg(
+	std::basic_ostream<T, Traits>& os,
+	const std::size_t n,
+	const U arg,
+	const Us... args
+) noexcept 
+{
+	if (n > 0) {
+		return write_arg(os, n - 1, args...);
+	}
+	os << arg;
+}
+
+}
+
+template <class T, class Traits = std::char_traits<T>, class... Us>
+void write(std::basic_ostream<T, Traits>& os, const T* s, const Us... args)
+noexcept
+{
+	using internal::is_digit;
+	using internal::write_arg;
+
 	auto f = s;
 	auto l = s;
-	while (*l) {
-		// Case 1. We need to format an argument.
-		if (*l == '{' && *(l + 1) != '{') {
-			os.write(f, l - f);
-			++l;
-			unsigned i = 0;
-			while (*l && *l != '}') {
-				i = 10 * i + (*l++ - '0');
+
+	// We disallow printing the null string.
+	assert(l != nullptr && "Format string is null.");
+	// We disallow printing the empty string.
+	assert(*l != 0 && "Format string is empty.");
+
+	do {
+		if (*l == T{'$'}) {
+			if (*(l + 1) != T{'$'}) {
+				os.write(f, l - f);
+				++l;
+				assert(is_digit(*l) && "Expected digit after $.");
+
+				std::size_t i = 0;
+				do {
+					i = 10 * i + (*l++ - T{'0'});
+				}
+				while (is_digit(*l));
+
+				write_arg(os, i, args...);
+				f = l;
 			}
-			if (!*l) {
-				throw format_error{"Unmatched curly bracket."};
+			else {
+				++l;
+				assert(*l == T{'$'} && "Unexpected token after $.");
+				os.write(f, l - f);
+				++l;
+				f = l;
 			}
-			internal::write_arg(os, i, ts...);
-			++l;
-			f = l;
 		}
-		// Case 2. We need to skip past a regular character, i.e. a
-		// character that is not a curly bracket.
-		else if (*l != '{' && *l != '}') {
-			++l;
-		}
-		// Case 3. We have encountered a double curly bracket ('{{' or
-		// '}}'), so we print everything from f to l, including the
-		// first curly bracket. Then, we skip past the last curly
-		// bracket.
 		else {
 			++l;
-			os.write(f, l - f);
-			++l;
-			f = l;
 		}
 	}
+	while (*l != 0);
 	os.write(f, l - f);
 }
 
-/*
-** Writes formatted text to a stream, ending with `std::endl`.
-*/
-template <class... Ts>
-void writeln(std::ostream& os, const char* s, const Ts... ts)
+template <class T, class Traits = std::char_traits<T>, class... Us>
+void writeln(std::basic_ostream<T, Traits>& os, const T* s, const Us... args)
+noexcept
 {
-	write(os, s, ts...);
+	write(os, s, args...);
 	os << std::endl;
 }
 
-/*
-** Writes formatted text to `stdout`.
-*/
-template <class... Ts>
-void print(const char* s, const Ts... ts)
+template <class T, class... Us>
+CC_ALWAYS_INLINE void
+print(const T* s, const Us... args)
+noexcept
 {
-	write(std::cout, s, ts...);
+	write(std::cout, s, args...);
 }
 
-/*
-** Writes formatted text to `stdout`, ending with `std::endl`.
-*/
-template <class... Ts>
-void println(const char* s, const Ts... ts)
+template <class T, class... Us>
+CC_ALWAYS_INLINE void
+println(const T* s, const Us... args)
+noexcept
 {
-	writeln(std::cout, s, ts...);
+	writeln(std::cout, s, args...);
 }
 
-/*
-** Returns a formatted std::string.
-*/
-template <class... Ts>
-std::string format(const char* s, const Ts... ts)
+template <class T, class... Us>
+CC_ALWAYS_INLINE auto
+format(const T* s, const Us... args) noexcept ->
+std::basic_string<T, std::char_traits<T>>
 {
-	std::ostringstream ss;
-	write(ss, s, ts...);
+	std::basic_ostringstream<T, std::char_traits<T>> ss; 
+	write(ss, s, args...);
 	return ss.str();
 }
 
-/*
-** Returns a formatted std::string, appending a newline at the end.
-*/
-template <class... Ts>
-std::string formatln(const char* s, const Ts... ts)
+template <class T, class... Us>
+CC_ALWAYS_INLINE auto
+formatln(const T* s, const Us... args) noexcept ->
+std::basic_string<T, std::char_traits<T>>
 {
-	std::ostringstream ss;
-	writeln(ss, s, ts...);
+	std::basic_ostringstream<T, std::char_traits<T>> ss; 
+	writeln(ss, s, args...);
 	return ss.str();
 }
 
