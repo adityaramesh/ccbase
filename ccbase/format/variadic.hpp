@@ -11,6 +11,7 @@
 #include <cassert>
 #include <cstring>
 #include <ios>
+#include <iostream>
 #include <sstream>
 #include <string>
 #include <ccbase/platform/attribute.hpp>
