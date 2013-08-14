@@ -44,7 +44,7 @@ public:
 		const char(&nl)[N]
 	) : os{os}, k{k}, nl{nl} {}
 
-	constexpr kernel kernel() const
+	constexpr kernel get_kernel() const
 	{
 		return k;
 	}
