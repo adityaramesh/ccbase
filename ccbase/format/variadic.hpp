@@ -133,6 +133,22 @@ noexcept
 }
 
 template <class T, class... Us>
+CC_ALWAYS_INLINE void
+err(const T* s, const Us... args)
+noexcept
+{
+	write(std::cerr, s, args...);
+}
+
+template <class T, class... Us>
+CC_ALWAYS_INLINE void
+errln(const T* s, const Us... args)
+noexcept
+{
+	writeln(std::cerr, s, args...);
+}
+
+template <class T, class... Us>
 CC_ALWAYS_INLINE auto
 format(const T* s, const Us... args) noexcept ->
 std::basic_string<T, std::char_traits<T>>
