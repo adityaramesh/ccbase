@@ -9,7 +9,7 @@
 */
 
 #include <string>
-#include <ccbase/platform/visibility.hpp>
+#include <ccbase/dynamic.hpp>
 
 extern "C" EXPORT_SYMBOL
 const std::string msg{"Original contents."};

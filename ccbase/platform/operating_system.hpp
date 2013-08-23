@@ -8,13 +8,13 @@
 #ifndef ZE8F1E203_0839_49EF_961E_1870AAE48161
 #define ZE8F1E203_0839_49EF_961E_1870AAE48161
 
-#include <ccbase/mpl/str_const.hpp>
 #include <ccbase/platform/definitions.hpp>
+#include <ccbase/platform/str_const.hpp>
 
 namespace cc
 {
 
-enum class kernel
+enum class kernel_type
 {
 	linux      = PLATFORM_KERNEL_LINUX,
 	xnu        = PLATFORM_KERNEL_XNU,
@@ -34,17 +34,17 @@ public:
 	};
 private:
 	const type os;
-	const kernel k;
+	const kernel_type k;
 	const str_const nl;
 public:
 	template <std::size_t N>
 	constexpr operating_system(
 		const type os,
-		const kernel k,
+		const kernel_type k,
 		const char(&nl)[N]
 	) : os{os}, k{k}, nl{nl} {}
 
-	constexpr kernel get_kernel() const
+	constexpr kernel_type kernel() const
 	{
 		return k;
 	}

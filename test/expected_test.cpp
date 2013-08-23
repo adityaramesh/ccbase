@@ -6,7 +6,7 @@
 */
 
 #include <exception>
-#include <ccbase/utility/expected.hpp>
+#include <ccbase/error.hpp>
 #include <ccbase/unit_test.hpp>
 
 module("test_valid_constructors")

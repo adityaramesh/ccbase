@@ -35,14 +35,15 @@
 #include <cstring>
 #include <iostream>
 #include <vector>
-#include <ccbase/format/variadic.hpp>
-#include <ccbase/platform/attribute.hpp>
-#include <ccbase/preprocessor/variadic_size.hpp>
+#include <ccbase/format.hpp>
+#include <ccbase/platform.hpp>
 #include <ccbase/unit_test/module.hpp>
 #include <ccbase/unit_test/module_list.hpp>
 #include <ccbase/unit_test/result.hpp>
+
 #include <boost/preprocessor/cat.hpp>
 #include <boost/preprocessor/repetition/repeat_from_to.hpp>
+#include <ccbase/platform/variadic_size.hpp>
 
 #define module(...) \
 	BOOST_PP_CAT(module_impl_, CC_VARIADIC_SIZE(__VA_ARGS__))(__VA_ARGS__)

@@ -6,7 +6,7 @@
 */
 
 #include <iostream>
-#include <ccbase/format/variadic.hpp>
+#include <ccbase/format.hpp>
 #include <ccbase/unit_test.hpp>
 
 module("test_repeated_arguments")

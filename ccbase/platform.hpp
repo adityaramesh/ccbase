@@ -8,9 +8,8 @@
 #ifndef Z89D7C3CE_6E8B_4964_B5C4_FB5400F1A9F1
 #define Z89D7C3CE_6E8B_4964_B5C4_FB5400F1A9F1
 
-#include <ccbase/platform/attribute.hpp>
-#include <ccbase/platform/features.hpp>
-#include <ccbase/platform/visibility.hpp>
+#include <ccbase/platform/attributes.hpp>
+#include <ccbase/platform/identification.hpp>
 #include <ccbase/platform/print.hpp>
 
 #endif

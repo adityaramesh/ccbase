@@ -20,7 +20,7 @@ dll_ppflags   = "-DCCBASE_EXPORT_SYMBOLS"
 dll_confflags = ""
 
 if RUBY_PLATFORM.include? "linux"
-	dll_confflags = "-shared -fpic -fvisibility=hidden"
+	dll_confflags = "-shared -fpie -fvisibility=hidden"
 elsif RUBY_PLATFORM.include? "darwin"
 	dll_confflags = "-dynamiclib -fvisibility=hidden"
 end
