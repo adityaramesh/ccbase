@@ -195,6 +195,11 @@ substituted.
 		<td>*_LINUX, *_WINDOWS_NT, *_XNU, *_UNKNOWN</td>
 	</tr>
 	<tr>
+		<td>PLATFORM_OS</td>
+		<td>Platform operating system.</td>
+		<td>*_LINUX, *_WINDOWS, *_OS_X, *_UNKNOWN</td>
+	</tr>
+	<tr>
 		<td>PLATFORM_WORD_SIZE</td>
 		<td>Platform word size.</td>
 		<td>32, 64, *_UNKNOWN</td>
@@ -253,14 +258,12 @@ Here is some example usage:
 	#elif PLATFORM_OS == PLATFORM_OS_WINDOWS
 		// ...
 	#else
-		// Either none of the above or the identification failed.
+		// Identification failure.
 	#endif
 
 	/*
-	** Identification failure can be checked for explicitly by checking
-	** whether `PLATFORM_OS` is defined. Comparisons involving `PLATFORM_OS`
-	** will work even if `PLATFORM_OS` is not defined, because the standard
-	** dictates that undefined macros evaluate to zero in such cases.
+	** Identification failure can be checked for explicitly by determining
+	** whether `PLATFORM_OS == PLATFORM_OS_UNKNOWN`.
 	*/
 
 Macros are defined analogously for the other platform features in the list
