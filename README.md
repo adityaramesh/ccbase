@@ -136,6 +136,86 @@ which provides the same information as the macros in a more organized fashion.
 If you do not need to use the preprocessor, then it is recommend that you use
 the `platform` struct instead of the macros.
 
+### Preprocessor Usage
+
+The macros defined by the preprocessor are listed in the table below. Where `*`
+is used to indicate the value of a macro, the name of the macro is to be
+substituted.
+
+<table>
+	<th>
+		<td>Macro</td>
+		<td>Description</td>
+		<td>Possible Values</td>
+	</th>
+	<tr>
+		<td>`PLATFORM_ARCH`</td>
+		<td>Platform CPU architecture.</td>
+		<td>`*_ARM`, `*_ITANIUM`, `*_X86`, `*_UNKNOWN`</td>
+	</tr>
+	<tr>
+		<td>`PLATFORM_COMPILER`</td>
+		<td>Platform compiler.</td>
+		<td>
+			`*_CLANG`, `*_COMEAU`, `*_GCC`, `*_ICC`, `*_MSVC`,
+			`*_UNKNOWN`
+		</td>
+	</tr>
+	<tr>
+		<td>`PLATFORM_COMPILER_VERSION`</td>
+		<td>Platform compiler version.</td>
+		<td>Compare using `CC_COMPILER_VERSION(v, r, p)`.</td>
+	</tr>
+	<tr>
+		<td>`PLATFORM_COMPILER_MAJOR_VERSION`</td>
+		<td>Platform compiler major version.</td>
+		<td>Integer.</td>
+	</tr>
+	<tr>
+		<td>`PLATFORM_COMPILER_MINOR_VERSION`</td>
+		<td>Platform compiler minor version.</td>
+		<td>Integer.</td>
+	</tr>
+	<tr>
+		<td>`PLATFORM_COMPILER_PATCH_LEVEL`</td>
+		<td>Platform compiler patch level.</td>
+		<td>Integer.</td>
+	</tr>
+	<tr>
+		<td>`PLATFORM_INTEGER_BYTE_ORDER`</td>
+		<td>Platform byte order.</td>
+		<td>
+			(`*` = `PLATFORM_BYTE_ORDER`) `*_LITTLE`, `*_BIG`,
+			`*_LITTLE_WORD`, `*_UNKNOWN`
+		</td>
+	</tr>
+	<tr>
+		<td>`PLATFORM_KERNEL`</td>
+		<td>Platform byte order.</td>
+		<td>`*_LINUX`, `*_WINDOWS_NT`, `*_XNU`, `*_UNKNOWN`</td>
+	</tr>
+	<tr>
+		<td>`PLATFORM_WORD_SIZE`</td>
+		<td>Platform word size.</td>
+		<td>32, 64, `*_UNKNOWN`</td>
+	</tr>
+	<tr>
+		<td>`PLATFORM_NEWLINE`</td>
+		<td>Platform newline.</td>
+		<td>`"\n"`, `"\r\n"`</td>
+	</tr>
+	<tr>
+		<td>`PLATFORM_NEWLINE_LENGTH`</td>
+		<td>Platform newline.</td>
+		<td>Integer.</td>
+	</tr>
+</table>
+
+### C++ Usage
+
+The same information provided by the macros is also organized hierarchically in
+a `constexpr` structure that is accessible during compile-time.
+
 	struct platform
 	{
 		static constexpr auto arch = // See `platform/architecture.hpp`.
