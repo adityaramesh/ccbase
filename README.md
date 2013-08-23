@@ -12,10 +12,10 @@ standard library or provide abstractions over platform-specific functionality.
 
 The `ccbase` library consists of the following components:
 
-- CCBase.Format: Elegant syntax for printing and formatting strings.
-- CCBase.Platform: Compile-time access to platform-specific information.
-- CCBase.UnitTest: Convenient and lightweight unit testing framework.
-- CCBase.Error: Utilities for systematic error handling.
+- `ccbase.format`: Elegant syntax for printing and formatting strings.
+- `ccbase.platform`: Compile-time access to platform-specific information.
+- `ccbase.unit_test`: Convenient and lightweight unit testing framework.
+- `ccbase.error`: Utilities for systematic error handling.
 
 The following additional components are currently under development:
 
@@ -56,7 +56,7 @@ Thanks!
 
 # Documentation
 
-## CCBase.Format
+## `ccbase.format`
 
 Suppose that you wish to throw an exception in an IO parsing routine, and that
 the message reported by the exception should contain some useful diagnostic
@@ -86,12 +86,12 @@ template argument to the destination output stream using `operator<<`.
 	<tr>
 		<td>Print to `std::cout`.</td>
 		<td>`cc::print[ln](const T*, const Us&...)`</td>
-		<td>`cc::println("Hello, $0.", name);</td>
+		<td>`cc::println("Hello, $0.", name);`</td>
 	</tr>
 	<tr>
 		<td>Print to `std::cerr`.</td>
 		<td>`cc::err[ln](const T*, const Us&...)`</td>
-		<td>`cc::errln("Hello, $0.", name);</td>
+		<td>`cc::errln("Hello, $0.", name);`</td>
 	</tr>
 	<tr>
 		<td>Format arguments into `std::string`.</td>
@@ -101,12 +101,12 @@ template argument to the destination output stream using `operator<<`.
 	<tr>
 		<td>Print to `std::cout` and exit with success code.</td>
 		<td>`cc::finish(const T*, const Us&...)`</td>
-		<td>`cc::finish("Done.");</td>
+		<td>`cc::finish("Done.");`</td>
 	</tr>
 	<tr>
 		<td>Print to `std::cerr` and exit with failure code.</td>
 		<td>`cc::fail(const T*, const Us&...)`</td>
-		<td>`cc::fail("Could not open file $0.", fn);</td>
+		<td>`cc::fail("Could not open file $0.", fn);`</td>
 	</tr>
 <table>
 
