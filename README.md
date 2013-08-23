@@ -143,11 +143,11 @@ is used to indicate the value of a macro, the name of the macro is to be
 substituted.
 
 <table>
-	<th>
-		<td>Macro</td>
-		<td>Description</td>
-		<td>Possible Values</td>
-	</th>
+	<tr>
+		<th>Macro</th>
+		<th>Description</th>
+		<th>Possible Values</th>
+	</tr>
 	<tr>
 		<td>`PLATFORM_ARCH`</td>
 		<td>Platform CPU architecture.</td>
