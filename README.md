@@ -7,20 +7,26 @@
 
 # Introduction
 
-This library is a collection of utilities that help to minimize the complexity
-of code that needs to be written in order to accomplish some common tasks,
-without compromising on efficiency or legibility. Examples of these common tasks
-include printing and parsing data, loading dynamic libraries, or writing unit
-tests. This library requires a C++11-conformant compiler.
+`ccbase` is a header-only collection of lightweight modules that augment the
+standard library or provide abstractions over platform-specific functionality.
+
+The `ccbase` library consists of the following components:
+
+- CCBase.Format: Elegant syntax for printing and formatting strings.
+- CCBase.Platform: Compile-time access to platform-specific information.
+- CCBase.UnitTest: Convenient and lightweight unit testing framework.
+- CCBase.Error: Utilities for systematic error handling.
+
+The following additional components are currently under development:
+
+- CCBase.Tuple: Printing and operators for `std::tuple`.
 
 ## Planned updates
 
+- Consolidate `str_const.hpp` and `variadic_size.hpp` into the directories of
+  the respective projects, and remove the `preprocessor` and `mpl` directories.
 - Tuple arithmetic.
 - Support for typesetting paragraphs with a given character width. 
-- Generate HTML documentation from code.
-- Structure the documentation so that each file has an associated tutorial page.
-  The summary of each header given in this page should be taken from the summary
-  provided in the tutorial page for the header.
 
 # Installation
 
@@ -50,25 +56,59 @@ Thanks!
 
 # Documentation
 
-## `format.hpp`
+## CCBase.Format
 
-This very small header (125 line) header implements C#'s nifty curly-brace
-string formatting syntax. The functions in this header accept the format
-arguments as variadic templates, and invoke `operator<<(std::ostream&, ...)` to
-print out each argument specified in the format string. This means that you can
-print out arbitrary types using this curly-brace syntax by defining
-`operator<<(std::ostream&, ...)` for them. The convenient syntax makes it a good
-replacement for many common stream operations, including `std::cout` statements.
+Suppose that you wish to throw an exception in an IO parsing routine, and that
+the message reported by the exception should contain some useful diagnostic
+information. Using the Standard Library, your implementation would likely look
+something like this:
 
-	// Old way:
 	std::ostringstream ss;
 	ss << "Error parsing header: expected " << a << " at line " << line <<
 	", column " << col << ", but got " << b << " instead." << std::endl;
 	throw parse_error{ss.str()};
 
-	// New way:
+Using `ccbase/format.hpp`, it would look like this:
+
 	throw parse_error(cc::format("Error parsing header: expected $0 at "
 	"line $1, column $2, but got $3 instead.", a, line, col, b));
+
+The formatting functions provided by CCBase.Format are listed in the table
+below. Each of them is a lightweight wrapper that forwards each variadic
+template argument to the destination output stream using `operator<<`.
+
+<table>
+	<tr>
+		<th>Purpose</th>
+		<th>Function</th>
+		<th>Example</th>
+	</tr>
+	<tr>
+		<td>Print to `std::cout`.</td>
+		<td>`cc::print[ln](const T*, const Us&...)`</td>
+		<td>`cc::println("Hello, $0.", name);</td>
+	</tr>
+	<tr>
+		<td>Print to `std::cerr`.</td>
+		<td>`cc::err[ln](const T*, const Us&...)`</td>
+		<td>`cc::errln("Hello, $0.", name);</td>
+	</tr>
+	<tr>
+		<td>Format arguments into `std::string`.</td>
+		<td>`cc::format[ln](const T*, const Us&...)`</td>
+		<td>See motivating example above.</td>
+	</tr>
+	<tr>
+		<td>Print to `std::cout` and exit with success code.</td>
+		<td>`cc::finish(const T*, const Us&...)`</td>
+		<td>`cc::finish("Done.");</td>
+	</tr>
+	<tr>
+		<td>Print to `std::cerr` and exit with failure code.</td>
+		<td>`cc::fail(const T*, const Us&...)`</td>
+		<td>`cc::fail("Could not open file $0.", fn);</td>
+	</tr>
+<table>
 
 ## `platform/dynamic.hpp`
 
