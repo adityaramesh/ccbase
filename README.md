@@ -85,29 +85,29 @@ template argument to the destination output stream using `operator<<`.
 		<th>Example</th>
 	</tr>
 	<tr>
-		<td>Print to `std::cout`.</td>
-		<td>`cc::print[ln](const T*, const Us&...)`</td>
-		<td>`cc::println("Hello, $0.", name);`</td>
+		<td>Print to std::cout.</td>
+		<td>cc::print[ln](const T*, const Us&...)</td>
+		<td>cc::println("Hello, $0.", name);</td>
 	</tr>
 	<tr>
-		<td>Print to `std::cerr`.</td>
-		<td>`cc::err[ln](const T*, const Us&...)`</td>
-		<td>`cc::errln("Hello, $0.", name);`</td>
+		<td>Print to std::cerr.</td>
+		<td>cc::err[ln](const T*, const Us&...)</td>
+		<td>cc::errln("Hello, $0.", name);</td>
 	</tr>
 	<tr>
-		<td>Format arguments into `std::string`.</td>
-		<td>`cc::format[ln](const T*, const Us&...)`</td>
+		<td>Format arguments into std::string.</td>
+		<td>cc::format[ln](const T*, const Us&...)</td>
 		<td>See motivating example above.</td>
 	</tr>
 	<tr>
-		<td>Print to `std::cout` and exit with success code.</td>
-		<td>`cc::finish(const T*, const Us&...)`</td>
-		<td>`cc::finish("Done.");`</td>
+		<td>Print to std::cout and exit with success code.</td>
+		<td>cc::finish(const T*, const Us&...)</td>
+		<td>cc::finish("Done.");</td>
 	</tr>
 	<tr>
-		<td>Print to `std::cerr` and exit with failure code.</td>
-		<td>`cc::fail(const T*, const Us&...)`</td>
-		<td>`cc::fail("Could not open file $0.", fn);`</td>
+		<td>Print to std::cerr and exit with failure code.</td>
+		<td>cc::fail(const T*, const Us&...)</td>
+		<td>cc::fail("Could not open file $0.", fn);</td>
 	</tr>
 </table>
 
@@ -149,63 +149,63 @@ substituted.
 		<th>Possible Values</th>
 	</tr>
 	<tr>
-		<td>`PLATFORM_ARCH`</td>
+		<td>PLATFORM_ARCH</td>
 		<td>Platform CPU architecture.</td>
-		<td>`*_ARM`, `*_ITANIUM`, `*_X86`, `*_UNKNOWN`</td>
+		<td>*_ARM, *_ITANIUM, *_X86, *_UNKNOWN</td>
 	</tr>
 	<tr>
-		<td>`PLATFORM_COMPILER`</td>
+		<td>PLATFORM_COMPILER</td>
 		<td>Platform compiler.</td>
 		<td>
-			`*_CLANG`, `*_COMEAU`, `*_GCC`, `*_ICC`, `*_MSVC`,
-			`*_UNKNOWN`
+			*_CLANG, *_COMEAU, *_GCC, *_ICC, *_MSVC,
+			*_UNKNOWN
 		</td>
 	</tr>
 	<tr>
-		<td>`PLATFORM_COMPILER_VERSION`</td>
+		<td>PLATFORM_COMPILER_VERSION</td>
 		<td>Platform compiler version.</td>
-		<td>Compare using `CC_COMPILER_VERSION(v, r, p)`.</td>
+		<td>Compare using CC_COMPILER_VERSION(v, r, p).</td>
 	</tr>
 	<tr>
-		<td>`PLATFORM_COMPILER_MAJOR_VERSION`</td>
+		<td>PLATFORM_COMPILER_MAJOR_VERSION</td>
 		<td>Platform compiler major version.</td>
 		<td>Integer.</td>
 	</tr>
 	<tr>
-		<td>`PLATFORM_COMPILER_MINOR_VERSION`</td>
+		<td>PLATFORM_COMPILER_MINOR_VERSION</td>
 		<td>Platform compiler minor version.</td>
 		<td>Integer.</td>
 	</tr>
 	<tr>
-		<td>`PLATFORM_COMPILER_PATCH_LEVEL`</td>
+		<td>PLATFORM_COMPILER_PATCH_LEVEL</td>
 		<td>Platform compiler patch level.</td>
 		<td>Integer.</td>
 	</tr>
 	<tr>
-		<td>`PLATFORM_INTEGER_BYTE_ORDER`</td>
+		<td>PLATFORM_INTEGER_BYTE_ORDER</td>
 		<td>Platform byte order.</td>
 		<td>
-			(`*` = `PLATFORM_BYTE_ORDER`) `*_LITTLE`, `*_BIG`,
-			`*_LITTLE_WORD`, `*_UNKNOWN`
+			(* = PLATFORM_BYTE_ORDER) *_LITTLE, *_BIG,
+			*_LITTLE_WORD, *_UNKNOWN
 		</td>
 	</tr>
 	<tr>
-		<td>`PLATFORM_KERNEL`</td>
+		<td>PLATFORM_KERNEL</td>
 		<td>Platform byte order.</td>
-		<td>`*_LINUX`, `*_WINDOWS_NT`, `*_XNU`, `*_UNKNOWN`</td>
+		<td>*_LINUX, *_WINDOWS_NT, *_XNU, *_UNKNOWN</td>
 	</tr>
 	<tr>
-		<td>`PLATFORM_WORD_SIZE`</td>
+		<td>PLATFORM_WORD_SIZE</td>
 		<td>Platform word size.</td>
-		<td>32, 64, `*_UNKNOWN`</td>
+		<td>32, 64, *_UNKNOWN</td>
 	</tr>
 	<tr>
-		<td>`PLATFORM_NEWLINE`</td>
+		<td>PLATFORM_NEWLINE</td>
 		<td>Platform newline.</td>
-		<td>`"\n"`, `"\r\n"`</td>
+		<td>"\n", "\r\n"</td>
 	</tr>
 	<tr>
-		<td>`PLATFORM_NEWLINE_LENGTH`</td>
+		<td>PLATFORM_NEWLINE_LENGTH</td>
 		<td>Platform newline.</td>
 		<td>Integer.</td>
 	</tr>
