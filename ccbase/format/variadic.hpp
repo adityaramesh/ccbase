@@ -9,6 +9,7 @@
 #define Z9DCE86DF_558B_497F_B6CC_4DCDFD6070FC
 
 #include <cassert>
+#include <cstdlib>
 #include <cstring>
 #include <ios>
 #include <iostream>
@@ -146,6 +147,24 @@ errln(const T* s, const Us... args)
 noexcept
 {
 	writeln(std::cerr, s, args...);
+}
+
+template <class T, class... Us>
+CC_ALWAYS_INLINE void
+finish(const T* s, const Us... args)
+noexcept
+{
+	println(s, args...);
+	std::exit(EXIT_SUCCESS);
+}
+
+template <class T, class... Us>
+CC_ALWAYS_INLINE void
+fail(const T* s, const Us... args)
+noexcept
+{
+	errln(s, args...);
+	std::exit(EXIT_FAILURE);
 }
 
 template <class T, class... Us>
