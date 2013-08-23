@@ -16,10 +16,11 @@ The `ccbase` library consists of the following components:
 - `ccbase.platform`: Compile-time access to platform-specific information.
 - `ccbase.unit_test`: Convenient and lightweight unit testing framework.
 - `ccbase.error`: Utilities for systematic error handling.
+- `ccbase.dynamic`: Dynamic library loading and symbol visibility control.
 
 The following additional components are currently under development:
 
-- CCBase.Tuple: Printing and operators for `std::tuple`.
+- `ccbase.tuple`: Printing and operators for `std::tuple`.
 
 ## Planned updates
 
@@ -73,7 +74,7 @@ Using `ccbase/format.hpp`, it would look like this:
 	throw parse_error(cc::format("Error parsing header: expected $0 at "
 	"line $1, column $2, but got $3 instead.", a, line, col, b));
 
-The formatting functions provided by CCBase.Format are listed in the table
+The formatting functions provided by `ccbase.format` are listed in the table
 below. Each of them is a lightweight wrapper that forwards each variadic
 template argument to the destination output stream using `operator<<`.
 
@@ -110,86 +111,15 @@ template argument to the destination output stream using `operator<<`.
 	</tr>
 <table>
 
-## `platform/dynamic.hpp`
+## `ccbase.platform`
 
-This header allows you to load functions and data from dynamic libraries using
-convenient C++11 syntax. Suppose that you have a library called `test.dll`,
-which defines two symbols of interest: `msg`, a `const std::string` and `test`,
-a function with the signature `std::string(std::string, std::string)`. Assuming
-that both symbols have C linkage, then you could load them as follows:
-
-	cc::image i{"test.dll", cc::lazy};
-	using signature = std::string(std::string, std::string);
-	auto f = cc::get_function<signature>("test", i).get();
-	auto& s = cc::get_data<std::string>("msg", i).get();
-
-Both methods return `expected` objects, which either contain the objects loaded
-from the symbols, or the exceptions that prevented them from being loaded.
-Notice that the `get_data` method returns a reference to the object at the
-symbol's address, so mutating the reference will also change the data at the
-symbol's address in memory.
-
-Information about the symbols can be queried using the `get_info` method, which
-returns an `expected<symbol_information>` structure. The `symbol_information`
-structure defines the following methods:
-	
-	// Returns the path to the loaded image.
-	const char* path();
-	// Returns the base address of the image.
-	const void* base_address();
-	// Returns the name of the symbol.
-	const char* name();
-	// Returns the address of the symbol.
-	const void* address();
-
-With the variables `f` and `s` as defined in the previous code sample, the
-`get_info` method is used as follows:
-
-	auto fi = cc::get_info(f).get();
-	auto si = cc::get_info(s).get();
-
-## `platform/visibility.hpp`
-
-This header defines macros that can be used to set symbol visibility when
-compiling shared libraries in a cross-platform manner. To this end, the
-following macros are defined:
-
-	// Used for public symbols in a header for a shared library that is to
-	// be implicitly linked into the final executable.
-	IMPORT_SYMBOL
-	// Used for public symbols in source code that is to be compiled into a
-	// shared library.
-	EXPORT_SYMBOL
-	// Used to hide symbols in source code that is to be compiled into a
-	// shared library.
-	HIDDEN_SYMBOL
-
-Often times, it is the case that the same header file is used both by the source
-code that is compiled into the shared library, and by the source code that links
-to the shared library. In the first case, public symbols should be prefixed by
-`EXPORT_SYMBOL`; in the second case, public symbols should be prefixed by
-`IMPORT_SYMBOL`. In both cases, private symbols that are not included in the
-shared library should be prefixed by `HIDDEN_SYMBOL`. The following macros are
-provided to make this task easier:
-
-	PUBLIC_SYMBOL
-	PRIVATE_SYMBOL
-
-`PUBLIC_SYMBOL` expands to `IMPORT_SYMBOL` if `CCBASE_IMPORT_SYMBOLS` is
-defined, or `EXPORT_SYMBOL` if `CCBASE_EXPORT_SYMBOLS` is defined. If neither of
-the two macros is defined, then `PUBLIC_SYMBOL` expands to nothing.
-`PRIVATE_SYMBOL` expands to `HIDDEN_SYMBOL` if either of the two macros is
-defined, and nothing otherwise.
-
-## `platform.hpp`
-
-This header allows you to identify various features of the host platform.
+This module allows you to identify various features of the host platform.
 Because preprocessor macros are used to perform the detection, the header is not
-guaranteed to successfully define all of the features in the list below.
-However, the GNU/Linux, Mac OS, and Windows operating systems are supported,
-along with the major C++ compilers and several CPU architectures.
+guaranteed to successfully define all of the features listed below.  However,
+the GNU/Linux, Mac OS, and Windows operating systems are supported, along with
+the major C++ compilers and several CPU architectures.
 
-The header attempts to identify the following features of the host platform.
+This module attempts to identify the following features of the host platform.
 - The compiler.
 - The compiler version.
 - The processor architecture.
@@ -256,23 +186,98 @@ Here is some example usage:
 Macros are defined analogously for the other platform features in the list
 above.
 
-## `utility/expected.hpp`
+## `ccbase.dynamic`
 
-This class is based on Andrei Alexandrescu's implementation of `expected<T>`,
-which he discussed in a talk at C++ Next 2012 called "Systematic Error
-Handling". The video and slides of the talk (which contain his code) are
-available [here][error_handling]. Support was later added for `expected<void>`,
-so that methods that return void can still take advantage of the this idiom.
-Finally, support for references was added, so that objects of type
-`expected<T&>` and `expected<const T&>` can now be created. The fact that
-generalized unions cannot contain references was alluded to in [this blog
-post][extending_expected], and the approach taken to rectify the problem is
-adapted from the one given in the blog post.
+### Loading Dynamic Libraries
 
-[error_handling]: http://channel9.msdn.com/Shows/Going+Deep/C-and-Beyond-2012-Andrei-Alexandrescu-Systematic-Error-Handling-in-C "Alexandrescu's Talk on Systematic Error Handling"
-[extending_expected]: http://anto-nonco.blogspot.com/2013/03/extending-expected-to-deal-with.html "Extending `expected<T>` to Deal with References"
+Suppose that you have a library called `test.dll`, which defines two symbols of
+interest: `msg`, a `const std::string` and `test`, a function with the signature
+`std::string(std::string, std::string)`. Assuming that both symbols have C
+linkage, then you could load them as follows:
 
-## `unit_test.hpp`
+	using signature = std::string(std::string, std::string);
+	auto i  = cc::image{"test.dll", cc::lazy};
+	auto f  = cc::get_function<signature>("test", i).get();
+	auto& s = cc::get_data<std::string>("msg", i).get();
+
+Both methods return `expected` objects, which either contain the objects loaded
+from the symbols, or the exceptions that prevented them from being loaded.
+Notice that the `get_data` method returns a reference to the object at the
+symbol's address, so mutating the reference will also change the data at the
+symbol's address in memory.
+
+Information about the symbols can be queried using the `get_info` method, which
+returns an `expected<symbol_information>` structure. The `symbol_information`
+structure defines the following methods:
+	
+	// Returns the path to the loaded image.
+	const char* path();
+	// Returns the base address of the image.
+	const void* base_address();
+	// Returns the name of the symbol.
+	const char* name();
+	// Returns the address of the symbol.
+	const void* address();
+
+With the variables `f` and `s` as defined in the previous code sample, the
+`get_info` method is used as follows:
+
+	auto fi = cc::get_info(f).get();
+	auto si = cc::get_info(s).get();
+
+### Controlling Symbol Visibility
+
+The following macros can be used to set symbol visibility when compiling shared
+libraries.
+
+	// Used for public symbols in a header for a shared library that is to
+	// be implicitly linked into the final executable.
+	IMPORT_SYMBOL
+	// Used for public symbols in source code that is to be compiled into a
+	// shared library.
+	EXPORT_SYMBOL
+	// Used to hide symbols in source code that is to be compiled into a
+	// shared library.
+	HIDDEN_SYMBOL
+
+Often times, it is the case that the same header file is used both by the source
+code that is compiled into the shared library, and by the source code that links
+to the shared library. In the first case, public symbols should be prefixed by
+`EXPORT_SYMBOL`; in the second case, public symbols should be prefixed by
+`IMPORT_SYMBOL`. In both cases, private symbols that are not included in the
+shared library should be prefixed by `HIDDEN_SYMBOL`. The following macros are
+provided to make this task easier:
+
+	PUBLIC_SYMBOL
+	PRIVATE_SYMBOL
+
+`PUBLIC_SYMBOL` expands to `IMPORT_SYMBOL` if `CCBASE_IMPORT_SYMBOLS` is
+defined, or `EXPORT_SYMBOL` if `CCBASE_EXPORT_SYMBOLS` is defined. If neither of
+the two macros is defined, then `PUBLIC_SYMBOL` expands to nothing.
+`PRIVATE_SYMBOL` expands to `HIDDEN_SYMBOL` if either of the two macros is
+defined, and nothing otherwise.
+
+## `ccbase.error`
+
+Currently, this module contains an implementation of `expected<T>` based on the
+one Andrei Alexandrescu discusses in his talk at C++ Next 2012 called
+"Systematic Error Handling". The video and slides of the talk (which contain his
+code) are available [here][error_handling]. This implementation in `ccbase` is
+extended so that it also works for `void` and reference types.
+
+The fact that generalized unions cannot contain references was alluded to in
+[this blog post][extending_expected], and the approach taken to rectify the
+problem is adapted from the one given in the blog post.
+
+[error_handling]:
+http://channel9.msdn.com/Shows/Going+Deep/C-and-Beyond-2012-Andrei-Alexandrescu-Systematic-Error-Handling-in-C
+"Alexandrescu's Talk on Systematic Error Handling"
+
+[extending_expected]:
+http://anto-nonco.blogspot.com/2013/03/extending-expected-to-deal-with.html
+"Extending `expected<T>` to Deal with References"
+
+## `ccbase.unit_test`
 
 This header provides some utilities for basic unit testing. Tests are
 implemented as modules, and a set of related modules is gathered in a suite.
