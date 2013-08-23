@@ -109,7 +109,7 @@ template argument to the destination output stream using `operator<<`.
 		<td>`cc::fail(const T*, const Us&...)`</td>
 		<td>`cc::fail("Could not open file $0.", fn);`</td>
 	</tr>
-<table>
+</table>
 
 ## `ccbase.platform`
 
