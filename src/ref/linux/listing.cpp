@@ -9,28 +9,43 @@
 #include <fcntl.h>
 // POSIX close.
 #include <unistd.h>
-// System call number for `getdirentries64`.
+// System call number for `getdents`.
 #include <sys/syscall.h>
-// Definition of struct dirent and file type macros.
-#include <sys/dirent.h>
 // POSIX stat.
 #include <sys/stat.h>
+// For defining linux_dirent.
+#include <cstdint>
+
+// For perror. We do not need this in the library.
+#include <stdio.h>
 
 #include <algorithm>
 #include <array>
 #include <memory>
 #include <ccbase/format.hpp>
-#include <ccbase/platform.hpp>
 
-static CC_ALWAYS_INLINE ssize_t
-getdirentries64(int fd, char* buf, size_t n, off_t* pos)
+struct linux_dirent
 {
-	return ::syscall(SYS_getdirentries64, fd, buf, n, pos);
+	uint64_t d_ino;
+	uint64_t d_off;
+	uint16_t d_reclen;
+	uint8_t  d_name[];
+	/*
+	** Although there are more fields after d_name, it does not do any good
+	** to declare them here, because they can only be accessed after we know
+	** d_reclen.
+	*/
+};
+
+static CC_ALWAYS_INLINE int
+getdents(unsigned fd, const char* buf, unsigned n)
+{
+	return ::syscall(SYS_getdents, fd, buf, n);
 }
 
 int main()
 {
-	auto fd = ::open("/Users/aditya", O_RDONLY);
+	auto fd = ::open("/home/aditya", O_RDONLY);
 	if (fd < 0) {
 		::perror(nullptr);
 		cc::fail("Failed to open directory.");
@@ -51,23 +66,22 @@ int main()
 	
 	auto n   = std::max(s.st_size, s.st_blocks);
 	auto buf = std::unique_ptr<char[]>{new char[n]};
-	auto bp  = off_t{0};
 	auto i   = 1u;
 	ssize_t r;
 
-	while ((r = getdirentries64(fd, buf.get(), n, &bp)) > 0) {
+	while ((r = getdents(fd, buf.get(), n)) > 0) {
 		auto p = buf.get();
 		auto l = buf.get() + r;
 		do {
-			auto e = (::dirent*)p;
+			auto e = (::linux_dirent*)p;
+			auto t = *(char*)(p + e->d_reclen - 1);
 			p += e->d_reclen;
 			if (e->d_ino != 0) {
 				cc::println("Entry $0.", i);
 				cc::println("File number: $0.", e->d_ino); 
-				cc::println("Seek offset: $0.", e->d_seekoff);
+				cc::println("Seek offset: $0.", e->d_off);
 				cc::println("Record length: $0.", e->d_reclen);
-				cc::println("Name length: $0.", e->d_namlen);
-				cc::println("Type: $0.", (unsigned)e->d_type);
+				cc::println("Type: $0.", (unsigned)t);
 				cc::println("Name: \"$0\".\n", e->d_name);
 				++i;
 			}
