@@ -45,9 +45,9 @@ system, please review and edit the Rakefile accordingly. Then, run the following
 commands:
 
 	rake
-	rake tests
+	rake check
 
-If `rake tests` produces no output, then everything worked well, and you can
+If `rake check` produces no output, then everything worked well, and you can
 proceed to move the `ccbase_master/ccbase` directory to your include path.
 Otherwise, some tests must have failed on your system. I apologize for this, and
 would appreciate it if you file a bug report with the output of the unit tests

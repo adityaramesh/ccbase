@@ -33,8 +33,12 @@ libs  = FileList["src/lib/*"].map{|f| f.sub("src", "out").ext("lib")}
 task :default => dirs + tests + libs
 
 task "check" => tests do
-	tests.each do |f|
-		sh "./#{f}"
+	(tests - ["out/test/unit_test_test.run"]).each do |f|
+		r = `./#{f} -v medium`
+		if r.include? "Failure"
+			puts "The test \"#{f}\" failed! Please submit a bug report."
+			puts r
+		end
 	end
 end
 
