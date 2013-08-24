@@ -202,6 +202,7 @@ get_function(const char* name, const image& i)
 		if (t == nullptr) {
 			return std::runtime_error{::dlerror()};
 		}
+	default: return std::logic_error{"Unsupported kernel."};
 	}
 	return function<Signature>{t};
 }
@@ -229,6 +230,7 @@ get_data(const char* name, const image& i)
 		if (t == nullptr) {
 			return std::runtime_error{::dlerror()};
 		}
+	default: return std::logic_error{"Unsupported kernel."};
 	}
 	return *static_cast<T*>(t);
 }

@@ -9,6 +9,9 @@
 #define Z18CE7F37_CE09_4418_857C_204E01CC8104
 
 #include <ostream>
+#undef major
+#undef minor
+
 #include <ccbase/platform/architecture.hpp>
 #include <ccbase/platform/compiler.hpp>
 #include <ccbase/platform/operating_system.hpp>

@@ -9,6 +9,8 @@
 #define Z178C9C24_0EEF_41B7_B90A_400FC8D6827D
 
 #include <cstring>
+#undef major
+#undef minor
 
 namespace cc
 {
