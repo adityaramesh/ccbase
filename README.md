@@ -30,8 +30,6 @@ https://github.com/adityaramesh/ccbase/blob/master/documentation.md
 
 ## Planned updates
 
-- Consolidate `str_const.hpp` and `variadic_size.hpp` into the directories of
-  the respective projects, and remove the `preprocessor` and `mpl` directories.
 - Tuple arithmetic.
 - Support for typesetting paragraphs with a given character width. 
 
