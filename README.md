@@ -59,6 +59,10 @@ and your platform details (in particular, your OS and compiler, along with their
 corresponding versions) either via Github or by email at `_@adityaramesh.com`.
 Thanks!
 
-# Documentation
+# Development Notes
 
-You can read the examples and documentation [here][documentation].
+- Each module in `ccbase` has its own directory, along with a top-level header
+  file that includes all of the header files in the module.
+- The `src/ref` directory contains platform-specific reference programs that are
+  written to help understand how various functions work before they are
+  abstracted away behind an interface.
