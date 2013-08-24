@@ -22,6 +22,8 @@ The following additional components are currently under development:
 
 - `ccbase.tuple`: Printing and operators for `std::tuple`.
 
+You can read the examples and documentation [here]("documentation.md");
+
 ## Planned updates
 
 - Consolidate `str_const.hpp` and `variadic_size.hpp` into the directories of
@@ -56,3 +58,5 @@ corresponding versions) either via Github or by email at `_@adityaramesh.com`.
 Thanks!
 
 # Documentation
+
+You can read the examples and documentation [here]("documentation.md");
