@@ -22,8 +22,11 @@ The following additional components are currently under development:
 
 - `ccbase.tuple`: Printing and operators for `std::tuple`.
 
-You can read the examples and documentation
-[here]("blob/master/documentation.md").
+You can read the examples and documentation [here][documentation].
+
+[documentation]:
+https://github.com/adityaramesh/ccbase/blob/master/documentation.md
+"CCBase Documentation"
 
 ## Planned updates
 
@@ -60,5 +63,4 @@ Thanks!
 
 # Documentation
 
-You can read the examples and documentation
-[here]("blob/master/documentation.md").
+You can read the examples and documentation [here][documentation].
