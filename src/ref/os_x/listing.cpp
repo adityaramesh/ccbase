@@ -60,15 +60,17 @@ int main()
 		auto l = buf.get() + r;
 		do {
 			auto e = (::dirent*)p;
-			cc::println("Entry $0.", i);
-			cc::println("File number: $0.", e->d_ino); 
-			cc::println("Seek offset: $0.", e->d_seekoff);
-			cc::println("Record length: $0.", e->d_reclen);
-			cc::println("Name length: $0.", e->d_namlen);
-			cc::println("Type: $0.", (unsigned)e->d_type);
-			cc::println("Name: \"$0\".\n", e->d_name);
-			++i;
 			p += e->d_reclen;
+			if (e->d_ino != 0) {
+				cc::println("Entry $0.", i);
+				cc::println("File number: $0.", e->d_ino); 
+				cc::println("Seek offset: $0.", e->d_seekoff);
+				cc::println("Record length: $0.", e->d_reclen);
+				cc::println("Name length: $0.", e->d_namlen);
+				cc::println("Type: $0.", (unsigned)e->d_type);
+				cc::println("Name: \"$0\".\n", e->d_name);
+				++i;
+			}
 		}
 		while (p < l);
 	}
