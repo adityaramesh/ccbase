@@ -189,21 +189,24 @@ template <class Signature>
 cc::expected<function<Signature>>
 get_function(const char* name, const image& i)
 {
-	if (cc::platform::os.kernel() == cc::kernel_type::linux) {
+	// The Linux manual states that the error state should be cleared before
+	// checking the error state after the next dl* function call.
+	#if PLATFORM_KERNEL == PLATFORM_KERNEL_LINUX
 		::dlerror();
-	}
+	#endif
+
 	auto t = ::dlsym(i, name);
-	switch (cc::platform::os.kernel()) {
-	case cc::kernel_type::linux:
+
+	#if PLATFORM_KERNEL == PLATFORM_KERNEL_LINUX
 		if (::dlerror() != nullptr) {
 			return std::runtime_error{"Symbol not found."};
 		}
-	case cc::kernel_type::xnu:
+	#elif PLATFORM_KERNEL == PLATFORM_KERNEL_XNU
 		if (t == nullptr) {
 			return std::runtime_error{::dlerror()};
 		}
-	default: return std::logic_error{"Unsupported kernel."};
-	}
+	#endif
+
 	return function<Signature>{t};
 }
 
@@ -217,21 +220,24 @@ template <class T>
 cc::expected<T&>
 get_data(const char* name, const image& i)
 {
-	if (cc::platform::os.kernel() == cc::kernel_type::linux) {
+	// The Linux manual states that the error state should be cleared before
+	// checking the error state after the next dl* function call.
+	#if PLATFORM_KERNEL == PLATFORM_KERNEL_LINUX
 		::dlerror();
-	}
+	#endif
+
 	auto t = ::dlsym(i, name);
-	switch (cc::platform::os.kernel()) {
-	case cc::kernel_type::linux:
+
+	#if PLATFORM_KERNEL == PLATFORM_KERNEL_LINUX
 		if (::dlerror() != nullptr) {
 			return std::runtime_error{"Symbol not found."};
 		}
-	case cc::kernel_type::xnu:
+	#elif PLATFORM_KERNEL == PLATFORM_KERNEL_XNU
 		if (t == nullptr) {
 			return std::runtime_error{::dlerror()};
 		}
-	default: return std::logic_error{"Unsupported kernel."};
-	}
+	#endif
+
 	return *static_cast<T*>(t);
 }
 

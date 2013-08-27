@@ -9,6 +9,7 @@
 #define ZCED3A582_E931_4EB0_BF05_4DED7F731208
 
 #include <boost/preprocessor/slot/counter.hpp>
+#include <ccbase/platform/definitions.hpp>
 #include <ccbase/platform/variadic_size.hpp>
 
 /*
@@ -187,10 +188,10 @@
 	#include <linux/limits.h>
 
 	#ifdef NAME_MAX
-		#define PLATFORM_MAX_NAME_LENGTH NAME_MAX
+		#define PLATFORM_MAX_FILENAME_LENGTH NAME_MAX
 	#elif
-		#define PLATFORM_MAX_NAME_LENGTH \
-			PLATFORM_MAX_NAME_LENGTH_UNKNOWN
+		#define PLATFORM_MAX_FILENAME_LENGTH \
+			PLATFORM_MAX_FILENAME_LENGTH_UNKNOWN
 	#endif
 
 	#ifdef PATH_MAX
@@ -211,10 +212,10 @@
 	#include <sys/syslimits.h>
 
 	#ifdef NAME_MAX
-		#define PLATFORM_MAX_NAME_LENGTH NAME_MAX
+		#define PLATFORM_MAX_FILENAME_LENGTH NAME_MAX
 	#elif
-		#define PLATFORM_MAX_NAME_LENGTH \
-			PLATFORM_MAX_NAME_LENGTH_UNKNOWN
+		#define PLATFORM_MAX_FILENAME_LENGTH \
+			PLATFORM_MAX_FILENAME_LENGTH_UNKNOWN
 	#endif
 
 	#ifdef PATH_MAX
@@ -306,36 +307,5 @@
 #elif BOOST_PP_COUNTER > 1
 	#error "Conflicting byte order macros defined."
 #endif
-
-namespace cc
-{
-	struct platform
-	{
-		static constexpr auto arch = architecture{
-			static_cast<architecture::type>(PLATFORM_ARCH),
-			PLATFORM_WORD_SIZE,
-			static_cast<byte_order>(PLATFORM_INTEGER_BYTE_ORDER)
-		};
-
-		static constexpr auto os = operating_system{
-			static_cast<operating_system::type>(PLATFORM_OS),
-			static_cast<kernel_type>(PLATFORM_KERNEL),
-			PLATFORM_NEWLINE
-		};
-
-		static constexpr auto cc = compiler{
-			static_cast<compiler::type>(PLATFORM_COMPILER),
-			{
-				PLATFORM_COMPILER_MAJOR_VERSION,
-				PLATFORM_COMPILER_MINOR_VERSION,
-				PLATFORM_COMPILER_PATCH_LEVEL
-			}
-		};
-	};
-
-	constexpr architecture platform::arch;
-	constexpr operating_system platform::os;
-	constexpr compiler platform::cc;
-}
 
 #endif
