@@ -67,7 +67,7 @@ int main()
 	// strerror or strerror_r to get the error string.
 	// https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man3/strerror.3.html
 	
-	auto n   = std::max(s.st_size, s.st_blocks);
+	auto n   = rumpot(s.st_size, s.st_blksize);
 	auto buf = std::unique_ptr<char[]>{new char[n]};
 	auto bp  = off_t{0};
 	auto i   = 1u;
