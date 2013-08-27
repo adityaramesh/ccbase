@@ -40,6 +40,7 @@ class directory_entry
 {
 private:
 	friend class directory_iterator;
+
 	using length_type = uint16_t;
 
 	const directory_iterator* p;

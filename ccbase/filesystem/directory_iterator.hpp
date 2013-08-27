@@ -51,6 +51,7 @@ namespace cc
 
 namespace detail
 {
+
 	CC_ALWAYS_INLINE unsigned
 	rumpot(const unsigned p, const unsigned q)
 	{
@@ -58,6 +59,7 @@ namespace detail
 	}
 
 #if PLATFORM_KERNEL == PLATFORM_KERNEL_LINUX
+
 	struct linux_dirent
 	{
 		uint64_t d_ino;
@@ -65,12 +67,14 @@ namespace detail
 		uint16_t d_reclen;
 		uint8_t  d_name[];
 		/*
-		** Although there are more fields after d_name, it does not do any good
-		** to declare them here, because they can only be accessed after we know
-		** d_reclen.
+		** Although there are more fields after d_name, it does not do
+		** any good to declare them here, because they can only be
+		** accessed after we know d_reclen.
 		*/
 	};
+
 #endif
+
 }
 
 /*
@@ -83,8 +87,7 @@ namespace detail
 class directory_iterator :
 public boost::iterator_facade<
 	directory_iterator, directory_entry,
-	boost::single_pass_traversal_tag,
-	directory_entry
+	boost::single_pass_traversal_tag, directory_entry
 >
 {
 	using length_type = directory_entry::length_type;
@@ -259,6 +262,8 @@ const char* directory_entry::path() const
 	p->update_path(n, len);
 	return p->path();
 }
+
+using const_directory_iterator = directory_iterator;
 
 }
 
