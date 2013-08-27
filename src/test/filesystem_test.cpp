@@ -5,18 +5,26 @@
 ** Contact:	_@adityaramesh.com
 */
 
+#include <cstring>
 #include <ccbase/filesystem/directory_iterator.hpp>
 #include <ccbase/format.hpp>
 #include <ccbase/unit_test.hpp>
 
 module("Test directory iteration.")
 {
-	cc::directory_iterator f{"/Users/aditya"};
+	cc::directory_iterator f{"dat/listing"};
 	cc::directory_iterator l;
 
 	while (f != l) {
-		cc::println("File name: \"$0\". Is regular file: $1.",
-			f->path(), f->type() == cc::file_type::regular);
+		if (std::strcmp(f->name(), "a") == 0) {
+			require(f->type() == cc::file_type::regular);
+		}
+		else if (std::strcmp(f->name(), "b") == 0) {
+			require(f->type() == cc::file_type::symbolic_link);
+		}
+		else if (std::strcmp(f->name(), "c") == 0) {
+			require(f->type() == cc::file_type::directory);
+		}
 		++f;
 	}
 }
