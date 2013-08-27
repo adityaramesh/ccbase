@@ -190,8 +190,7 @@ private:
 	friend class boost::iterator_core_access;
 
 	/*
-	** Mmm... chunky. I wish I had some clam chowder right now. The Sundance
-	** Steakhouse in Palo Alto has great clam chowder.
+	** Mmm... chunky.
 	*/
 	void read_chunk()
 	{
