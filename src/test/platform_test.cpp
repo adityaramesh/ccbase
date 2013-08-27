@@ -44,6 +44,12 @@
 	#define platform_newline 0
 #endif
 
+#if defined(PLATFORM_DIRECTORY_SEPARATOR)
+	#define platform_directory_separator 1
+#else
+	#define platform_directory_separator 0
+#endif
+
 #if defined(PLATFORM_MAX_FILENAME_LENGTH)
 	#define platform_max_filename_length 1
 #else
@@ -64,6 +70,7 @@ module("test_support")
 	require(platform_kernel);
 	require(platform_integer_byte_order);
 	require(platform_newline);
+	require(platform_directory_separator);
 	require(platform_max_filename_length);
 	require(platform_max_pathname_length);
 }
