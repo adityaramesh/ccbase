@@ -9,20 +9,55 @@
 #define ZDDEA7CE4_14FD_40C7_AA27_9BBF59D67383
 
 #include <cstdint>
-#include <sys/types.h>
-#include <sys/dirent.h>
+#include <ccbase/platform.hpp>
+
+#if PLATFORM_KERNEL == PLATFORM_KERNEL_LINUX
+	#include <dirent.h>
+#elif PLATFORM_KERNEL == PLATFORM_KERNEL_XNU
+	#include <sys/dirent.h>
+#else
+	#error "Unsupported kernel."
+#endif
 
 namespace cc
 {
 
+enum class file_type : unsigned char
+{
+	block         = DT_BLK,
+	character     = DT_CHR,
+	directory     = DT_DIR,
+	fifo          = DT_FIFO,
+	symbolic_link = DT_LNK,
+	regular       = DT_REG,
+	socket        = DT_SOCK,
+	unknown       = DT_UNKNOWN
+};
+
+class directory_iterator;
+
 class directory_entry
 {
 private:
-	const uint8_t* name;
-	const uint8_t len;
+	friend class directory_iterator;
+	using length_type = uint16_t;
 
+	const directory_iterator* p;
+	const char* n;
+	const length_type len;
+	const file_type t;
+
+	directory_entry(
+		const directory_iterator& p,
+		const char* n,
+		const length_type len,
+		const file_type t
+	) noexcept : p{&p}, n{n}, len{len}, t{t} {}
 public:
-	explicit directory_entry()
+	// Defined in `directory_iterator.hpp` due to cyclic dependencies.
+	const char* path() const;
+	const char* name() const { return n; }
+	file_type type() const { return t; }
 };
 
 }
