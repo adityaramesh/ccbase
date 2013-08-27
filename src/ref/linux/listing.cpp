@@ -19,7 +19,6 @@
 // For perror. We do not need this in the library.
 #include <stdio.h>
 
-#include <algorithm>
 #include <array>
 #include <memory>
 #include <ccbase/format.hpp>
@@ -36,6 +35,25 @@ struct linux_dirent
 	** d_reclen.
 	*/
 };
+
+/*
+** RUMPOT: [R]ound [u]p to [m]ultiple of [p]ower [o]f [t]wo.
+**
+** If $p$ and $q$ are positive integers, then we can round $p$ to the next
+** multiple of $q$ by computing
+**
+** 	r = p + q - (p % q).
+**
+** In the case that $q = 2^k$, where $k \geq 0$, we have
+**
+** 	r = p + q - (p & (q - 1)).
+*/
+
+static inline unsigned
+rumpot(const unsigned p, const unsigned q)
+{
+	return p + q - (p & (q - 1));
+}
 
 static CC_ALWAYS_INLINE int
 getdents(unsigned fd, const char* buf, unsigned n)
@@ -64,7 +82,7 @@ int main()
 	// strerror or strerror_r to get the error string.
 	// https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man3/strerror.3.html
 	
-	auto n   = std::max(s.st_size, s.st_blocks);
+	auto n   = rumpot(s.st_size, s.st_blocks);
 	auto buf = std::unique_ptr<char[]>{new char[n]};
 	auto i   = 1u;
 	ssize_t r;

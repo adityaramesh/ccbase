@@ -16,11 +16,29 @@
 // POSIX stat.
 #include <sys/stat.h>
 
-#include <algorithm>
 #include <array>
 #include <memory>
 #include <ccbase/format.hpp>
 #include <ccbase/platform.hpp>
+
+/*
+** RUMPOT: [R]ound [u]p to [m]ultiple of [p]ower [o]f [t]wo.
+**
+** If $p$ and $q$ are positive integers, then we can round $p$ to the next
+** multiple of $q$ by computing
+**
+** 	r = p + q - (p % q).
+**
+** In the case that $q = 2^k$, where $k \geq 0$, we have
+**
+** 	r = p + q - (p & (q - 1)).
+*/
+
+static inline unsigned
+rumpot(const unsigned p, const unsigned q)
+{
+	return p + q - (p & (q - 1));
+}
 
 static CC_ALWAYS_INLINE ssize_t
 getdirentries64(int fd, char* buf, size_t n, off_t* pos)
