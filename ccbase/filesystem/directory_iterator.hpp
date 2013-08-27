@@ -125,13 +125,13 @@ public:
 		fd = ::open(dir, O_RDONLY);
 		if (fd < 0) {
 			throw std::system_error{errno, std::system_category(),
-				"Failed to open directory."};
+				"Failed to open directory"};
 		}
 
 		struct stat s;
 		if (::fstat(fd, &s) == -1) {
 			throw std::system_error{errno, std::system_category(),
-				"Failed to get directory status."};
+				"Failed to get directory status"};
 		}
 
 		bufsz = detail::rumpot(s.st_size, s.st_blksize);
@@ -172,7 +172,7 @@ public:
 		fd = ::open(pathbuf.data(), O_RDONLY);
 		if (fd < 0) {
 			throw std::system_error{errno, std::system_category(),
-				"Failed to open directory."};
+				"Failed to open directory"};
 		}
 
 		pathbuf[dirlen] = PLATFORM_DIRECTORY_SEPARATOR;
@@ -207,7 +207,7 @@ private:
 		}
 		else if (read == -1) {
 			throw std::system_error{errno, std::system_category(),
-				"Failed to read directory entries."};
+				"Failed to read directory entries"};
 		}
 	}
 
@@ -231,8 +231,8 @@ private:
 		#if PLATFORM_KERNEL == PLATFORM_KERNEL_LINUX
 			auto e  = (native_dirent*)f;
 			auto t  = static_cast<file_type>(*(char*)(f + e->d_reclen - 1));
-			auto nl = e->d_reclen - 2 - offsetof(linux_dirent, d_name);
-			return { *this, e->d_name, e->d_namlen, t };
+			auto nl = length_type(e->d_reclen - 2 - offsetof(detail::linux_dirent, d_name));
+			return { *this, (char*)e->d_name, nl, t };
 		#elif PLATFORM_KERNEL == PLATFORM_KERNEL_XNU
 			auto e = (native_dirent*)f;
 			return { *this, e->d_name, e->d_namlen,

@@ -11,7 +11,7 @@
 
 module("Test directory iteration.")
 {
-	cc::directory_iterator f{"/Users/aditya"};
+	cc::directory_iterator f{"/home/aditya"};
 	cc::directory_iterator l;
 
 	while (f != l) {
