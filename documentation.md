@@ -80,6 +80,7 @@ This module attempts to identify the following features of the host platform.
   different from the integer byte order, but the header makes no attempt to
   identify the latter).
 - The platform newline character.
+- The maximum permissible file and path name lengths.
 
 The header defines various feature macros, as well as the following structure
 which provides the same information as the macros in a more organized fashion.
@@ -162,6 +163,16 @@ substituted.
 	<tr>
 		<td>PLATFORM_NEWLINE_LENGTH</td>
 		<td>Platform newline.</td>
+		<td>Integer.</td>
+	</tr>
+	<tr>
+		<td>PLATFORM_MAX_FILENAME_LENGTH</td>
+		<td>Maximum permissible file name length.</td>
+		<td>Integer.</td>
+	</tr>
+	<tr>
+		<td>PLATFORM_MAX_PATHNAME_LENGTH</td>
+		<td>Maximum permissible path name length.</td>
 		<td>Integer.</td>
 	</tr>
 </table>
