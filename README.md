@@ -66,3 +66,6 @@ Thanks!
 - The `src/ref` directory contains platform-specific reference programs that are
   written to help understand how various functions work before they are
   abstracted away behind an interface.
+- Avoid using constexpr structures alongside macros. Although the syntax may be
+  cleaner in certain cases, it is not worth the development nightmare to
+  maintain both variants simultaneously.
