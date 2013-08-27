@@ -44,6 +44,18 @@
 	#define platform_newline 0
 #endif
 
+#if defined(PLATFORM_MAX_FILENAME_LENGTH)
+	#define platform_max_filename_length 1
+#else
+	#define platform_max_filename_length 0
+#endif
+
+#if defined(PLATFORM_MAX_PATHNAME_LENGTH)
+	#define platform_max_pathname_length 1
+#else
+	#define platform_max_pathname_length 0
+#endif
+
 module("test_support")
 {
 	require(platform_compiler);
@@ -52,6 +64,8 @@ module("test_support")
 	require(platform_kernel);
 	require(platform_integer_byte_order);
 	require(platform_newline);
+	require(platform_max_filename_length);
+	require(platform_max_pathname_length);
 }
 
 suite("Tests whether the platform identification features work on this platform.")

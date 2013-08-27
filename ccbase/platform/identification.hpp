@@ -11,10 +11,6 @@
 #include <boost/preprocessor/slot/counter.hpp>
 #include <ccbase/platform/variadic_size.hpp>
 
-#include <ccbase/platform/architecture.hpp>
-#include <ccbase/platform/compiler.hpp>
-#include <ccbase/platform/operating_system.hpp>
-
 /*
 ** List of variable macros:
 **
