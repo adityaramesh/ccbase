@@ -83,12 +83,7 @@ This module attempts to identify the following features of the host platform.
 - The platform directory separator.
 - The maximum permissible file and path name lengths.
 
-The header defines various feature macros, as well as the following structure
-which provides the same information as the macros in a more organized fashion.
-If you do not need to use the preprocessor, then it is recommend that you use
-the `platform` struct instead of the macros.
-
-### Preprocessor Usage
+### Usage
 
 The macros defined by the preprocessor are listed in the table below. Where `*`
 is used to indicate the value of a macro, the name of the macro is to be
@@ -182,59 +177,6 @@ substituted.
 		<td>Integer.</td>
 	</tr>
 </table>
-
-### C++ Usage
-
-The same information provided by the macros is also organized hierarchically in
-a `constexpr` structure that is accessible during compile-time.
-
-	struct platform
-	{
-		static constexpr auto arch = // See `platform/architecture.hpp`.
-		static constexpr auto cc = // See `platform/compiler.hpp`.
-		static constexpr auto os = // See `platform/operating_system.hpp.`
-	};
-
-Here is some example usage:
-
-	// Use of enums, which is encouraged where possible.
-
-	if (cc::platform::os == cc::operating_system::linux_distribution) {
-		// ...
-	}
-	else if (cc::platform::os == cc::operating_system::os_x) {
-		// ...
-	}
-	else if (cc::platform::os == cc::operating_system::windows) {
-		// ...
-	}
-	else {
-		// ...
-	}
-
-	/*
-	** Identification failure can be checked for explicitly by checking
-	** whether `cc::platform::os == cc::operating_system::unknown`.
-	*/
-
-	// Where necessary, macros can be used.
-	#if PLATFORM_OS == PLATFORM_OS_LINUX_DISTRIBUTION
-		// ...
-	#elif PLATFORM_OS == PLATFORM_OS_OS_X
-		// ...
-	#elif PLATFORM_OS == PLATFORM_OS_WINDOWS
-		// ...
-	#else
-		// Identification failure.
-	#endif
-
-	/*
-	** Identification failure can be checked for explicitly by determining
-	** whether `PLATFORM_OS == PLATFORM_OS_UNKNOWN`.
-	*/
-
-Macros are defined analogously for the other platform features in the list
-above.
 
 ## `ccbase.dynamic`
 
