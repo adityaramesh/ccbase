@@ -39,7 +39,7 @@ noexcept
 
 template <class T, class Traits = std::char_traits<T>>
 static CC_ALWAYS_INLINE void
-write_arg(std::basic_ostream<T, Traits>& os, const std::size_t n)
+write_arg(std::basic_ostream<T, Traits>& os, const std::size_t)
 noexcept 
 {
 	os.setstate(std::ios::failbit);
