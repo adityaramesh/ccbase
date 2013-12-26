@@ -122,7 +122,7 @@ get_suite(const char* program)
 }
 
 static int
-print_error(int argc, char** argv, const std::string msg)
+print_error(int, char** argv, const std::string msg)
 {
 	cc::writeln(std::cerr, "$0", msg);
 	cc::writeln(std::cerr, "Please type \"$0 --help\" for a list of "

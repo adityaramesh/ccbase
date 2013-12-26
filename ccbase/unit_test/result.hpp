@@ -30,7 +30,7 @@ public:
 
 	operator bool() const { return b; }
 	const char* source() const { return s.c_str(); }
-	const size_type line() const { return l; }
+	size_type line() const { return l; }
 };
 
 }
