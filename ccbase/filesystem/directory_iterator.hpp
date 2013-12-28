@@ -3,6 +3,13 @@
 ** Author:	Aditya Ramesh
 ** Date:	08/27/2013
 ** Contact:	_@adityaramesh.com
+**
+** This header defines a forward iterator that traverses the low-level directory
+** entries stored by the operating system. It reads the directory entires into a
+** buffer that is at least as large as the total size of the directory entries,
+** and whose size is also a multiple of the blocksize reported by `fstat`. When
+** the iterator is incremented, it reads the record length of the current
+** directory entry, and uses it to reach the next directory entry.
 */
 
 #ifndef Z288360C0_5CDE_4818_A366_F1E1AA4CF599
@@ -49,9 +56,13 @@
 namespace cc
 {
 
-namespace detail
+namespace
 {
 
+	/*
+	** Rounds a number to a multiple of another number that is a power of
+	** two.
+	*/
 	CC_ALWAYS_INLINE unsigned
 	rumpot(const unsigned p, const unsigned q)
 	{
@@ -92,7 +103,7 @@ public boost::iterator_facade<
 {
 	using length_type = directory_entry::length_type;
 #if PLATFORM_KERNEL == PLATFORM_KERNEL_LINUX
-	using native_dirent = detail::linux_dirent;
+	using native_dirent = linux_dirent;
 #elif PLATFORM_KERNEL == PLATFORM_KERNEL_XNU
 	using native_dirent = ::dirent;
 #endif
@@ -106,12 +117,12 @@ public boost::iterator_facade<
 	int read;
 #elif PLATFORM_KERNEL == PLATFORM_KERNEL_XNU
 	user_ssize_t read;
-	off_t        off{0};
+	off_t        off{};
 #endif
 
 	ssize_t  bufsz;
 	int      fd;
-	int      pos{0};
+	int      pos{};
 	unsigned dirlen;
 public:
 	directory_iterator() noexcept : pos{-1} {}
@@ -137,7 +148,7 @@ public:
 				"Failed to get directory status"};
 		}
 
-		bufsz = detail::rumpot(s.st_size, s.st_blksize);
+		bufsz = rumpot(s.st_size, s.st_blksize);
 		buf   = std::unique_ptr<char[]>{new char[bufsz]};
 
 		// We do not want to copy the null character, so we only copy
@@ -233,7 +244,7 @@ private:
 		#if PLATFORM_KERNEL == PLATFORM_KERNEL_LINUX
 			auto e  = (native_dirent*)f;
 			auto t  = static_cast<file_type>(*(char*)(f + e->d_reclen - 1));
-			auto nl = length_type(e->d_reclen - 2 - offsetof(detail::linux_dirent, d_name));
+			auto nl = length_type(e->d_reclen - 2 - offsetof(linux_dirent, d_name));
 			return { *this, (char*)e->d_name, nl, t };
 		#elif PLATFORM_KERNEL == PLATFORM_KERNEL_XNU
 			auto e = (native_dirent*)f;
