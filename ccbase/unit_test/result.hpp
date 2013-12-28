@@ -11,10 +11,8 @@
 #include <string>
 #include <ccbase/format.hpp>
 
-namespace cc
-{
-namespace internal
-{
+namespace cc {
+namespace detail {
 
 class result
 {
@@ -33,7 +31,6 @@ public:
 	size_type line() const { return l; }
 };
 
-}
-}
+}}
 
 #endif

@@ -13,8 +13,7 @@
 #include <ccbase/filesystem/directory_iterator.hpp>
 #include <ccbase/platform.hpp>
 
-namespace cc
-{
+namespace cc {
 
 CC_ALWAYS_INLINE bool
 is_glob(const char c)

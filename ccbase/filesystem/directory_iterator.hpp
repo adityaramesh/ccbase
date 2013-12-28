@@ -53,11 +53,9 @@
 	#error "Could not determine necessary information about platform."
 #endif
 
-namespace cc
-{
+namespace cc {
 
-namespace
-{
+namespace {
 
 	/*
 	** Rounds a number to a multiple of another number that is a power of

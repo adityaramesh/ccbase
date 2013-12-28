@@ -69,8 +69,7 @@
 #include <typeinfo>
 #include <utility>
 
-namespace cc
-{
+namespace cc {
 
 template <class T>
 struct expected_traits

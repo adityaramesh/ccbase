@@ -10,10 +10,8 @@
 
 #include <ccbase/unit_test/module.hpp>
 
-namespace cc
-{
-namespace internal
-{
+namespace cc {
+namespace detail {
 
 class module_list
 {
@@ -74,7 +72,6 @@ cend(const module_list m)
 	return m.cend();
 }
 
-}
-}
+}}
 
 #endif

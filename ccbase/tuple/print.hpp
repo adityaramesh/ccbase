@@ -13,11 +13,8 @@
 #include <tuple>
 #include <string>
 
-namespace cc
-{
-
-namespace internal
-{
+namespace cc {
+namespace {
 
 template <std::size_t Current, std::size_t Max, class Stream, class Tuple>
 struct print_tuple
@@ -49,7 +46,7 @@ noexcept -> decltype(os)
 	}
 
 	os << "(";
-	internal::print_tuple<0, sizeof...(Us) - 1, decltype(os), decltype(t)>::apply(os, t);
+	print_tuple<0, sizeof...(Us) - 1, decltype(os), decltype(t)>::apply(os, t);
 	return os;
 }
 

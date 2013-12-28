@@ -19,8 +19,7 @@
 	#error "Unsupported kernel."
 #endif
 
-namespace cc
-{
+namespace cc {
 
 enum class file_type : unsigned char
 {

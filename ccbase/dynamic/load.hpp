@@ -21,8 +21,7 @@
 	#error "Unsupported kernel."
 #endif
 
-namespace cc
-{
+namespace cc {
 
 enum class mode : int
 {

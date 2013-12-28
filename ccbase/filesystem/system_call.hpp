@@ -30,8 +30,7 @@
 	#error "Unsupported kernel."
 #endif
 
-namespace cc
-{
+namespace cc {
 
 #if PLATFORM_KERNEL == PLATFORM_KERNEL_LINUX
 

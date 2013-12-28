@@ -12,10 +12,8 @@
 #include <vector>
 #include <ccbase/unit_test/result.hpp>
 
-namespace cc
-{
-namespace internal
-{
+namespace cc {
+namespace detail {
 
 class module
 {

@@ -50,17 +50,17 @@
 
 #define module_impl_1(name)                                         \
 	static const bool CC_UNUSED BOOST_PP_CAT(temp_, __LINE__) = \
-	cc::internal::module_list::add(name, __LINE__);                 \
+	cc::detail::module_list::add(name, __LINE__);                 \
 	static void BOOST_PP_CAT(module_, __COUNTER__)()
 
 #define module_impl_2(name, description)                            \
 	static const bool CC_UNUSED BOOST_PP_CAT(temp_, __LINE__) = \
-	cc::internal::module_list::add(name, __LINE__, description);    \
+	cc::detail::module_list::add(name, __LINE__, description);    \
 	static void BOOST_PP_CAT(module_, __COUNTER__)()
 
 #define require(x)                                                  \
 	static const bool CC_UNUSED BOOST_PP_CAT(temp_, __LINE__) = \
-	cc::internal::module_list::require(__LINE__, #x, (x))
+	cc::detail::module_list::require(__LINE__, #x, (x))
 
 #define DECL(z, n, text) \
 	BOOST_PP_CAT(text, n)();
@@ -70,17 +70,17 @@
 	{                                                                      \
 		if (                                                           \
 			argc <= 1 || (argc == 3 &&                             \
-			(cc::internal::equal(argv[1], "-v") ||                 \
-			cc::internal::equal(argv[1], "--verbosity")))          \
+			(cc::detail::equal(argv[1], "-v") ||                 \
+			cc::detail::equal(argv[1], "--verbosity")))          \
 		) {                                                            \
 			BOOST_PP_REPEAT_FROM_TO(0, __COUNTER__, DECL, module_) \
 		}                                                              \
-		return cc::internal::parse_flags(argc, argv, description);     \
+		return cc::detail::parse_flags(argc, argv, description);     \
 	}
 
 namespace cc
 {
-namespace internal
+namespace detail
 {
 
 enum class verbosity : unsigned
