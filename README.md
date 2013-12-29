@@ -28,10 +28,12 @@ You can read the examples and documentation [here][documentation].
 https://github.com/adityaramesh/ccbase/blob/master/documentation.md
 "CCBase Documentation"
 
-## Planned updates
+## TODO
 
+- `cc::file_list`
 - Tuple arithmetic.
-- Support for typesetting paragraphs with a given character width. 
+- Support for typesetting ASCII text into paragraphs with a given character
+  width. 
 
 # Installation
 
