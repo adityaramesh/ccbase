@@ -38,6 +38,12 @@
 	#define platform_integer_byte_order 0
 #endif
 
+#if defined(PLATFORM_FLOAT_BYTE_ORDER)
+	#define platform_float_byte_order 1
+#else
+	#define platform_float_byte_order 0
+#endif
+
 #if defined(PLATFORM_NEWLINE)
 	#define platform_newline 1
 #else
@@ -69,6 +75,7 @@ module("test_support")
 	require(platform_os);
 	require(platform_kernel);
 	require(platform_integer_byte_order);
+	require(platform_float_byte_order);
 	require(platform_newline);
 	require(platform_directory_separator);
 	require(platform_max_filename_length);

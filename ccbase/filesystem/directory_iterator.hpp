@@ -57,30 +57,32 @@ namespace cc {
 
 namespace {
 
-	/*
-	** Rounds a number to a multiple of another number that is a power of
-	** two.
-	*/
-	CC_ALWAYS_INLINE unsigned
-	rumpot(const unsigned p, const unsigned q)
-	{
-		return p + q - (p & (q - 1));
-	}
+/*
+** Rounds a number to a multiple of another number that is a power of two.
+*/
+CC_ALWAYS_INLINE unsigned
+rumpot(const unsigned p, const unsigned q)
+{
+	return p + q - (p & (q - 1));
+}
 
 #if PLATFORM_KERNEL == PLATFORM_KERNEL_LINUX
 
-	struct linux_dirent
-	{
-		uint64_t d_ino;
-		uint64_t d_off;
-		uint16_t d_reclen;
-		uint8_t  d_name[];
-		/*
-		** Although there are more fields after d_name, it does not do
-		** any good to declare them here, because they can only be
-		** accessed after we know d_reclen.
-		*/
-	};
+struct linux_dirent
+{
+	uint64_t d_ino;
+	uint64_t d_off;
+	uint16_t d_reclen;
+	uint8_t  d_name[];
+
+	/*
+	** Although there are more fields after `d_name`, it does not do any
+	** good to declare them here, because they can only be accessed after we
+	** know `d_reclen`. The purpose of this structure is to make it easy to
+	** access the first few fields without tedious pointer arithmetic
+	** involving alignment computations.
+	*/
+};
 
 #endif
 
@@ -241,8 +243,11 @@ private:
 	{
 		#if PLATFORM_KERNEL == PLATFORM_KERNEL_LINUX
 			auto e  = (native_dirent*)f;
+			// The type of the file is stored in the last byte of
+			// the directory record.
 			auto t  = static_cast<file_type>(*(char*)(f + e->d_reclen - 1));
-			auto nl = length_type(e->d_reclen - 2 - offsetof(linux_dirent, d_name));
+			// Compute the length of the file name.
+			auto nl = length_type{e->d_reclen - 2 - offsetof(linux_dirent, d_name)};
 			return { *this, (char*)e->d_name, nl, t };
 		#elif PLATFORM_KERNEL == PLATFORM_KERNEL_XNU
 			auto e = (native_dirent*)f;
