@@ -55,7 +55,7 @@
 
 namespace cc {
 
-namespace {
+namespace detail {
 
 /*
 ** Rounds a number to a multiple of another number that is a power of two.
@@ -89,7 +89,7 @@ struct linux_dirent
 }
 
 /*
-** The constructors of this class can throw. For most cases, the `cc::list`
+** The constructors of this class can throw. For most cases, the `cc::file_list`
 ** function, which returns an expected range object containing the first and
 ** last directory iterators, should be sufficient. The latter is also much more
 ** convenient to use.
@@ -148,7 +148,7 @@ public:
 				"Failed to get directory status"};
 		}
 
-		bufsz = rumpot(s.st_size, s.st_blksize);
+		bufsz = detail::rumpot(s.st_size, s.st_blksize);
 		buf   = std::unique_ptr<char[]>{new char[bufsz]};
 
 		// We do not want to copy the null character, so we only copy

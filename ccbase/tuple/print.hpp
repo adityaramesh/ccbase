@@ -14,7 +14,7 @@
 #include <string>
 
 namespace cc {
-namespace {
+namespace detail {
 
 template <std::size_t Current, std::size_t Max, class Stream, class Tuple>
 struct print_tuple

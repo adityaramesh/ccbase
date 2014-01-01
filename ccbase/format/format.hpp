@@ -18,7 +18,8 @@
 #include <ccbase/platform.hpp>
 
 namespace cc {
-namespace {
+
+namespace detail {
 
 /*
 ** We do not use the `isdigit` function from `<cctype>`, because the only
@@ -63,6 +64,9 @@ template <class T, class Traits = std::char_traits<T>, class... Us>
 void write(std::basic_ostream<T, Traits>& os, const T* s, const Us... args)
 noexcept
 {
+	using detail::is_digit;
+	using detail::write_arg;
+
 	auto f = s;
 	auto l = s;
 
