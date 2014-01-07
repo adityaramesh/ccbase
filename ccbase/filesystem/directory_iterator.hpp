@@ -103,7 +103,7 @@ public boost::iterator_facade<
 {
 	using length_type = directory_entry::length_type;
 #if PLATFORM_KERNEL == PLATFORM_KERNEL_LINUX
-	using native_dirent = linux_dirent;
+	using native_dirent = detail::linux_dirent;
 #elif PLATFORM_KERNEL == PLATFORM_KERNEL_XNU
 	using native_dirent = ::dirent;
 #endif
@@ -247,7 +247,7 @@ private:
 			// the directory record.
 			auto t  = static_cast<file_type>(*(char*)(f + e->d_reclen - 1));
 			// Compute the length of the file name.
-			auto nl = length_type{e->d_reclen - 2 - offsetof(linux_dirent, d_name)};
+			auto nl = length_type(e->d_reclen - 2 - offsetof(detail::linux_dirent, d_name));
 			return { *this, (char*)e->d_name, nl, t };
 		#elif PLATFORM_KERNEL == PLATFORM_KERNEL_XNU
 			auto e = (native_dirent*)f;
