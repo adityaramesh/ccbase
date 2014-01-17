@@ -62,6 +62,7 @@
 #ifndef Z9F71ED6B_DBA6_4FFD_83F7_2D168D140002
 #define Z9F71ED6B_DBA6_4FFD_83F7_2D168D140002
 
+#include <cassert>
 #include <exception>
 #include <functional>
 #include <stdexcept>
@@ -367,6 +368,9 @@ class expected<void>
 {
 	std::exception_ptr p_;
 	bool valid_;
+	#ifndef NDEBUG
+		mutable bool read_{false};
+	#endif
 public:
 	expected(bool) noexcept : valid_{true} {}
 
@@ -415,6 +419,9 @@ public:
 		// `p_.::~exception_ptr()`.
 		using std::exception_ptr;
 		if (!valid_) p_.~exception_ptr();
+		#ifndef NDEBUG
+			assert(read_);
+		#endif
 	}
 
 	bool valid() const
@@ -424,6 +431,9 @@ public:
 	
 	void get() const
 	{
+		#ifndef NDEBUG
+			read_ = true;
+		#endif
 		if (!valid_) std::rethrow_exception(p_);
 	}
 

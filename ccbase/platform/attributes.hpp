@@ -17,6 +17,7 @@
 	#define CC_PURE          __attribute__((pure))
 	#define CC_UNUSED        __attribute__((unused))
 	#define CC_RESTRICT      __restrict__
+	#define CC_ALIGN(n)      __attribute__((aligned(n)))
 #elif PLATFORM_COMPILER == PLATFORM_COMPILER_CLANG
 	#define CC_ALWAYS_INLINE __attribute__((always_inline))
 	#define CC_NEVER_INLINE  __attribute__((noinline))
@@ -24,6 +25,7 @@
 	#define CC_PURE          __attribute__((pure))
 	#define CC_UNUSED        __attribute__((unused))
 	#define CC_RESTRICT      __restrict__
+	#define CC_ALIGN(n)      __attribute__((aligned(n)))
 #elif PLATFORM_COMPILER == PLATFORM_COMPILER_ICC
 	#define CC_ALWAYS_INLINE __attribute__((always_inline))
 	#define CC_NEVER_INLINE  __attribute__((noinline))
@@ -31,6 +33,7 @@
 	#define CC_PURE          __attribute__((pure))
 	#define CC_UNUSED        __attribute__((unused))
 	#define CC_RESTRICT      restrict
+	#define CC_ALIGN(n)      __attribute__((aligned(n)))
 #elif PLATFORM_COMPILER == PLATFORM_COMPILER_MSVC
 	#define CC_ALWAYS_INLINE __forceinline
 	#define CC_NEVER_INLINE  __declspec(noinline)
@@ -38,6 +41,7 @@
 	#define CC_PURE
 	#define CC_UNUSED
 	#define CC_RESTRICT      __restrict
+	#define CC_ALIGN(n)      __declspec(align(n))
 #else
 	#define CC_ALWAYS_INLINE
 	#define CC_NEVER_INLINE
@@ -45,6 +49,7 @@
 	#define CC_PURE
 	#define CC_UNUSED
 	#define CC_RESTRICT
+	#define CC_ALIGN(n)     "Could not determine compiler alignment directive."
 #endif
 
 #endif
