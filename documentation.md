@@ -338,7 +338,8 @@ The former takes a path to a directory, and returns a `boost::iterator_range`
 object that can be used to iterate over the files in the directory. The latter
 does the same, but it also allows for Bash globbing (`*`, `[]`, `?`, and
 escaping special characters using `\\` all work). The only limitation is that
-recursive directory iteration via globbing is not yet supported.
+recursive directory iteration via globbing is not yet supported (so only use
+globbing after the last `/`).
 
 Dereferencing an iterator within the range returned by either of these functions
 returns a `cc::directory_entry` object, which has the following three member
