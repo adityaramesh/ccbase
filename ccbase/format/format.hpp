@@ -14,6 +14,7 @@
 #include <ios>
 #include <iostream>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 #include <ccbase/platform.hpp>
 
@@ -38,9 +39,8 @@ noexcept
 template <class T, class Traits = std::char_traits<T>>
 static CC_ALWAYS_INLINE void
 write_arg(std::basic_ostream<T, Traits>& os, const std::size_t)
-noexcept 
 {
-	os.setstate(std::ios::failbit);
+	throw std::out_of_range{"Not enough arguments."};
 }
 
 template <class T, class Traits = std::char_traits<T>, class U, class... Us>
@@ -50,7 +50,7 @@ write_arg(
 	const std::size_t n,
 	const U arg,
 	const Us... args
-) noexcept 
+)
 {
 	if (n > 0) {
 		return write_arg(os, n - 1, args...);
@@ -62,7 +62,6 @@ write_arg(
 
 template <class T, class Traits = std::char_traits<T>, class... Us>
 void write(std::basic_ostream<T, Traits>& os, const T* s, const Us... args)
-noexcept
 {
 	using detail::is_digit;
 	using detail::write_arg;
@@ -109,7 +108,6 @@ noexcept
 
 template <class T, class Traits = std::char_traits<T>, class... Us>
 void writeln(std::basic_ostream<T, Traits>& os, const T* s, const Us... args)
-noexcept
 {
 	write(os, s, args...);
 	os << std::endl;
@@ -118,7 +116,6 @@ noexcept
 template <class T, class... Us>
 CC_ALWAYS_INLINE void
 print(const T* s, const Us... args)
-noexcept
 {
 	write(std::cout, s, args...);
 }
@@ -126,7 +123,6 @@ noexcept
 template <class T, class... Us>
 CC_ALWAYS_INLINE void
 println(const T* s, const Us... args)
-noexcept
 {
 	writeln(std::cout, s, args...);
 }
@@ -134,7 +130,6 @@ noexcept
 template <class T, class... Us>
 CC_ALWAYS_INLINE void
 err(const T* s, const Us... args)
-noexcept
 {
 	write(std::cerr, s, args...);
 }
@@ -142,7 +137,6 @@ noexcept
 template <class T, class... Us>
 CC_ALWAYS_INLINE void
 errln(const T* s, const Us... args)
-noexcept
 {
 	writeln(std::cerr, s, args...);
 }
@@ -150,7 +144,6 @@ noexcept
 template <class T, class... Us>
 CC_ALWAYS_INLINE void
 finish(const T* s, const Us... args)
-noexcept
 {
 	println(s, args...);
 	std::exit(EXIT_SUCCESS);
@@ -159,7 +152,6 @@ noexcept
 template <class T, class... Us>
 CC_ALWAYS_INLINE void
 fail(const T* s, const Us... args)
-noexcept
 {
 	errln(s, args...);
 	std::exit(EXIT_FAILURE);
@@ -167,7 +159,7 @@ noexcept
 
 template <class T, class... Us>
 CC_ALWAYS_INLINE auto
-format(const T* s, const Us... args) noexcept ->
+format(const T* s, const Us... args) ->
 std::basic_string<T, std::char_traits<T>>
 {
 	std::basic_ostringstream<T, std::char_traits<T>> ss; 
@@ -177,7 +169,7 @@ std::basic_string<T, std::char_traits<T>>
 
 template <class T, class... Us>
 CC_ALWAYS_INLINE auto
-formatln(const T* s, const Us... args) noexcept ->
+formatln(const T* s, const Us... args) ->
 std::basic_string<T, std::char_traits<T>>
 {
 	std::basic_ostringstream<T, std::char_traits<T>> ss; 
