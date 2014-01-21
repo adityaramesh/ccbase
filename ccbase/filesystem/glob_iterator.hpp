@@ -8,7 +8,6 @@
 #ifndef Z8614FAE3_9C93_4CD5_8DDC_263814847601
 #define Z8614FAE3_9C93_4CD5_8DDC_263814847601
 
-#include <iostream>
 #include <boost/iterator/filter_iterator.hpp>
 #include <ccbase/filesystem/directory_iterator.hpp>
 #include <ccbase/platform.hpp>
@@ -35,23 +34,28 @@ public:
 		#ifndef NDEBUG
 		auto i = 0u;
 
-		// These sequences are considered to be syntax violations when
-		// they occur within glob patterns supplied to this constructor:
-		// 1. Special characters within groups.
-		// 2. Empty groups.
-		// 3. Any backslash not followed by special character; this
-		// includes trailing backslashes.
-
+		/*
+		** The following sequences are considered to be syntax
+		** violations when they occur within glob patterns:
+		**
+		**   1. Special characters within groups.
+		**   2. Empty groups.
+		**   3. Any backslash not followed by a special character; this
+		**   includes trailing backslashes.
+		*/
 		do switch (pat[i]) {
 		default:
 		case '*':
 		case '?':     ++i;                            continue;
 		case '[':     assert(pat[++i] != ']');        goto group_mode;
+		// Ensure that the character escaped using a backslash is a
+		// special character.
 		case '\\':    assert(is_glob(pat[++i])); ++i; continue;
 		regular_mode:                                 continue;
 		} while (pat[i] != '\0');
 		return;
-
+		
+		// Check to ensure that the current group is valid.
 	group_mode:
 		for(;;) switch (pat[i]) {
 		default:   ++i;                            continue;
@@ -65,11 +69,18 @@ public:
 		#endif
 	}
 
+	/*
+	** Determines whether the directory entry's name matches the glob
+	** pattern.
+	*/
 	bool operator()(const directory_entry& e) const
 	{
+		// Offset into pattern that we are matching.
 		auto i = 0u;
+		// Offset into the file name.
 		auto j = 0u;
 		auto s = e.name();
+
 		do switch(pat[i]) {
 		default:   if (pat[i++] != s[j++])           return false; continue;
 		case '*':  ++i; return match_wildcard(s, i, j);
@@ -80,10 +91,15 @@ public:
 		return (pat[i] == '\0' || pat[i] == '*') && s[j] == '\0';
 	}
 private:
+	/*
+	** Determines whether `s[j]` matches the group of characters starting at
+	** `pat[i]`.
+	*/
 	bool match_group(const char* s, unsigned& i, unsigned& j) const
 	{
 		auto b = false;
 		do {
+			// Skip past the backslash before an escaped character.
 			i += (pat[i] == '\\');
 			b = b || (pat[i] == s[j]);
 			++i;
@@ -94,13 +110,26 @@ private:
 		return b;
 	}
 
+	/*
+	** After this method is called, we must iteratively test each character
+	** of `s` beginning at `s[j]` to check whether it matches the characters
+	** after the wildcards beginning at `pat[i - 1]`.
+	*/
 	bool match_wildcard(const char* s, unsigned i, unsigned j) const
 	{
-		// First index of current subpattern for which we are finding a
-		// match. A subpattern is a pattern between a wildcard and
+		/*
+		** We keep track of the index `pi` after each wildcard that we
+		** are trying to match, and the index `pj` into `s` at which we
+		** are looking for a match. If the characters after the wildcard
+		** fail to match the string beginning at `s[j]`, then we reset
+		** `i` to `pi` and `j` to `pj`.
+		*/
+
+		// First index of current subpattern for which we are looking
+		// for a match. A subpattern is a pattern between a wildcard and
 		// another wildcard or null character.
 		auto pi = i;
-		// Current index at which we are checking for a match.
+		// Current index at which we are looking for a match.
 		auto pj = j;
 
 		while (s[j] != '\0') switch (pat[i]) {
@@ -134,10 +163,13 @@ private:
 				}
 				continue;
 			case '\\':
-				// We have to be careful about how we increment
-				// i before continuing to the next iteration, or
-				// else we may treat the escaped character as a
-				// special character.
+				/*
+				** If we increment `i` by one, then we will
+				** interpret the following escaped character as
+				** a special character at the next iteration. To
+				** prevent this, we must anticipate what should
+				** happen in the next iteration.
+				*/
 				if (pat[i + 1] != s[j]) {
 					++pj;
 					i = pi;
