@@ -10,6 +10,11 @@
 ** and whose size is also a multiple of the blocksize reported by `fstat`. When
 ** the iterator is incremented, it reads the record length of the current
 ** directory entry, and uses it to reach the next directory entry.
+**
+** If you need to iterate a very large number of files as fast as possible, then
+** this strategy could be optimized further by using two buffers and
+** preemptively filling the second buffer on another thread while the first
+** buffer is processed.
 */
 
 #ifndef Z288360C0_5CDE_4818_A366_F1E1AA4CF599
@@ -170,7 +175,6 @@ public:
 	** If the original iterator is an end iterator, the copy will also be an
 	** end iterator, although no IO operations will be performed.
 	*/
-
 	directory_iterator(const directory_iterator& rhs) :
 	bufsz{rhs.bufsz}, dirlen{rhs.dirlen}
 	{

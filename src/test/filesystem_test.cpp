@@ -7,8 +7,7 @@
 
 #include <cstring>
 #include <unordered_set>
-#include <ccbase/filesystem/directory_iterator.hpp>
-#include <ccbase/filesystem/glob_iterator.hpp>
+#include <ccbase/filesystem/range.hpp>
 #include <ccbase/format.hpp>
 #include <ccbase/unit_test.hpp>
 
@@ -91,6 +90,17 @@ module("Test glob matching.")
 	require(v5.size() == 2 && v5.count("ab123") && v5.count("abc23"));
 	require(v6.size() == 1 && v6.count("[?]*[?]"));
 	require(v7.size() == 2 && v7.count("[?]*[?]") && v7.count("abc123abc"));
+}
+
+module("Test range functionality.")
+{
+	auto i = 0u;
+	for (const auto& e : cc::list_files("dat/listing_2")) { ++i; }
+	require(i == 8);
+
+	i = 0u;
+	for (const auto& e : cc::match_files("dat/listing_2/*")) { ++i; }
+	require(i == 4);
 }
 
 suite("Tests the filesystem module.")

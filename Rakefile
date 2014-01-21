@@ -38,7 +38,7 @@ elsif RUBY_PLATFORM.include? "darwin"
 		sub("os_x/", "").ext("run")}
 end
 
-task :default => dirs + tests + libs
+multitask :default => dirs + tests + libs
 
 task "refs" => dirs + refs
 

@@ -8,7 +8,8 @@
 # Introduction
 
 `ccbase` is a header-only collection of lightweight modules that augment the
-standard library or provide abstractions over platform-specific functionality.
+standard library or provide abstractions over platform-specific functionality
+for Linux and OS X.
 
 The `ccbase` library consists of the following components:
 
@@ -17,6 +18,7 @@ The `ccbase` library consists of the following components:
 - `ccbase.unit_test`: Convenient and lightweight unit testing framework.
 - `ccbase.error`: Utilities for systematic error handling.
 - `ccbase.dynamic`: Dynamic library loading and symbol visibility control.
+- `ccbase.filesystem`: Fast and convenient directory iteration.
 
 The following additional components are currently under development:
 
@@ -26,10 +28,13 @@ You can read the examples and documentation [here](documentation.md).
 
 ## TODO
 
-- `cc::file_list`
+- `match_files` with recursive directory enumeration.
 - Tuple arithmetic.
-- Support for typesetting ASCII text into paragraphs with a given character
-  width. 
+
+## Prerequisites
+
+`ccbase` depends on Boost (namely, Boost.Range and Boost.Iterator). You should
+have Boost installed on your system before attempting to install `ccbase`.
 
 # Installation
 
@@ -40,11 +45,11 @@ would suggest first building and running the unit tests, to ensure that
 everything is working correctly on your system.
 
 First, ensure that the `CXX` environment variable is set to your desired
-C++11-conformant compiler. The compilation flags set in the Rakefile should work
-for both `g++` and `clang++` running on OS X or Linux. If you are using another
-compiler or think that the compilation flags may need to be revised for your
-system, please review and edit the Rakefile accordingly. Then, run the following
-commands:
+C++11-conformant compiler, and that `BOOST_INCLUDE_PATH` is set appropriately.
+The compilation flags set in the Rakefile should work for both `g++` and
+`clang++` running on OS X or Linux. If you are using another compiler or think
+that the compilation flags may need to be revised for your system, please review
+and edit the Rakefile accordingly. Then, run the following commands:
 
 	rake
 	rake check

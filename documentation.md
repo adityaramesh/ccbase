@@ -255,7 +255,9 @@ Currently, this module contains an implementation of `expected<T>` based on the
 one Andrei Alexandrescu discusses in his talk at C++ Next 2012 called
 "Systematic Error Handling". The video and slides of the talk (which contain his
 code) are available [here][error_handling]. This implementation in `ccbase` is
-extended so that it also works for `void` and reference types.
+extended so that it also works for `void` and reference types. (For `void`
+types, an assertion is performed if `NDEBUG` is not defined to ensure that
+`.get()` is called before destruction.)
 
 The fact that generalized unions cannot contain references was alluded to in
 [this blog post][extending_expected], and the approach taken to rectify the
@@ -271,7 +273,7 @@ http://anto-nonco.blogspot.com/2013/03/extending-expected-to-deal-with.html
 
 ## `ccbase.unit_test`
 
-This header provides some utilities for basic unit testing. Tests are
+This header provides some utilities for very basic unit testing. Tests are
 implemented as modules, and a set of related modules is gathered in a suite.
 Here is an example of a file called `test.cpp` which uses the unit testing
 functionality.
@@ -311,3 +313,52 @@ running the executable with the option `-v medium` displays the following.
 Medium-level logging causes the line number and source code for failed
 assertions within each module to be printed along with the summary statistics.
 For more options, run the executable with the `--help` flag.
+
+## `ccbase.filesystem`
+
+Using this header, you can do the following without any static library
+dependencies (Linux and OS X only):
+
+	for (const auto& e : cc::match_files("dat/frame_[abc]*.jpg")) {
+		cc::println("$0", e.name());
+	}
+
+`ccbase.filesystem` uses raw system calls rather than the POSIX `readdir()`
+function. This allows for efficient iteration over millions of files. `ls`,
+`find`, or any utility that uses `readdir()` (including Boost.Filesystem) can
+hang in such cases. See [this blog post][readdir_fails] for the full story.
+
+The design of this library is roughly influenced by Boost.Filesystem, but the
+high-level interface only consists of the following two functions:
+
+  - `cc::list_files`
+  - `cc::match_files`
+
+The former takes a path to a directory, and returns a `boost::iterator_range`
+object that can be used to iterate over the files in the directory. The latter
+does the same, but it also allows for Bash globbing (`*`, `[]`, `?`, and
+escaping special characters using `\\` all work). The only limitation is that
+recursive directory iteration via globbing is not yet supported.
+
+Dereferencing an iterator within the range returned by either of these functions
+returns a `cc::directory_entry` object, which has the following three member
+functions:
+
+  - `const char* path() const` Returns the absolute path to this file.
+  - `const char* name() const` Returns the name of the file.
+  - `const cc::file_type type() const` Returns the file type.
+
+The `cc:file_type` is an enum class with the following values:
+
+  - `cc::file_type::block`
+  - `cc::file_type::character`
+  - `cc::file_type::directory`
+  - `cc::file_type::fifo`
+  - `cc::file_type::symbolic_link`
+  - `cc::file_type::regular`
+  - `cc::file_type::socket`
+  - `cc::file_type::unknown`
+
+[readdir_fails]:
+http://www.olark.com/spw/2011/08/you-can-list-a-directory-with-8-million-files-but-not-with-ls/
+"Listing a directory with 8 million files"
