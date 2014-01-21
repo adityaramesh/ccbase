@@ -319,6 +319,8 @@ For more options, run the executable with the `--help` flag.
 Using this header, you can do the following without any static library
 dependencies (Linux and OS X only):
 
+	#include <ccbase/filesystem.hpp>
+
 	for (const auto& e : cc::match_files("dat/frame_[abc]*.jpg")) {
 		cc::println("$0", e.name());
 	}
