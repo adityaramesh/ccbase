@@ -24,7 +24,7 @@ private:
 	bool b;
 public:
 	result(size_type l, const char* s, const bool b)
-	noexcept : s{format("require($0)", s)}, l{l}, b{b} {}
+	noexcept : s{format("require($)", s)}, l{l}, b{b} {}
 
 	operator bool() const { return b; }
 	const char* source() const { return s.c_str(); }

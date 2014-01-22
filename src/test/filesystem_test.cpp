@@ -99,7 +99,7 @@ module("Test range functionality.")
 	require(i == 8);
 
 	i = 0u;
-	for (const auto& e : cc::match_files("dat/listing_2/*")) { ++i; }
+	for (const auto& e : cc::match_files("dat/listing_2/abc*")) { ++i; }
 	require(i == 4);
 }
 

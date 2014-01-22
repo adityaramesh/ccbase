@@ -66,8 +66,13 @@ void write(std::basic_ostream<T, Traits>& os, const T* s, const Us... args)
 	using detail::is_digit;
 	using detail::write_arg;
 
+	// Used to keep track of the segment of the string to be printed before
+	// printing the next format argument.
 	auto f = s;
 	auto l = s;
+
+	// Used to keep track of the next format argument to be printed.
+	auto i = 0u;
 
 	// We disallow printing the null string.
 	assert(l != nullptr && "Format string is null.");
@@ -76,27 +81,36 @@ void write(std::basic_ostream<T, Traits>& os, const T* s, const Us... args)
 
 	do {
 		if (*l == T{'$'}) {
-			if (*(l + 1) != T{'$'}) {
+			os.write(f, l - f);
+			++l;
+			f = l;
+			write_arg(os, i, args...);
+			++i;
+		}
+		else if (*l == T{'{'}) {
+			if (*(l + 1) == T{'$'}) {
+				assert(*(l + 2) == '}' && "Expected '}'.");
+				os.write(f, l - f);
+				os.write("$", 1);
+				l += 3;
+				f = l;
+			}
+			else if (*(l + 1) == T{'{'}) {
+				++l;
 				os.write(f, l - f);
 				++l;
-				assert(is_digit(*l) && "Expected digit after $.");
-
-				std::size_t i = 0;
-				do {
-					i = 10 * i + (*l++ - T{'0'});
-				}
-				while (is_digit(*l));
-
-				write_arg(os, i, args...);
 				f = l;
 			}
 			else {
-				++l;
-				assert(*l == T{'$'} && "Unexpected token after $.");
-				os.write(f, l - f);
-				++l;
-				f = l;
+				assert(false && "Invalid use of '{'.");
 			}
+		}
+		else if (*l == T{'}'}) {
+			assert(*(l + 1) == '}' && "Unexpected '}'.");
+			++l;
+			os.write(f, l - f);
+			++l;
+			f = l;
 		}
 		else {
 			++l;

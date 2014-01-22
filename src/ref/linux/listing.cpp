@@ -74,9 +74,9 @@ int main()
 		::perror(nullptr);
 		cc::fail("Failed to stat directory.");
 	}
-	cc::println("Directory file size: $0.", s.st_size);
-	cc::println("Blocks allocated: $0.", s.st_blocks);
-	cc::println("IO blocksize: $0.\n", s.st_blksize);
+	cc::println("Directory file size: $.", s.st_size);
+	cc::println("Blocks allocated: $.", s.st_blocks);
+	cc::println("IO blocksize: $.\n", s.st_blksize);
 
 	// When returning an expected object with std::system_error, use
 	// strerror or strerror_r to get the error string.
@@ -95,12 +95,12 @@ int main()
 			auto t = *(char*)(p + e->d_reclen - 1);
 			p += e->d_reclen;
 			if (e->d_ino != 0) {
-				cc::println("Entry $0.", i);
-				cc::println("File number: $0.", e->d_ino); 
-				cc::println("Seek offset: $0.", e->d_off);
-				cc::println("Record length: $0.", e->d_reclen);
-				cc::println("Type: $0.", (unsigned)t);
-				cc::println("Name: \"$0\".\n", e->d_name);
+				cc::println("Entry $.", i);
+				cc::println("File number: $.", e->d_ino); 
+				cc::println("Seek offset: $.", e->d_off);
+				cc::println("Record length: $.", e->d_reclen);
+				cc::println("Type: $.", (unsigned)t);
+				cc::println("Name: \"$\".\n", e->d_name);
 				++i;
 			}
 		}

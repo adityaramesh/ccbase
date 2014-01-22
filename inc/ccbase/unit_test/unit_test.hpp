@@ -131,8 +131,8 @@ get_suite(const char* program)
 static int
 print_error(int, char** argv, const std::string msg)
 {
-	cc::writeln(std::cerr, "$0", msg);
-	cc::writeln(std::cerr, "Please type \"$0 --help\" for a list of "
+	cc::writeln(std::cerr, "$", msg);
+	cc::writeln(std::cerr, "Please type \"$ --help\" for a list of "
 		"options.", argv[0]);
 	return EXIT_FAILURE;
 }
@@ -149,24 +149,24 @@ run_modules(const char* program, const verbosity v)
 		if (v == verbosity::medium) {
 			for (const auto& r : m) {
 				if (!r) {
-					cc::println("Failure in module \"$0\", "
-					"line $1: \"$2\".", m.name(), r.line(),
+					cc::println("Failure in module \"$\", "
+					"line $: \"$\".", m.name(), r.line(),
 					r.source());
 				}
 			}
 		}
 		else if (v == verbosity::high) {
 			for (const auto& r : m) {
-				cc::println("$0 in module \"$1\", line $2: "
-				"\"$3\".", r ? "Success" : "Failure", m.name(),
-				r.line(), r.source());
+				cc::println("$ in module \"$\", line $: \"$\".",
+				r ? "Success" : "Failure", m.name(), r.line(),
+				r.source());
 			}
 		}
-		cc::println("Summary for module \"$0\": $1 of $2 "
+		cc::println("Summary for module \"$\": $ of $ "
 			"assertions passed.", m.name(), m.passed(),
 			m.total());
 	}
-	cc::println("Summary for suite \"$0\": $1 of $2 assertions "
+	cc::println("Summary for suite \"$\": $ of $ assertions "
 		"passed.", suite, p, t);
 	return EXIT_SUCCESS;
 }
@@ -182,17 +182,17 @@ static int
 list_modules(const char* program, const char* d)
 {
 	if (d != nullptr) {
-		println("Suite \"$0\": $1.", get_suite(program), d);
+		println("Suite \"$\": $.", get_suite(program), d);
 	}
 	else {
-		println("Suite \"$0\".", get_suite(program));
+		println("Suite \"$\".", get_suite(program));
 	}
 	for (const auto& m : module_list{}) {
 		if (m.description() != nullptr) {
-			println("Module \"$0\": $1.", m.name(), m.description());
+			println("Module \"$\": $.", m.name(), m.description());
 		}
 		else {
-			println("Module \"$0\".", m.name(), m.description());
+			println("Module \"$\".", m.name(), m.description());
 		}
 	}
 	return EXIT_SUCCESS;
@@ -223,7 +223,7 @@ parse_flags(int argc, char** argv, const char* d = nullptr)
 		) {
 			if (argc < 3) {
 				auto s = cc::format("Error: expected verbosity "
-					"level after \"$0\" flag.", argv[1]);
+					"level after \"$\" flag.", argv[1]);
 				return print_error(argc, argv, s);
 			}
 			if (equal(argv[2], "low")) {
@@ -237,12 +237,12 @@ parse_flags(int argc, char** argv, const char* d = nullptr)
 			}
 			else {
 				auto s = cc::format("Error: invalid verbosity "
-					"level \"$0\".", argv[2]);
+					"level \"$\".", argv[2]);
 				return print_error(argc, argv, s);
 			}
 		}
 		else {
-			auto s = cc::format("Error: unrecognized flag \"$0\".",
+			auto s = cc::format("Error: unrecognized flag \"$\".",
 				argv[1]);
 			return print_error(argc, argv, s);
 		}
@@ -252,7 +252,6 @@ parse_flags(int argc, char** argv, const char* d = nullptr)
 	}
 }
 
-}
-}
+}}
 
 #endif

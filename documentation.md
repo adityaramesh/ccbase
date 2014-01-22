@@ -21,8 +21,12 @@ something like this:
 
 Using `ccbase/format.hpp`, it would look like this:
 
-	throw parse_error(cc::format("Error parsing header: expected $0 at "
-	"line $1, column $2, but got $3 instead.", a, line, col, b));
+	throw parse_error(cc::format("Error parsing header: expected $ at "
+	"line $, column $, but got $ instead.", a, line, col, b));
+
+To print the dollar sign character, escape the dollar sign like so: `{$}`. To
+escape a curly bracket, use another curly bracket of the same kind. For
+instance, `{{` prints `{`.
 
 The formatting functions provided by `ccbase.format` are listed in the table
 below. Each of them is a lightweight wrapper that forwards each variadic
@@ -37,12 +41,12 @@ template argument to the destination output stream using `operator<<`.
 	<tr>
 		<td>Print to std::cout.</td>
 		<td>cc::print[ln](const T*, const Us&...)</td>
-		<td>cc::println("Hello, $0.", name);</td>
+		<td>cc::println("Hello, $.", name);</td>
 	</tr>
 	<tr>
 		<td>Print to std::cerr.</td>
 		<td>cc::err[ln](const T*, const Us&...)</td>
-		<td>cc::errln("Hello, $0.", name);</td>
+		<td>cc::errln("Hello, $.", name);</td>
 	</tr>
 	<tr>
 		<td>Format arguments into std::string.</td>
@@ -57,7 +61,7 @@ template argument to the destination output stream using `operator<<`.
 	<tr>
 		<td>Print to std::cerr and exit with failure code.</td>
 		<td>cc::fail(const T*, const Us&...)</td>
-		<td>cc::fail("Could not open file $0.", fn);</td>
+		<td>cc::fail("Could not open file $.", fn);</td>
 	</tr>
 </table>
 
@@ -322,7 +326,7 @@ dependencies (Linux and OS X only):
 	#include <ccbase/filesystem.hpp>
 
 	for (const auto& e : cc::match_files("dat/frame_[abc]*.jpg")) {
-		cc::println("$0", e.name());
+		cc::println("$", e.name());
 	}
 
 `ccbase.filesystem` uses raw system calls rather than the POSIX `readdir()`
