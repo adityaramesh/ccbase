@@ -43,7 +43,14 @@
 
 #include <boost/preprocessor/cat.hpp>
 #include <boost/preprocessor/repetition/repeat_from_to.hpp>
-#include <ccbase/platform/variadic_size.hpp>
+
+/*
+** The purpose of the 0 in the argument list is only to ensure that there is at
+** least one variadic argument for `CC_VARIADIC_SIZE_IMPL`. Otherwise, the code
+** is technically not standards-compliant.
+*/
+#define CC_VARIADIC_SIZE(...) CC_VARIADIC_SIZE_IMPL(__VA_ARGS__, 4, 3, 2, 1, 0)
+#define CC_VARIADIC_SIZE_IMPL(_1, _2, _3, _4, N, ...) N
 
 #define module(...) \
 	BOOST_PP_CAT(module_impl_, CC_VARIADIC_SIZE(__VA_ARGS__))(__VA_ARGS__)

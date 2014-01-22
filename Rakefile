@@ -3,7 +3,7 @@ require 'rake/clean'
 cxx       = ENV['CXX']
 boost     = ENV['BOOST_INCLUDE_PATH']
 langflags = "-std=c++11"
-wflags    = "-Wall -Wextra -Wpedantic -Wno-gnu-zero-variadic-macro-arguments -Wno-return-type-c-linkage"
+wflags    = "-Wall -Wextra -pedantic -Wno-return-type-c-linkage"
 archflags = "-march=native"
 incflags  = "-I inc -isystem #{boost}"
 optflags  = "-O3"
