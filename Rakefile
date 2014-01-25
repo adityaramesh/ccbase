@@ -6,8 +6,13 @@ langflags = "-std=c++11"
 wflags    = "-Wall -Wextra -pedantic -Wno-return-type-c-linkage"
 archflags = "-march=native"
 incflags  = "-I inc -isystem #{boost}"
-optflags  = "-O3"
 ldflags   = ""
+
+if cxx.include? "clang"
+	optflags  = "-Ofast -fno-fast-math -flto"
+elsif cxx.include? "g++"
+	optflags  = "-Ofast -fno-fast-math -flto -fwhole-program"
+end
 
 if RUBY_PLATFORM.include? "linux"
 	ldflags = "-ldl"
