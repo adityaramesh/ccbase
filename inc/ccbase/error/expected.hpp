@@ -117,7 +117,7 @@ class expected_base
 		std::exception_ptr p_;
 	};
 
-	bool valid_;
+	std::atomic<bool> valid_;
 
 	/*
 	** These constructors are used to create `expected` objects in valid
@@ -156,13 +156,13 @@ class expected_base
 		new (&p_) std::exception_ptr{std::move(std::make_exception_ptr(e))};
 	}
 
-	expected_base(const expected_base& rhs) noexcept : valid_{rhs.valid_}
+	expected_base(const expected_base& rhs) noexcept : valid_{rhs.valid_.load()}
 	{
 		if (valid_) new(&t_) storage{rhs.t_};
 		else new(&p_) std::exception_ptr{rhs.p_};
 	}
 
-	expected_base(expected_base&& rhs) noexcept : valid_{rhs.valid_}
+	expected_base(expected_base&& rhs) noexcept : valid_{rhs.valid_.load()}
 	{
 		if (valid_) new(&t_) storage{std::move(rhs.t_)};
 		else new(&p_) std::exception_ptr{std::move(rhs.p_)};
@@ -367,7 +367,7 @@ template <>
 class expected<void>
 {
 	std::exception_ptr p_;
-	bool valid_;
+	std::atomic<bool> valid_;
 	#ifndef NDEBUG
 		mutable bool read_{false};
 	#endif
@@ -402,12 +402,12 @@ public:
 		new (&p_) std::exception_ptr{std::move(std::make_exception_ptr(e))};
 	}
 
-	expected(const expected& rhs) noexcept : valid_{rhs.valid_}
+	expected(const expected& rhs) noexcept : valid_{rhs.valid_.load()}
 	{
 		if (!valid_) new(&p_) std::exception_ptr{rhs.p_};
 	}
 
-	expected(expected&& rhs) noexcept : valid_{rhs.valid_}
+	expected(expected&& rhs) noexcept : valid_{rhs.valid_.load()}
 	{
 		if (!valid_) new(&p_) std::exception_ptr{std::move(rhs.p_)};
 	}
