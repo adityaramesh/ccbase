@@ -170,9 +170,6 @@ class expected_base
 
 	~expected_base()
 	{
-		// We need the `using` statement here, because `::~` does not
-		// parse, so we would not be able to not write
-		// `p_.::~exception_ptr()`.
 		if (valid_) t_.~storage();
 		else p_.~exception_ptr();
 	}
@@ -193,6 +190,12 @@ public:
 	{
 		if (!valid_) std::rethrow_exception(p_);
 		return t_;
+	}
+
+	std::exception_ptr exception_ptr() const
+	{
+		assert(!valid_);
+		return p_;
 	}
 
 	void swap(expected_base& rhs)
@@ -433,6 +436,12 @@ public:
 			read_ = true;
 		#endif
 		if (!valid_) std::rethrow_exception(p_);
+	}
+
+	std::exception_ptr exception_ptr() const
+	{
+		assert(!valid_);
+		return p_;
 	}
 
 	void swap(expected& rhs)
