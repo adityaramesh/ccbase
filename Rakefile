@@ -5,7 +5,7 @@ boost     = ENV['BOOST_INCLUDE_PATH']
 langflags = "-std=c++11"
 wflags    = "-Wall -Wextra -pedantic -Wno-return-type-c-linkage"
 archflags = "-march=native"
-incflags  = "-I inc -isystem #{boost}"
+incflags  = "-I include -isystem #{boost}"
 ldflags   = ""
 
 if cxx.include? "clang"
@@ -31,15 +31,15 @@ end
 
 lib_cxxflags = "#{cxxflags} #{lib_ppflags} #{lib_confflags}"
 
-dirs  = ["out/test", "out/lib", "out/ref"]
-tests = FileList["src/test/*"].map{|f| f.sub("src", "out").ext("run")}
-libs  = FileList["src/lib/*"].map{|f| f.sub("src", "out").ext("lib")}
+dirs  = ["out/test", "out/libraries", "out/reference"]
+tests = FileList["source/test/*"].map{|f| f.sub("source", "out").ext("run")}
+libs  = FileList["source/libraries/*"].map{|f| f.sub("source", "out").ext("lib")}
 
 if RUBY_PLATFORM.include? "linux"
-	refs = FileList["src/ref/linux/*"].map{|f| f.sub("src", "out").
+	refs = FileList["source/reference/linux/*"].map{|f| f.sub("source", "out").
 		sub("linux/", "").ext("run")}
 elsif RUBY_PLATFORM.include? "darwin"
-	refs = FileList["src/ref/os_x/*"].map{|f| f.sub("src", "out").
+	refs = FileList["source/reference/os_x/*"].map{|f| f.sub("source", "out").
 		sub("os_x/", "").ext("run")}
 end
 
@@ -62,14 +62,14 @@ dirs.each do |d|
 end
 
 libs.each do |f|
-	src = f.sub("out", "src").ext("cpp")
+	src = f.sub("out", "source").ext("cpp")
 	file f => [src] + dirs do
 		sh "#{cxx} #{lib_cxxflags} -o #{f} #{src}"
 	end
 end
 
 tests.each do |f|
-	src = f.sub("out", "src").ext("cpp")
+	src = f.sub("out", "source").ext("cpp")
 	file f => [src] + dirs do
 		sh "#{cxx} #{cxxflags} -o #{f} #{src} #{ldflags}"
 	end
@@ -77,9 +77,9 @@ end
 
 refs.each do |f|
 	if RUBY_PLATFORM.include? "linux"
-		src = f.sub("out", "src").sub("ref", "ref/linux").ext("cpp")
+		src = f.sub("out", "source").sub("ref", "reference/linux").ext("cpp")
 	elsif RUBY_PLATFORM.include? "darwin"
-		src = f.sub("out", "src").sub("ref", "ref/os_x").ext("cpp")
+		src = f.sub("out", "source").sub("ref", "reference/os_x").ext("cpp")
 	end
 	file f => [src] + dirs do
 		sh "#{cxx} #{cxxflags} -o #{f} #{src} #{ldflags}"
@@ -88,6 +88,6 @@ end
 
 task :clobber => dirs do
 	FileList["out/test/*.run"].each{ |f| File.delete(f) if File.exist?(f) }
-	FileList["out/lib/*.lib"].each{ |f| File.delete(f) if File.exist?(f) }
-	FileList["out/ref/**/*.run"].each{ |f| File.delete(f) if File.exist?(f) }
+	FileList["out/libraries/*.lib"].each{ |f| File.delete(f) if File.exist?(f) }
+	FileList["out/reference/**/*.run"].each{ |f| File.delete(f) if File.exist?(f) }
 end
