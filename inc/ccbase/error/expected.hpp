@@ -173,7 +173,6 @@ class expected_base
 		// We need the `using` statement here, because `::~` does not
 		// parse, so we would not be able to not write
 		// `p_.::~exception_ptr()`.
-		using std::exception_ptr;
 		if (valid_) t_.~storage();
 		else p_.~exception_ptr();
 	}
@@ -417,7 +416,6 @@ public:
 		// We need the `using` statement here, because `::~` does not
 		// parse, so we would not be able to not write
 		// `p_.::~exception_ptr()`.
-		using std::exception_ptr;
 		if (!valid_) p_.~exception_ptr();
 		#ifndef NDEBUG
 			assert(read_);
