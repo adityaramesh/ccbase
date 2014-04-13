@@ -87,7 +87,7 @@ refs.each do |f|
 end
 
 task :clobber => dirs do
-	FileList["out/test/*.run"].each{ |f| File.delete(f) if File.exist?(f) }
-	FileList["out/lib/*.lib"].each{ |f| File.delete(f) if File.exist?(f) }
-	FileList["out/ref/**/*.run"].each{ |f| File.delete(f) if File.exist?(f) }
+	FileList["out/test/*.run"].each{|f| File.delete(f)}
+	FileList["out/lib/*.lib"].each{|f| File.delete(f)}
+	FileList["out/ref/**/*.run"].each{|f| File.delete(f)}
 end
