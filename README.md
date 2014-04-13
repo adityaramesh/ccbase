@@ -26,10 +26,19 @@ The following additional components are currently under development:
 
 You can read the examples and documentation [here](documentation.md).
 
-## TODO
+## Upcoming Features
 
 - `match_files` with recursive directory enumeration.
 - Tuple arithmetic.
+
+# License
+
+This work is licensed under the [BSD Three-Clause License](LICENSE.md).
+Basically, you can use this library for both free and commercial applications
+without any attribution, provided that:
+  - Redistributions of the source must contain the [license file](LICENSE.md).
+  - You do not use my name to promote products derived from this one without
+  prior written permission.
 
 ## Prerequisites
 
@@ -64,11 +73,15 @@ Thanks!
 
 # Development Notes
 
+- The include files are placed within the `inc` directory to guard against
+  executables that have the same name as standard header files. (Thanks to
+  guepier from Reddit for the suggestion.)
 - Each module in `ccbase` has its own directory, along with a top-level header
   file that includes all of the header files in the module.
 - The `src/ref` directory contains platform-specific reference programs that are
   written to help understand how various functions work before they are
-  abstracted away behind an interface.
-- Avoid using constexpr structures alongside macros. Although the syntax may be
-  cleaner in certain cases, it is not worth the development nightmare to
+  abstracted away behind an interface. These were especially useful when
+  developing the `dynamic` and `filesystem` modules.
+- Lesson: avoid using constexpr structures alongside macros. Although the syntax
+  may be cleaner in certain cases, it is not worth the development nightmare to
   maintain both variants simultaneously.
