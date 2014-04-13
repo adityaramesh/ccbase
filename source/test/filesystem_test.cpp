@@ -13,7 +13,7 @@
 
 module("Test directory iteration.")
 {
-	auto f = cc::directory_iterator{"dat/listing_1"};
+	auto f = cc::directory_iterator{"data/listing_1"};
 	auto l = cc::directory_iterator{};
 
 	while (f != l) {
@@ -32,7 +32,7 @@ module("Test directory iteration.")
 
 module("Test glob matching.")
 {
-	auto f = cc::directory_iterator{"dat/listing_2"};
+	auto f = cc::directory_iterator{"data/listing_2"};
 	auto l = cc::directory_iterator{};
 
 	auto m1 = cc::glob_matcher{"abc123"};
@@ -95,11 +95,11 @@ module("Test glob matching.")
 module("Test range functionality.")
 {
 	auto i = 0u;
-	for (const auto& e : cc::list_files("dat/listing_2")) { ++i; }
+	for (const auto& e : cc::list_files("data/listing_2")) { ++i; }
 	require(i == 8);
 
 	i = 0u;
-	for (const auto& e : cc::match_files("dat/listing_2/abc*")) { ++i; }
+	for (const auto& e : cc::match_files("data/listing_2/abc*")) { ++i; }
 	require(i == 4);
 }
 

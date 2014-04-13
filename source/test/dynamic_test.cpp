@@ -14,7 +14,7 @@
 module("test_retrieval", "Tests whether getting data works.")
 {
 	using signature = std::string(std::string, std::string);
-	cc::image i{"./out/lib/test.lib", cc::lazy};
+	cc::image i{"./out/libraries/test.lib", cc::lazy};
 	auto f = cc::get_function<signature>("test", i).get();
 	require(f("foo", "bar") == "foobar");
 	auto& s = cc::get_data<std::string>("msg", i).get();
@@ -23,7 +23,7 @@ module("test_retrieval", "Tests whether getting data works.")
 
 module("test_mutation", "Tests whether module data is mutable.")
 {
-	cc::image i{"./out/lib/test.lib", cc::lazy};
+	cc::image i{"./out/libraries/test.lib", cc::lazy};
 	auto& s1 = cc::get_data<std::string>("msg", i).get();
 	require(s1 == "Original contents.");
 	s1 = "New contents.";
@@ -35,7 +35,7 @@ module("test_mutation", "Tests whether module data is mutable.")
 module("test_info", "Tests whether symbol address lookup works.")
 {
 	using signature = std::string(std::string, std::string);
-	cc::image i{"./out/lib/test.lib", cc::lazy};
+	cc::image i{"./out/libraries/test.lib", cc::lazy};
 	auto f = cc::get_function<signature>("test", i).get();
 	require(f("foo", "bar") == "foobar");
 	auto& s = cc::get_data<std::string>("msg", i).get();
