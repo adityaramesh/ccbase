@@ -26,7 +26,7 @@ The following additional components are currently under development:
 
 You can read the examples and documentation [here](documentation.md).
 
-## Upcoming Features
+# Upcoming Features
 
 - `match_files` with recursive directory enumeration.
 - Tuple arithmetic.
@@ -40,7 +40,7 @@ without any attribution, provided that:
   - You do not use my name to promote products derived from this one without
   prior written permission.
 
-## Prerequisites
+# Prerequisites
 
 `ccbase` depends on Boost (namely, Boost.Range and Boost.Iterator). You should
 have Boost installed on your system before attempting to install `ccbase`.
