@@ -49,8 +49,8 @@ have Boost installed on your system before attempting to install `ccbase`.
 
 Click the "Download ZIP" button on the right-hand side of the screen, and
 extract the `ccbase_master` archive. At this point, you could then move the
-`ccbase_master/ccbase` directory directly to your desired include path, but I
-would suggest first building and running the unit tests, to ensure that
+`ccbase_master/ccbase/include` directory directly to your desired include path,
+but I would suggest first building and running the unit tests, to ensure that
 everything is working correctly on your system.
 
 First, ensure that the `CXX` environment variable is set to your desired
@@ -73,7 +73,7 @@ Thanks!
 
 # Development Notes
 
-- The include files are placed within the `inc` directory to guard against
+- The include files are placed within the `include` directory to guard against
   executables that have the same name as standard header files. (Thanks to
   guepier from Reddit for the suggestion.)
 - Each module in `ccbase` has its own directory, along with a top-level header
