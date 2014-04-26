@@ -120,56 +120,53 @@ void write(std::basic_ostream<T, Traits>& os, const T* s, const Us... args)
 	os.write(f, l - f);
 }
 
-template <class T, class Traits = std::char_traits<T>, class... Us>
-void writeln(std::basic_ostream<T, Traits>& os, const T* s, const Us... args)
+template <class T, class Traits = std::char_traits<T>, class U>
+CC_ALWAYS_INLINE void
+write(std::basic_ostream<T, Traits>& os, const U& u)
 {
-	write(os, s, args...);
+	os << u;
+}
+
+template <class T, class Traits = std::char_traits<T>, class... Ts>
+CC_ALWAYS_INLINE void
+writeln(std::basic_ostream<T, Traits>& os, const Ts... args)
+{
+	write(os, args...);
 	os << std::endl;
 }
 
-template <class T, class... Us>
+template <class... Ts>
 CC_ALWAYS_INLINE void
-print(const T* s, const Us... args)
+print(const Ts... args)
 {
-	write(std::cout, s, args...);
+	write(std::cout, args...);
 }
 
-template <class T, class... Us>
+template <class... Ts>
 CC_ALWAYS_INLINE void
-println(const T* s, const Us... args)
+println(const Ts... args)
 {
-	writeln(std::cout, s, args...);
+	writeln(std::cout, args...);
 }
 
-template <class T, class... Us>
+template <class... Ts>
 CC_ALWAYS_INLINE void
-err(const T* s, const Us... args)
+err(const Ts... args)
 {
-	write(std::cerr, s, args...);
+	write(std::cerr, args...);
 }
 
-template <class T, class... Us>
+template <class... Ts>
 CC_ALWAYS_INLINE void
-errln(const T* s, const Us... args)
+errln(const Ts... args)
 {
-	writeln(std::cerr, s, args...);
+	writeln(std::cerr, args...);
 }
 
-template <class T, class... Us>
-CC_ALWAYS_INLINE void
-finish(const T* s, const Us... args)
-{
-	println(s, args...);
-	std::exit(EXIT_SUCCESS);
-}
-
-template <class T, class... Us>
-CC_ALWAYS_INLINE void
-fail(const T* s, const Us... args)
-{
-	errln(s, args...);
-	std::exit(EXIT_FAILURE);
-}
+/*
+** These functions require the format string argument, because we would not know
+** the type of string to return otherwise.
+*/
 
 template <class T, class... Us>
 CC_ALWAYS_INLINE auto
