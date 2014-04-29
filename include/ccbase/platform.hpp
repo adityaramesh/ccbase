@@ -10,5 +10,6 @@
 
 #include <ccbase/platform/attributes.hpp>
 #include <ccbase/platform/identification.hpp>
+#include <ccbase/platform/bswap.hpp>
 
 #endif
