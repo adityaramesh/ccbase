@@ -28,6 +28,7 @@ You can read the examples and documentation [here](documentation.md).
 
 # Upcoming Features
 
+- Add documentation and tests for `bwsap.hpp` header.
 - `match_files` with recursive directory enumeration.
 - Tuple arithmetic.
 
