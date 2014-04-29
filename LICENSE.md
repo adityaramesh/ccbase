@@ -7,7 +7,7 @@
 
 # The BSD Three-Clause License
 
-Copyright (c) 2014, Aditya Ramesh
+Copyright (c) 2014, Aditya Ramesh.  
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
