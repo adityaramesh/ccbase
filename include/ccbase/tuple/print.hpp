@@ -46,7 +46,7 @@ noexcept -> decltype(os)
 	}
 
 	os << "(";
-	print_tuple<0, sizeof...(Us) - 1, decltype(os), decltype(t)>::apply(os, t);
+	detail::print_tuple<0, sizeof...(Us) - 1, decltype(os), decltype(t)>::apply(os, t);
 	return os;
 }
 
