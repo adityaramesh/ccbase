@@ -12,7 +12,7 @@
 #include <type_traits>
 #include <ccbase/platform/identification.hpp>
 
-namespace neo {
+namespace cc {
 
 CC_ALWAYS_INLINE uint16_t
 bswap(uint16_t x)
