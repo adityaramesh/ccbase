@@ -421,7 +421,7 @@ public:
 		// `p_.::~exception_ptr()`.
 		if (!valid_) p_.~exception_ptr();
 		#ifndef NDEBUG
-			assert(read_);
+			assert(read_ && "Potentially unchecked exception.");
 		#endif
 	}
 
