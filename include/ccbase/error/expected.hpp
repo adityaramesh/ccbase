@@ -192,7 +192,7 @@ public:
 		return t_;
 	}
 
-	std::exception_ptr exception_ptr() const
+	std::exception_ptr exception() const
 	{
 		assert(!valid_);
 		return p_;
@@ -438,7 +438,7 @@ public:
 		if (!valid_) std::rethrow_exception(p_);
 	}
 
-	std::exception_ptr exception_ptr() const
+	std::exception_ptr exception() const
 	{
 		assert(!valid_);
 		return p_;
