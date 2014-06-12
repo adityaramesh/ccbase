@@ -118,6 +118,9 @@ class expected_base
 	};
 
 	bool valid_;
+	#ifndef NDEBUG
+		mutable bool read_{false};
+	#endif
 
 	/*
 	** These constructors are used to create `expected` objects in valid
@@ -172,16 +175,25 @@ class expected_base
 	{
 		if (valid_) t_.~storage();
 		else p_.~exception_ptr();
+		#ifndef NDEBUG
+			assert(read_ && "Potentially unchecked exception.");
+		#endif
 	}
 
 public:
 	bool valid() const
 	{
+		#ifndef NDEBUG
+			read_ = true;
+		#endif
 		return valid_;
 	}
 
 	reference get()
 	{
+		#ifndef NDEBUG
+			read_ = true;
+		#endif
 		if (!valid_) std::rethrow_exception(p_);
 		return t_;
 	}
@@ -427,6 +439,9 @@ public:
 
 	bool valid() const
 	{
+		#ifndef NDEBUG
+			read_ = true;
+		#endif
 		return valid_;
 	}
 	
