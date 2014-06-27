@@ -52,7 +52,7 @@ private:
 		const char* n,
 		const length_type len,
 		const file_type t
-	) noexcept noexcept : p{&p}, n{n}, len{len}, t{t} {}
+	) noexcept : p{&p}, n{n}, len{len}, t{t} {}
 public:
 	// Defined in `directory_iterator.hpp` due to cyclic dependencies.
 	const char* path() const noexcept;
