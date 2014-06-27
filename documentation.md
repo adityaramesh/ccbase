@@ -100,7 +100,7 @@ substituted.
 | `PLATFORM_MAX_FILENAME_LENGTH`    | Maximum permissible file name length. | Integer.                                                              |
 | `PLATFORM_MAX_PATHNAME_LENGTH`    | Maximum permissible path name length. | Integer.                                                              |
 
-## Compiler Attributes
+### Compiler Attributes
 
 The following macros provide access to the corresponding compiler-specific
 attributes. If the host compiler does not implement the corresponding attribute,
@@ -114,6 +114,26 @@ then the macro expands to nothing.
 | `CC_PURE`          | Tells the compiler that the designated function does not modify any global memory. |
 | `CC_RESTRICT`      | Expands to the compiler's equivalent of the C99 `restrict` keyword.                |
 | `CC_ALIGN(n)`      | Used to align addresses of static arrays to multiples of `n`.                      |
+
+### Compiler Intrinsics
+
+The following functions provide access to the corresponding intrinsics offered
+by the host compiler:
+
+    - `cc::bswap`. Reverses the endianness of the given primitive type.
+    Overloaded for all of the `[u]int[n]_t` types defined in `cstdint`, along
+    with `float` and `double`.
+    - `cc::pause`. Provides access to the platform's `pause` instruction, if
+    available. This function is useful for optimizing spinlocks, since it
+    accomplishes the following three goals, which I have adapted from [Dmitry
+    Vyukov's article][spinning]:
+	- Improves performance by decreasing memory contention within the
+	processor.
+	- Decreases power consumption.
+	- Improves performance in the context of hyperthreading, because it
+	avoids saturating use of the ALU.
+
+[spinning]: http://www.1024cores.net/home/lock-free-algorithms/tricks/spinning
 
 ## `ccbase.dynamic`
 
