@@ -12,12 +12,19 @@
 #include <type_traits>
 #include <ccbase/platform/identification.hpp>
 
+#if !(PLATFORM_COMPILER == PLATFORM_COMPILER_CLANG || \
+      PLATFORM_COMPILER == PLATFORM_COMPILER_GCC   || \
+      PLATFORM_COMPILER == PLATFORM_COMPILER_ICC)
+	#warning "Unsupported compiler for cc::bswap."
+	#warning "The operation will not use intrinsics."
+#endif
+
 namespace cc {
 
-CC_ALWAYS_INLINE int8_t bswap(int8_t x) { return x; }
+CC_ALWAYS_INLINE int8_t bswap(int8_t x) noexcept { return x; }
 
 CC_ALWAYS_INLINE int16_t
-bswap(int16_t x)
+bswap(int16_t x) noexcept
 {
 #if PLATFORM_COMPILER == PLATFORM_COMPILER_CLANG || \
     PLATFORM_COMPILER == PLATFORM_COMPILER_GCC   || \
@@ -29,7 +36,7 @@ bswap(int16_t x)
 }
 
 CC_ALWAYS_INLINE
-int32_t bswap(int32_t x)
+int32_t bswap(int32_t x) noexcept
 {
 #if PLATFORM_COMPILER == PLATFORM_COMPILER_CLANG || \
     PLATFORM_COMPILER == PLATFORM_COMPILER_GCC   || \
@@ -44,7 +51,7 @@ int32_t bswap(int32_t x)
 }
 
 CC_ALWAYS_INLINE
-int64_t bswap(int64_t x)
+int64_t bswap(int64_t x) noexcept
 {
 #if PLATFORM_COMPILER == PLATFORM_COMPILER_CLANG || \
     PLATFORM_COMPILER == PLATFORM_COMPILER_GCC   || \
@@ -62,10 +69,10 @@ int64_t bswap(int64_t x)
 #endif
 }
 
-CC_ALWAYS_INLINE uint8_t bswap(uint8_t x) { return x; }
+CC_ALWAYS_INLINE uint8_t bswap(uint8_t x) noexcept { return x; }
 
 CC_ALWAYS_INLINE uint16_t
-bswap(uint16_t x)
+bswap(uint16_t x) noexcept
 {
 #if PLATFORM_COMPILER == PLATFORM_COMPILER_CLANG || \
     PLATFORM_COMPILER == PLATFORM_COMPILER_GCC   || \
@@ -77,7 +84,7 @@ bswap(uint16_t x)
 }
 
 CC_ALWAYS_INLINE
-uint32_t bswap(uint32_t x)
+uint32_t bswap(uint32_t x) noexcept
 {
 #if PLATFORM_COMPILER == PLATFORM_COMPILER_CLANG || \
     PLATFORM_COMPILER == PLATFORM_COMPILER_GCC   || \
@@ -92,7 +99,7 @@ uint32_t bswap(uint32_t x)
 }
 
 CC_ALWAYS_INLINE
-uint64_t bswap(uint64_t x)
+uint64_t bswap(uint64_t x) noexcept
 {
 #if PLATFORM_COMPILER == PLATFORM_COMPILER_CLANG || \
     PLATFORM_COMPILER == PLATFORM_COMPILER_GCC   || \
@@ -111,14 +118,14 @@ uint64_t bswap(uint64_t x)
 }
 
 CC_ALWAYS_INLINE
-auto bswap(float x) ->
+auto bswap(float x) noexcept ->
 std::enable_if<sizeof(float) == 4, float>::type
 {
 	return bswap(reinterpret_cast<uint32_t&>(x));
 }
 
 CC_ALWAYS_INLINE
-auto bswap(double x) ->
+auto bswap(double x) noexcept ->
 std::enable_if<sizeof(double) == 8, double>::type
 {
 	return bswap(reinterpret_cast<uint64_t&>(x));
