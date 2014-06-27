@@ -74,7 +74,8 @@ public:
 	** Determines whether the directory entry's name matches the glob
 	** pattern.
 	*/
-	bool operator()(const directory_entry& e) const
+	bool operator()(const directory_entry& e)
+	const noexcept
 	{
 		#ifndef NDEBUG
 			assert(pat != nullptr);
@@ -100,7 +101,8 @@ private:
 	** Determines whether `s[j]` matches the group of characters starting at
 	** `pat[i]`.
 	*/
-	bool match_group(const char* s, unsigned& i, unsigned& j) const
+	bool match_group(const char* s, unsigned& i, unsigned& j)
+	const noexcept
 	{
 		auto b = false;
 		do {
@@ -120,7 +122,8 @@ private:
 	** of `s` beginning at `s[j]` to check whether it matches the characters
 	** after the wildcards beginning at `pat[i - 1]`.
 	*/
-	bool match_wildcard(const char* s, unsigned i, unsigned j) const
+	bool match_wildcard(const char* s, unsigned i, unsigned j)
+	const noexcept
 	{
 		/*
 		** We keep track of the index `pi` after each wildcard that we

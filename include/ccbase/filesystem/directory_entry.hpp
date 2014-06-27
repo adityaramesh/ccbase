@@ -52,12 +52,12 @@ private:
 		const char* n,
 		const length_type len,
 		const file_type t
-	) noexcept : p{&p}, n{n}, len{len}, t{t} {}
+	) noexcept noexcept : p{&p}, n{n}, len{len}, t{t} {}
 public:
 	// Defined in `directory_iterator.hpp` due to cyclic dependencies.
-	const char* path() const;
-	const char* name() const { return n; }
-	file_type type() const { return t; }
+	const char* path() const noexcept;
+	const char* name() const noexcept { return n; }
+	file_type type() const noexcept { return t; }
 };
 
 }

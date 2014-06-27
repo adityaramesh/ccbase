@@ -36,6 +36,7 @@ namespace cc {
 
 CC_ALWAYS_INLINE int
 getdents(unsigned fd, char* buf, unsigned n)
+noexcept
 {
 	return ::syscall(SYS_getdents, fd, buf, n);
 }
@@ -44,6 +45,7 @@ getdents(unsigned fd, char* buf, unsigned n)
 
 CC_ALWAYS_INLINE user_ssize_t
 getdirentries64(int fd, char* buf, user_size_t n, off_t* pos)
+noexcept
 {
 	return ::syscall(SYS_getdirentries64, fd, buf, n, pos);
 }

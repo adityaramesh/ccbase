@@ -62,7 +62,7 @@ static constexpr mode local = mode::local;
 #endif
 
 constexpr mode
-operator|(const mode x, const mode y)
+operator|(const mode x, const mode y) noexcept
 {
 	using integer = typename std::underlying_type<mode>::type;
 	return static_cast<mode>(
@@ -94,7 +94,8 @@ public:
 		}
 	}
 
-	operator void*() const
+	operator void*()
+	const noexcept
 	{
 		return handle;
 	}
@@ -116,12 +117,14 @@ public:
 	function(void* address) noexcept :
 	f{reinterpret_cast<pointer>(address)}, address{address} {}
 
-	ReturnType operator()(Args... args) const
+	ReturnType operator()(Args... args)
+	const noexcept
 	{
 		return f(args...);
 	}
 
-	operator void*() const
+	operator void*()
+	const noexcept
 	{
 		return address;
 	}
@@ -134,27 +137,31 @@ private:
 public:
 	symbol_info() noexcept {}
 
-	const char* path() const
+	const char* path()
+	const noexcept
 	{
 		return data.dli_fname;
 	}
 
-	const void* base_address() const
+	const void* base_address()
+	const noexcept
 	{
 		return data.dli_fbase;
 	}
 
-	const char* name() const
+	const char* name()
+	const noexcept
 	{
 		return data.dli_sname;
 	}
 
-	const void* address() const
+	const void* address()
+	const noexcept
 	{
 		return data.dli_saddr;
 	}
 
-	operator Dl_info*()
+	operator Dl_info*() noexcept
 	{
 		return &data;
 	}

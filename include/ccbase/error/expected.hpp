@@ -181,7 +181,7 @@ class expected_base
 	}
 
 public:
-	bool valid() const
+	bool valid() const noexcept
 	{
 		#ifndef NDEBUG
 			read_ = true;
@@ -204,13 +204,14 @@ public:
 		return t_;
 	}
 
-	std::exception_ptr exception() const
+	std::exception_ptr exception()
+	const noexcept
 	{
 		assert(!valid_);
 		return p_;
 	}
 
-	void swap(expected_base& rhs)
+	void swap(expected_base& rhs) noexcept
 	{
 		if (valid_) {
 			if (rhs.valid_) {
@@ -266,7 +267,8 @@ public:
 	** Checks whether this object has an exception of type `E`.
 	*/
 	template <class E>
-	bool has_exception() const
+	bool has_exception()
+	const noexcept
 	{
 		try {
 			if (!valid_) std::rethrow_exception(p_);
@@ -305,7 +307,7 @@ public:
 	expected(expected&& rhs) noexcept :
 	base{static_cast<base&&>(rhs)} {}
 
-	void swap(expected& rhs)
+	void swap(expected& rhs) noexcept
 	{
 		base::swap(static_cast<base&>(rhs));
 	}
@@ -318,22 +320,22 @@ private:
 	friend class expected_base<T&>;
 	using base = expected_base<T&>;
 public:
-	expected(T& rhs) : base{rhs} {}
+	expected(T& rhs) noexcept : base{rhs} {}
 
-	expected() : base{} {}
-	expected(std::exception_ptr p) : base{p} {}
+	expected() noexcept : base{} {}
+	expected(std::exception_ptr p) noexcept : base{p} {}
 
 	template <class E>
 	expected(const E& e,
 		typename std::enable_if<
 			std::is_base_of<std::exception, E>::value, E
 		>::type* = 0
-	) : base{e} {}
+	) noexcept : base{e} {}
 
-	expected(const expected& rhs) : base{static_cast<const base&>(rhs)} {}
-	expected(expected&& rhs) : base{static_cast<base&&>(rhs)} {}
+	expected(const expected& rhs) noexcept : base{static_cast<const base&>(rhs)} {}
+	expected(expected&& rhs) noexcept : base{static_cast<base&&>(rhs)} {}
 
-	void swap(expected& rhs)
+	void swap(expected& rhs) noexcept
 	{
 		base::swap(static_cast<base&>(rhs));
 	}
@@ -346,22 +348,22 @@ private:
 	friend class expected_base<const T&>;
 	using base = expected_base<const T&>;
 public:
-	expected(const T& rhs) : base{rhs} {}
+	expected(const T& rhs) noexcept : base{rhs} {}
 
-	expected() : base{} {}
-	expected(std::exception_ptr p) : base{p} {}
+	expected() noexcept : base{} {}
+	expected(std::exception_ptr p) noexcept : base{p} {}
 
 	template <class E>
 	expected(const E& e,
 		typename std::enable_if<
 			std::is_base_of<std::exception, E>::value, E
 		>::type* = 0
-	) : base{e} {}
+	) noexcept : base{e} {}
 
-	expected(const expected& rhs) : base{static_cast<const base&>(rhs)} {}
-	expected(expected&& rhs) : base{static_cast<base&&>(rhs)} {}
+	expected(const expected& rhs) noexcept : base{static_cast<const base&>(rhs)} {}
+	expected(expected&& rhs) noexcept : base{static_cast<base&&>(rhs)} {}
 
-	void swap(expected& rhs)
+	void swap(expected& rhs) noexcept
 	{
 		base::swap(static_cast<base&>(rhs));
 	}
@@ -437,7 +439,7 @@ public:
 		#endif
 	}
 
-	bool valid() const
+	bool valid() const noexcept
 	{
 		#ifndef NDEBUG
 			read_ = true;
@@ -453,13 +455,13 @@ public:
 		if (!valid_) std::rethrow_exception(p_);
 	}
 
-	std::exception_ptr exception() const
+	std::exception_ptr exception() const noexcept
 	{
 		assert(!valid_);
 		return p_;
 	}
 
-	void swap(expected& rhs)
+	void swap(expected& rhs) noexcept
 	{
 		if (valid_) {
 			// If both `rhs` and `lhs` are valid, then we do not

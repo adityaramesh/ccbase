@@ -67,6 +67,7 @@ namespace detail {
 */
 CC_ALWAYS_INLINE unsigned
 rumpot(const unsigned p, const unsigned q)
+noexcept
 {
 	return p + q - (p & (q - 1));
 }
@@ -207,7 +208,7 @@ private:
 	/*
 	** Mmm... chunky.
 	*/
-	void read_chunk()
+	void read_chunk() noexcept
 	{
 		#if PLATFORM_KERNEL == PLATFORM_KERNEL_LINUX
 			read = getdents(fd, buf.get(), bufsz);
@@ -228,7 +229,7 @@ private:
 		}
 	}
 
-	void increment()
+	void increment() noexcept
 	{
 		native_dirent* e;
 		do {
@@ -243,7 +244,8 @@ private:
 		}
 	}
 
-	directory_entry dereference() const
+	directory_entry dereference()
+	const noexcept
 	{
 		#if PLATFORM_KERNEL == PLATFORM_KERNEL_LINUX
 			auto e  = (native_dirent*)f;
@@ -260,21 +262,24 @@ private:
 		#endif
 	}
 
-	bool equal(const directory_iterator& rhs) const
+	bool equal(const directory_iterator& rhs)
+	const noexcept
 	{
 		return pos == rhs.pos;
 	}
 
-	void update_path(const char* fn, length_type n) const
+	void update_path(const char* fn, length_type n)
+	const noexcept
 	{
 		std::copy(fn, fn + n, pathbuf.data() + dirlen + 1);
 		pathbuf[dirlen + 1 + n] = '\0';
 	}
 
-	const char* path() const { return pathbuf.data(); }
+	const char* path() const noexcept { return pathbuf.data(); }
 };
 
-const char* directory_entry::path() const
+const char* directory_entry::path()
+const noexcept
 {
 	p->update_path(n, len);
 	return p->path();
