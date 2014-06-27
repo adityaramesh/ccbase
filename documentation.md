@@ -127,11 +127,11 @@ by the host compiler:
   available. This function is useful for optimizing spinlocks, since it
   accomplishes the following three goals, which I have adapted from [Dmitry
   Vyukov's article][spinning]:
-      - Improves performance by decreasing memory contention within the
-      processor.
-      - Decreases power consumption.
-      - Improves performance in the context of hyperthreading, because it avoids
-      saturating use of the ALU.
+
+    - Improves performance by decreasing memory contention within the processor.
+    - Decreases power consumption.
+    - Improves performance in the context of hyperthreading, because it avoids
+    saturating use of the ALU.
 
 [spinning]: http://www.1024cores.net/home/lock-free-algorithms/tricks/spinning
 
