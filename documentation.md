@@ -9,7 +9,7 @@
 
 ## `ccbase.format`
 
-This module provides cleaner syntax for printing and formatting strings.
+This module provides clean syntax for printing and formatting strings.
 
 C++ IOStreams does a poor job of separating the formatting operations from the
 content that is being formatted. As a result, simple formatting operations are
@@ -51,6 +51,7 @@ arguments to the destination output stream using `operator<<`.
 ## `ccbase.platform`
 
 This module does the following three things:
+
     - Provides macros to identify various features describing the host platform.
     - Provides macros to invoke compiler attributes in a cross-platform way.
     - Provides clean, cross-platform syntax to access compiler intrinsics.
@@ -63,18 +64,19 @@ However, the OS X, Linux, and Windows are all supported, along with the major
 C++ compilers and several CPU architectures.
 
 This module attempts to identify the following features of the host platform.
-- The compiler.
-- The compiler version.
-- The processor architecture.
-- The processor ABI.
-- The operating system.
-- The kernel.
-- The integer byte order (the floating-point byte order can potentially be
-  different from the integer byte order, but the header makes no attempt to
-  identify the latter).
-- The platform newline character.
-- The platform directory separator.
-- The maximum permissible file and path name lengths.
+
+    - The compiler.
+    - The compiler version.
+    - The processor architecture.
+    - The processor ABI.
+    - The operating system.
+    - The kernel.
+    - The integer byte order (the floating-point byte order can potentially be
+      different from the integer byte order, but the header makes no attempt to
+      identify the latter).
+    - The platform newline character.
+    - The platform directory separator.
+    - The maximum permissible file and path name lengths.
 
 The macros defined by the preprocessor are listed in the table below. Where `*`
 is used to indicate the value of a macro, the name of the macro is to be
@@ -116,6 +118,7 @@ then the macro expands to nothing.
 ## `ccbase.dynamic`
 
 This module does the following two things:
+
     - Provides clean, cross-platform syntax for loading functions and symbols
     from dynamic libraries.
     - Provides macros to control symbol visibility in a cross-platform way.
@@ -273,8 +276,8 @@ hang in such cases. See [this blog post][readdir_fails] for the full story.
 The design of this library is roughly influenced by that of Boost.Filesystem,
 but the high-level interface only consists of the following two functions:
 
-  - `cc::list_files`
-  - `cc::match_files`
+    - `cc::list_files`
+    - `cc::match_files`
 
 The former takes a path to a directory, and returns a `boost::iterator_range`
 object that can be used to iterate over the files in the directory. The latter
@@ -287,20 +290,20 @@ Dereferencing an iterator within the range returned by either of these functions
 returns a `cc::directory_entry` object, which has the following three member
 functions:
 
-  - `const char* path() const noexcept` Returns the absolute path to this file.
-  - `const char* name() const noexcept` Returns the name of the file.
-  - `const cc::file_type type() const noexcept` Returns the file type.
+    - `const char* path() const noexcept` Returns the absolute path to this file.
+    - `const char* name() const noexcept` Returns the name of the file.
+    - `const cc::file_type type() const noexcept` Returns the file type.
 
 The `cc:file_type` is an enum class with the following values:
 
-  - `cc::file_type::block`
-  - `cc::file_type::character`
-  - `cc::file_type::directory`
-  - `cc::file_type::fifo`
-  - `cc::file_type::symbolic_link`
-  - `cc::file_type::regular`
-  - `cc::file_type::socket`
-  - `cc::file_type::unknown`
+    - `cc::file_type::block`
+    - `cc::file_type::character`
+    - `cc::file_type::directory`
+    - `cc::file_type::fifo`
+    - `cc::file_type::symbolic_link`
+    - `cc::file_type::regular`
+    - `cc::file_type::socket`
+    - `cc::file_type::unknown`
 
 [readdir_fails]:
 http://www.olark.com/spw/2011/08/you-can-list-a-directory-with-8-million-files-but-not-with-ls/
