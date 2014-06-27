@@ -9,69 +9,58 @@
 
 ## `ccbase.format`
 
-Suppose that you wish to throw an exception in an IO parsing routine, and that
-the message reported by the exception should contain some useful diagnostic
-information. Using the Standard Library, your implementation would likely look
-something like this:
+This module provides cleaner syntax for printing and formatting strings.
+
+C++ IOStreams does a poor job of separating the formatting operations from the
+content that is being formatted. As a result, simple formatting operations are
+riddled with line noise like `<<`, and one must continually start and end new
+string literals.
+
+Consider the following example using C++ IOStreams:
 
 	std::ostringstream ss;
 	ss << "Error parsing header: expected " << a << " at line " << line <<
 	", column " << col << ", but got " << b << " instead." << std::endl;
 	throw parse_error{ss.str()};
 
-Using `ccbase/format.hpp`, it would look like this:
+Using `ccbase/format.hpp`, we could rewrite the above as follows:
 
 	throw parse_error(cc::format("Error parsing header: expected $ at "
 	"line $, column $, but got $ instead.", a, line, col, b));
+
+The latter syntax does a much better job of separating the formatting from the
+content that is being formatted. As a programmer, this is usually what you want
+when you are reading or writing source code.
 
 To print the dollar sign character, escape the dollar sign like so: `{$}`. To
 escape a curly bracket, use another curly bracket of the same kind. For
 instance, `{{` prints `{`.
 
 The formatting functions provided by `ccbase.format` are listed in the table
-below. Each of them is a lightweight wrapper that forwards each variadic
-template argument to the destination output stream using `operator<<`.
+below. Each of them is a lightweight wrapper that forwards the variadic template
+arguments to the destination output stream using `operator<<`.
 
-<table>
-	<tr>
-		<th>Purpose</th>
-		<th>Function</th>
-		<th>Example</th>
-	</tr>
-	<tr>
-		<td>Print to std::cout.</td>
-		<td>cc::print[ln](const T*, const Us&...)</td>
-		<td>cc::println("Hello, $.", name);</td>
-	</tr>
-	<tr>
-		<td>Print to std::cerr.</td>
-		<td>cc::err[ln](const T*, const Us&...)</td>
-		<td>cc::errln("Hello, $.", name);</td>
-	</tr>
-	<tr>
-		<td>Format arguments into std::string.</td>
-		<td>cc::format[ln](const T*, const Us&...)</td>
-		<td>See motivating example above.</td>
-	</tr>
-	<tr>
-		<td>Print to std::cout and exit with success code.</td>
-		<td>cc::finish(const T*, const Us&...)</td>
-		<td>cc::finish("Done.");</td>
-	</tr>
-	<tr>
-		<td>Print to std::cerr and exit with failure code.</td>
-		<td>cc::fail(const T*, const Us&...)</td>
-		<td>cc::fail("Could not open file $.", fn);</td>
-	</tr>
-</table>
+| Purpose                                            | Function                                 | Example                                   |
+|----------------------------------------------------|------------------------------------------|-------------------------------------------|
+| Print to `std::cout`.                              | `cc::print[ln](const T*, const Us&...)`  | `cc::println("Hello, $.", name);`         |
+| Print to `std::cerr`.                              | `cc::err[ln](const T*, const Us&...)`    | `cc::errln("Hello, $.", name);`           |
+| Format arguments into `std::string`.               | `cc::format[ln](const T*, const Us&...)` | See examples above.                       |
+| Print to `std::cout` and exit with `EXIT_SUCCESS`. | `cc::finish(const T*, const Us&...)`     | `cc::finish("Done.");`                    |
+| Print to `std::cerr` and exit with `EXIT_FAILURE`. | `cc::fail(const T*, const Us&...)`       | `cc::fail("Could not open file $.", fn);` |
 
 ## `ccbase.platform`
 
-This module allows you to identify various features of the host platform.
-Because preprocessor macros are used to perform the detection, the header is not
-guaranteed to successfully define all of the features listed below.  However,
-the GNU/Linux, Mac OS, and Windows operating systems are supported, along with
-the major C++ compilers and several CPU architectures.
+This module does the following three things:
+    - Provides macros to identify various features describing the host platform.
+    - Provides macros to invoke compiler attributes in a cross-platform way.
+    - Provides clean, cross-platform syntax to access compiler intrinsics.
+
+### Platform Identification Macros
+
+Because preprocessor macros are used to identify platform features, the header
+is not guaranteed to successfully define all of the macros tabulated below.
+However, the OS X, Linux, and Windows are all supported, along with the major
+C++ compilers and several CPU architectures.
 
 This module attempts to identify the following features of the host platform.
 - The compiler.
@@ -87,102 +76,49 @@ This module attempts to identify the following features of the host platform.
 - The platform directory separator.
 - The maximum permissible file and path name lengths.
 
-### Usage
-
 The macros defined by the preprocessor are listed in the table below. Where `*`
 is used to indicate the value of a macro, the name of the macro is to be
 substituted.
 
-<table>
-	<tr>
-		<th>Macro</th>
-		<th>Description</th>
-		<th>Possible Values</th>
-	</tr>
-	<tr>
-		<td>PLATFORM_ARCH</td>
-		<td>Platform CPU architecture.</td>
-		<td>*_ARM, *_ITANIUM, *_X86, *_UNKNOWN</td>
-	</tr>
-	<tr>
-		<td>PLATFORM_COMPILER</td>
-		<td>Platform compiler.</td>
-		<td>
-			*_CLANG, *_COMEAU, *_GCC, *_ICC, *_MSVC,
-			*_UNKNOWN
-		</td>
-	</tr>
-	<tr>
-		<td>PLATFORM_COMPILER_VERSION</td>
-		<td>Platform compiler version.</td>
-		<td>Compare using CC_COMPILER_VERSION(v, r, p).</td>
-	</tr>
-	<tr>
-		<td>PLATFORM_COMPILER_MAJOR_VERSION</td>
-		<td>Platform compiler major version.</td>
-		<td>Integer.</td>
-	</tr>
-	<tr>
-		<td>PLATFORM_COMPILER_MINOR_VERSION</td>
-		<td>Platform compiler minor version.</td>
-		<td>Integer.</td>
-	</tr>
-	<tr>
-		<td>PLATFORM_COMPILER_PATCH_LEVEL</td>
-		<td>Platform compiler patch level.</td>
-		<td>Integer.</td>
-	</tr>
-	<tr>
-		<td>PLATFORM_INTEGER_BYTE_ORDER</td>
-		<td>Platform byte order.</td>
-		<td>
-			(* = PLATFORM_BYTE_ORDER) *_LITTLE, *_BIG,
-			*_LITTLE_WORD, *_UNKNOWN
-		</td>
-	</tr>
-	<tr>
-		<td>PLATFORM_KERNEL</td>
-		<td>Platform byte order.</td>
-		<td>*_LINUX, *_WINDOWS_NT, *_XNU, *_UNKNOWN</td>
-	</tr>
-	<tr>
-		<td>PLATFORM_OS</td>
-		<td>Platform operating system.</td>
-		<td>*_LINUX, *_WINDOWS, *_OS_X, *_UNKNOWN</td>
-	</tr>
-	<tr>
-		<td>PLATFORM_WORD_SIZE</td>
-		<td>Platform word size.</td>
-		<td>32, 64, *_UNKNOWN</td>
-	</tr>
-	<tr>
-		<td>PLATFORM_NEWLINE</td>
-		<td>Platform newline.</td>
-		<td>"\n", "\r\n"</td>
-	</tr>
-	<tr>
-		<td>PLATFORM_NEWLINE_LENGTH</td>
-		<td>Platform newline.</td>
-		<td>Integer.</td>
-	</tr>
-	<tr>
-		<td>PLATFORM_DIRECTORY_SEPARATOR</td>
-		<td>Platform directory separator.</td>
-		<td>Character literal.</td>
-	</tr>
-	<tr>
-		<td>PLATFORM_MAX_FILENAME_LENGTH</td>
-		<td>Maximum permissible file name length.</td>
-		<td>Integer.</td>
-	</tr>
-	<tr>
-		<td>PLATFORM_MAX_PATHNAME_LENGTH</td>
-		<td>Maximum permissible path name length.</td>
-		<td>Integer.</td>
-	</tr>
-</table>
+| Macro                             | Description                           | Possible Values                                                       |
+|-----------------------------------|---------------------------------------|-----------------------------------------------------------------------|
+| `PLATFORM_ARCH`                   | Platform CPU architecture.            | `*_ARM, *_ITANIUM, *_X86, *_UNKNOWN`                                  |
+| `PLATFORM_COMPILER`               | Platform compiler.                    | `*_CLANG, *_COMEAU, *_GCC, *_ICC, *_MSVC, *_UNKNOWN`                  |
+| `PLATFORM_COMPILER_VERSION`       | Platform compiler version.            | Compare using `CC_COMPILER_VERSION(v, r, p)`.                         |
+| `PLATFORM_COMPILER_MAJOR_VERSION` | Platform compiler major version.      | Integer.                                                              |
+| `PLATFORM_COMPILER_MINOR_VERSION` | Platform compiler minor version.      | Integer.                                                              |
+| `PLATFORM_COMPILER_PATCH_LEVEL`   | Platform compiler patch level.        | Integer.                                                              |
+| `PLATFORM_INTEGER_BYTE_ORDER`     | Platform byte order.                  | `(* = PLATFORM_BYTE_ORDER) *_LITTLE, *_BIG, *_LITTLE_WORD, *_UNKNOWN` |
+| `PLATFORM_KERNEL`                 | Platform byte order.                  | `*_LINUX, *_WINDOWS_NT, *_XNU, *_UNKNOWN`                             |
+| `PLATFORM_OS`                     | Platform operating system.            | `*_LINUX, *_WINDOWS, *_OS_X, *_UNKNOWN`                               |
+| `PLATFORM_WORD_SIZE`              | Platform word size.                   | `32, 64, *_UNKNOWN`                                                   |
+| `PLATFORM_NEWLINE`                | Platform newline.                     | `"\n", "\r\n"`                                                        |
+| `PLATFORM_NEWLINE_LENGTH`         | Platform newline length.              | Integer.                                                              |
+| `PLATFORM_DIRECTORY_SEPARATOR`    | Platform directory separator.         | Character literal.                                                    |
+| `PLATFORM_MAX_FILENAME_LENGTH`    | Maximum permissible file name length. | Integer.                                                              |
+| `PLATFORM_MAX_PATHNAME_LENGTH`    | Maximum permissible path name length. | Integer.                                                              |
+
+## Compiler Attributes
+
+The following macros provide access to the corresponding compiler-specific
+attributes. If the host compiler does not implement the corresponding attribute,
+then the macro expands to nothing.
+
+| Macro              | Description                                                                        |
+|--------------------|------------------------------------------------------------------------------------|
+| `CC_ALWAYS_INLINE` | Forces the compiler to inline the designated function.                             |
+| `CC_NEVER_INLINE`  | Instructs the compiler not to inline the designated function.                      |
+| `CC_CONST`         | Tells the compiler that the designated function does not access global memory.     |
+| `CC_PURE`          | Tells the compiler that the designated function does not modify any global memory. |
+| `CC_RESTRICT`      | Expands to the compiler's equivalent of the C99 `restrict` keyword.                |
+| `CC_ALIGN(n)`      | Used to align addresses of static arrays to multiples of `n`.                      |
 
 ## `ccbase.dynamic`
+
+This module does the following two things:
+    - Provides clean, cross-platform syntax for loading functions and symbols
+    from dynamic libraries.
+    - Provides macros to control symbol visibility in a cross-platform way.
 
 ### Loading Dynamic Libraries
 
@@ -255,13 +191,13 @@ defined, and nothing otherwise.
 
 ## `ccbase.error`
 
-Currently, this module contains an implementation of `expected<T>` based on the
-one Andrei Alexandrescu discusses in his talk at C++ Next 2012 called
-"Systematic Error Handling". The video and slides of the talk (which contain his
-code) are available [here][error_handling]. This implementation in `ccbase` is
-extended so that it also works for `void` and reference types. (For `void`
-types, an assertion is performed if `NDEBUG` is not defined to ensure that
-`.get()` is called before destruction.)
+This module contains an implementation of `expected<T>` based on the one Andrei
+Alexandrescu discusses in his talk at C++ Next 2012 called "Systematic Error
+Handling". The video and slides of the talk (which contain his code) are
+available [here][error_handling]. This implementation in `ccbase` is extended so
+that it also works for `void` and reference types. (For `void` types, an
+assertion is performed if `NDEBUG` is not defined to ensure that `.get()` is
+called before destruction.)
 
 The fact that generalized unions cannot contain references was alluded to in
 [this blog post][extending_expected], and the approach taken to rectify the
@@ -320,8 +256,8 @@ For more options, run the executable with the `--help` flag.
 
 ## `ccbase.filesystem`
 
-Using this header, you can do the following without any static library
-dependencies (Linux and OS X only):
+Using this header, you can do the following **without any static library
+dependencies** (Linux and OS X only):
 
 	#include <ccbase/filesystem.hpp>
 
@@ -330,12 +266,12 @@ dependencies (Linux and OS X only):
 	}
 
 `ccbase.filesystem` uses raw system calls rather than the POSIX `readdir()`
-function. This allows for efficient iteration over millions of files. `ls`,
+function. This allows for efficient iteration over _millions_ of files. `ls`,
 `find`, or any utility that uses `readdir()` (including Boost.Filesystem) can
 hang in such cases. See [this blog post][readdir_fails] for the full story.
 
-The design of this library is roughly influenced by Boost.Filesystem, but the
-high-level interface only consists of the following two functions:
+The design of this library is roughly influenced by that of Boost.Filesystem,
+but the high-level interface only consists of the following two functions:
 
   - `cc::list_files`
   - `cc::match_files`
@@ -351,9 +287,9 @@ Dereferencing an iterator within the range returned by either of these functions
 returns a `cc::directory_entry` object, which has the following three member
 functions:
 
-  - `const char* path() const` Returns the absolute path to this file.
-  - `const char* name() const` Returns the name of the file.
-  - `const cc::file_type type() const` Returns the file type.
+  - `const char* path() const noexcept` Returns the absolute path to this file.
+  - `const char* name() const noexcept` Returns the name of the file.
+  - `const cc::file_type type() const noexcept` Returns the file type.
 
 The `cc:file_type` is an enum class with the following values:
 
