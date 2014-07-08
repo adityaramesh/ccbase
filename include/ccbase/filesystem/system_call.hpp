@@ -23,6 +23,7 @@
 	#include <sys/types.h>
 #elif PLATFORM_KERNEL == PLATFORM_KERNEL_XNU
 	// For `user_size_t` and `user_ssize_t`.
+	#include <unistd.h>
 	#include <machine/types.h>
 	#include <sys/syscall.h>
 	#include <sys/types.h>

@@ -125,11 +125,18 @@ class expected_base
 	/*
 	** These constructors are used to create `expected` objects in valid
 	** states.
+	**
+	** XXX: We cannot use curly brackets to initialize `t_`, because it will
+	** fail for POD types. The curly bracket for POD types does something
+	** different from the uniform initialization for other types. If we used
+	** the curly bracket when `T` is POD type, the compiler would try to
+	** convert `rhs` to the first field of `rhs`, rather than performing the
+	** copy-construction.
 	*/
 
-	expected_base(value& rhs) noexcept : t_{rhs}, valid_{true} {}
-	expected_base(const value& rhs) noexcept : t_{rhs}, valid_{true} {}
-	expected_base(value&& rhs) noexcept : t_{std::move(rhs)}, valid_{true} {}
+	expected_base(value& rhs) noexcept : t_(rhs), valid_{true} {}
+	expected_base(const value& rhs) noexcept : t_(rhs), valid_{true} {}
+	expected_base(value&& rhs) noexcept : t_(std::move(rhs)), valid_{true} {}
 
 	/*
 	** These constructors are used to create `expected` objects in invalid
@@ -161,13 +168,13 @@ class expected_base
 
 	expected_base(const expected_base& rhs) noexcept : valid_{rhs.valid_}
 	{
-		if (valid_) new(&t_) storage{rhs.t_};
+		if (valid_) new(&t_) storage(rhs.t_);
 		else new(&p_) std::exception_ptr{rhs.p_};
 	}
 
 	expected_base(expected_base&& rhs) noexcept : valid_{rhs.valid_}
 	{
-		if (valid_) new(&t_) storage{std::move(rhs.t_)};
+		if (valid_) new(&t_) storage(std::move(rhs.t_));
 		else new(&p_) std::exception_ptr{std::move(rhs.p_)};
 	}
 
@@ -231,11 +238,11 @@ public:
 				if (sizeof(storage) < sizeof(std::exception_ptr)) {
 					auto t = std::move(t_);
 					new (&p_) std::exception_ptr{rhs.p_};
-					new (&rhs.t_) storage{std::move(t)};
+					new (&rhs.t_) storage(std::move(t));
 				}
 				else {
 					auto t = std::move(rhs.p_);
-					new (&rhs.t_) storage{std::move(t_)};
+					new (&rhs.t_) storage(std::move(t_));
 					new (&p_) std::exception_ptr{t};
 				}
 				valid_ = false;
@@ -247,11 +254,11 @@ public:
 				if (sizeof(storage) < sizeof(std::exception_ptr)) {
 					auto t = std::move(rhs.t_);
 					new (&rhs.p_) std::exception_ptr{p_};
-					new (&t_) storage{std::move(t)};
+					new (&t_) storage(std::move(t));
 				}
 				else {
 					auto t = std::move(p_);
-					new (&t_) storage{std::move(rhs.t_)};
+					new (&t_) storage(std::move(rhs.t_));
 					new (&rhs.p_) std::exception_ptr{t};
 				}
 				rhs.valid_ = false;

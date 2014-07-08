@@ -10,6 +10,7 @@
 
 #include <cstdint>
 #include <type_traits>
+#include <ccbase/platform/attributes.hpp>
 #include <ccbase/platform/identification.hpp>
 
 #if !(PLATFORM_COMPILER == PLATFORM_COMPILER_CLANG || \
