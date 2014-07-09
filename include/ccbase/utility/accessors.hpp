@@ -13,7 +13,7 @@
 	const decltype(member)& name() const { return member; }
 
 #define DEFINE_COPY_GETTER(name, member) \
-	decltype(member) name() { return member; }
+	decltype(member) name() const { return member; }
 
 #define DEFINE_SETTER(self, name, member)     \
 	self& name(const decltype(member)& x) \
