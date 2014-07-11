@@ -28,6 +28,10 @@ You can read the examples and documentation [here](documentation.md).
 
 # Upcoming Features
 
+- Document newly-added features after sufficient use:
+  - `accessors.hpp`
+  - `bytes.hpp`
+
 - `match_files` with recursive directory enumeration.
 - Tuple arithmetic.
 

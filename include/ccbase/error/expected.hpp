@@ -69,6 +69,7 @@
 #include <type_traits>
 #include <typeinfo>
 #include <utility>
+#include <boost/preprocessor/cat.hpp>
 
 namespace cc {
 
@@ -456,6 +457,9 @@ public:
 		#endif
 		return valid_;
 	}
+
+	operator bool() const noexcept
+	{ return valid(); }
 	
 	void get() const
 	{

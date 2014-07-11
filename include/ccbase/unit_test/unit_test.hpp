@@ -57,12 +57,12 @@
 
 #define module_impl_1(name)                                         \
 	static const bool CC_UNUSED BOOST_PP_CAT(temp_, __LINE__) = \
-	cc::detail::module_list::add(name, __LINE__);                 \
+	cc::detail::module_list::add(name, __LINE__);               \
 	static void BOOST_PP_CAT(module_, __COUNTER__)()
 
 #define module_impl_2(name, description)                            \
 	static const bool CC_UNUSED BOOST_PP_CAT(temp_, __LINE__) = \
-	cc::detail::module_list::add(name, __LINE__, description);    \
+	cc::detail::module_list::add(name, __LINE__, description);  \
 	static void BOOST_PP_CAT(module_, __COUNTER__)()
 
 #define require(x)                                                  \
@@ -77,12 +77,12 @@
 	{                                                                      \
 		if (                                                           \
 			argc <= 1 || (argc == 3 &&                             \
-			(cc::detail::equal(argv[1], "-v") ||                 \
-			cc::detail::equal(argv[1], "--verbosity")))          \
+			(cc::detail::equal(argv[1], "-v") ||                   \
+			cc::detail::equal(argv[1], "--verbosity")))            \
 		) {                                                            \
 			BOOST_PP_REPEAT_FROM_TO(0, __COUNTER__, DECL, module_) \
 		}                                                              \
-		return cc::detail::parse_flags(argc, argv, description);     \
+		return cc::detail::parse_flags(argc, argv, description);       \
 	}
 
 namespace cc
