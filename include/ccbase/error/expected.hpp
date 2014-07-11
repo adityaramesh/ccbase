@@ -196,6 +196,9 @@ public:
 		return valid_;
 	}
 
+	operator bool() const noexcept
+	{ return valid(); }
+
 	reference get()
 	{
 		#ifndef NDEBUG
