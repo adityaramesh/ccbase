@@ -485,6 +485,8 @@ public:
 		if (!valid_) std::rethrow_exception(p_);
 	}
 
+	void operator*() const { return get(); }
+
 	std::exception_ptr exception() const noexcept
 	{
 		assert(!valid_);
