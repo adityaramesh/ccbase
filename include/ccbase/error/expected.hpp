@@ -215,6 +215,9 @@ public:
 		return t_;
 	}
 
+	reference operator*() { return get(); }
+	const reference operator*() const { return get(); }
+
 	std::exception_ptr exception()
 	const noexcept
 	{
