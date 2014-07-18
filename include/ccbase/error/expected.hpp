@@ -305,6 +305,9 @@ private:
 	using base::t_;
 	using base::p_;
 	using base::valid_;
+	#ifndef NDEBUG
+		using base::read_;
+	#endif
 public:
 	expected(const T& rhs) noexcept : base{rhs} {}
 	expected(T&& rhs) noexcept : base{std::move(rhs)} {}
