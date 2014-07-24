@@ -1,5 +1,5 @@
 /*
-** File Name:	pause.hpp
+** File Name:	yield_execution.hpp
 ** Author:	Aditya Ramesh
 ** Date:	06/27/2014
 ** Contact:	_@adityaramesh.com
@@ -19,14 +19,14 @@
 #elif PLATFORM_COMPILER == PLATFORM_COMPILER_MSVC
 	#include <windows.h>
 #else
-	#warning "Unsupported compiler for cc::pause."
-	#warning "The operation will be a no-op."
+	#warning "Unsupported compiler for cc::yield_execution."
+	#warning "The function will be a no-op."
 #endif
 
 namespace cc {
 
 CC_ALWAYS_INLINE void
-pause() noexcept
+yield_execution() noexcept
 {
 #if PLATFORM_COMPILER == PLATFORM_COMPILER_CLANG || \
     PLATFORM_COMPILER == PLATFORM_COMPILER_GCC   || \
