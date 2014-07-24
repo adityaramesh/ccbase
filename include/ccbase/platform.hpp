@@ -11,6 +11,6 @@
 #include <ccbase/platform/attributes.hpp>
 #include <ccbase/platform/identification.hpp>
 #include <ccbase/platform/bswap.hpp>
-#include <ccbase/platform/pause.hpp>
+#include <ccbase/platform/yield_execution.hpp>
 
 #endif
