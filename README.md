@@ -28,6 +28,29 @@ You can read the examples and documentation [here](documentation.md).
 
 # Upcoming Features
 
+- Use `boost::string_ref` instead of returning `char*`.
+
+- Add attributes for formatting.
+  - E.g. `cc::println("Object ID: ${hex, align(left, 20)}.");`
+  - Allow use of numbers to refer to previously-formatted objects.
+  - Allow support for user-defined attributes?
+  - Supported attributes:
+    - General attributes:
+      - Adjustment/centering/fill characters
+    - Integral type attributes:
+      - binary
+      - octal
+      - hex
+      - bool
+    - Floating-point type attributes:
+      - precision
+      - fixed
+      - scientific
+    - String attributes:
+      - quote
+      - uppercase
+      - lowercase
+
 - Document newly-added features after sufficient use:
   - `accessors.hpp`
   - `bytes.hpp`
