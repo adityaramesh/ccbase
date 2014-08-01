@@ -1,5 +1,5 @@
 /*
-** File Name:	print.hpp
+** File Name:	tuple.hpp
 ** Author:	Aditya Ramesh
 ** Date:	08/12/2013
 ** Contact:	_@adityaramesh.com
@@ -8,6 +8,7 @@
 #ifndef ZC216C426_75CD_4BC3_B7CC_5B44145C130F
 #define ZC216C426_75CD_4BC3_B7CC_5B44145C130F
 
+#include <cstdint>
 #include <cstring>
 #include <ostream>
 #include <tuple>
@@ -16,7 +17,7 @@
 namespace cc {
 namespace detail {
 
-template <std::size_t Current, std::size_t Max, class Stream, class Tuple>
+template <uintmax_t Current, uintmax_t Max, class Stream, class Tuple>
 struct print_tuple
 {
 	static void apply(Stream& os, const Tuple t)
@@ -26,7 +27,7 @@ struct print_tuple
 	}
 };
 
-template <std::size_t Max, class Stream, class Tuple>
+template <uintmax_t Max, class Stream, class Tuple>
 struct print_tuple<Max, Max, Stream, Tuple>
 {
 	static void apply(Stream& os, const Tuple t)
@@ -51,5 +52,7 @@ noexcept -> decltype(os)
 }
 
 }
+
+using cc::operator<<;
 
 #endif
