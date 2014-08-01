@@ -11,8 +11,10 @@
 #include <functional>
 #include <stdexcept>
 #include <type_traits>
+#include <boost/utility/string_ref.hpp>
 #include <ccbase/error.hpp>
 #include <ccbase/platform.hpp>
+#include <ccbase/utility/enum_bitmask.hpp>
 
 #if PLATFORM_KERNEL == PLATFORM_KERNEL_LINUX || \
     PLATFORM_KERNEL == PLATFORM_KERNEL_XNU
@@ -23,7 +25,7 @@
 
 namespace cc {
 
-enum class mode : int
+enum class binding_mode : int
 {
 	lazy   = RTLD_LAZY,
 	now    = RTLD_NOW,
@@ -41,63 +43,39 @@ enum class mode : int
 #ifdef RTLD_DEPBIND
 	depbind = RTLD_DEPBIND,
 #endif
-
 };
 
-static constexpr mode lazy = mode::lazy;
-static constexpr mode now = mode::now;
-static constexpr mode global = mode::global;
-static constexpr mode local = mode::local;
-
-#ifdef RTLD_NODELETE
-	static constexpr mode nodelete = mode::nodelete;
-#endif
-
-#ifdef RTLD_NOLOAD
-	static constexpr mode noload = mode::noload;
-#endif
-
-#ifdef RTLD_DEPBIND
-	static constexpr mode depbind = mode::depbind;
-#endif
-
-constexpr mode
-operator|(const mode x, const mode y) noexcept
-{
-	using integer = typename std::underlying_type<mode>::type;
-	return static_cast<mode>(
-		static_cast<integer>(x) |
-		static_cast<integer>(y)
-	);
-}
+DEFINE_ENUM_BITWISE_OPERATORS(binding_mode)
 
 class image
 {
-private:
-	void* handle;
+	void* m_handle;
 public:
-	image(const char* path, mode m)
+	explicit image(const boost::string_ref path, binding_mode m)
 	{
-		using integer = typename std::underlying_type<mode>::type;
-		handle = ::dlopen(path, static_cast<integer>(m));
-		if (handle == nullptr) {
+		using integer = typename std::underlying_type<binding_mode>::type;
+		m_handle = ::dlopen(path.begin(), static_cast<integer>(m));
+		if (m_handle == nullptr) {
 			throw std::runtime_error{::dlerror()};
 		}
 	}
 
 	~image()
 	{
-		if (::dlclose(handle) != 0) {
-			// Ideally, if an error occurs in closing the handle,
-			// then we would log the error.
+		if (::dlclose(m_handle) != 0) {
+			// Ideally, this error should be logged.
 			::dlerror();
 		}
 	}
 
-	operator void*()
-	const noexcept
+	void* handle() const noexcept
+	{ return m_handle; }
+
+	void close()
 	{
-		return handle;
+		if (::dlclose(m_handle) != 0) {
+			throw std::runtime_error{::dlerror()};
+		}
 	}
 };
 
@@ -107,145 +85,153 @@ class function;
 template <class ReturnType, class... Args>
 class function<ReturnType(Args...)>
 {
-private:
 	using signature = ReturnType(Args...);
 	using pointer = ReturnType(*)(Args...);
 
-	std::function<signature> f;
-	void* address;
+	std::function<signature> m_func;
+	void* m_addr;
 public:
-	function(void* address) noexcept :
-	f{reinterpret_cast<pointer>(address)}, address{address} {}
+	explicit function(void* addr) noexcept :
+	m_func{reinterpret_cast<pointer>(addr)}, m_addr{addr} {}
 
 	ReturnType operator()(Args... args)
-	const noexcept
-	{
-		return f(args...);
-	}
+	const noexcept(noexcept(m_func(args...)))
+	{ return m_func(args...); }
 
-	operator void*()
-	const noexcept
-	{
-		return address;
-	}
+	void* address() noexcept
+	{ return m_addr; }
+
+	const void* address() const noexcept
+	{ return m_addr; }
 };
 
 class symbol_info
 {
-private:
-	Dl_info data;
+	::Dl_info m_data;
 public:
-	symbol_info() noexcept {}
+	explicit symbol_info() noexcept {}
 
-	const char* path()
-	const noexcept
-	{
-		return data.dli_fname;
-	}
+	const boost::string_ref path()
+	const noexcept { return {m_data.dli_fname}; }
+
+	const boost::string_ref name()
+	const noexcept { return {m_data.dli_sname}; }
 
 	const void* base_address()
-	const noexcept
-	{
-		return data.dli_fbase;
-	}
-
-	const char* name()
-	const noexcept
-	{
-		return data.dli_sname;
-	}
+	const noexcept { return m_data.dli_fbase; }
 
 	const void* address()
-	const noexcept
-	{
-		return data.dli_saddr;
-	}
+	const noexcept { return m_data.dli_saddr; }
 
-	operator Dl_info*() noexcept
-	{
-		return &data;
-	}
+	Dl_info& handle()
+	noexcept { return m_data; }
+
+	const Dl_info& handle()
+	const noexcept { return m_data; }
 };
 
 template <class T>
 cc::expected<symbol_info>
-get_info(const T& t)
+query(const T& t) noexcept
 {
-	symbol_info d;
-	auto r = ::dladdr(static_cast<void*>(const_cast<T*>(&t)), d);
-	if (r == 0) {
+	auto si = symbol_info{};
+	if (::dladdr((void*)&t, &si.handle()) == 0) {
 		throw std::runtime_error{::dlerror()};
 	}
-	return d;
+	return si;
 }
 
 template <class Signature>
 cc::expected<symbol_info>
-get_info(const function<Signature> f)
+query(const function<Signature>& f) noexcept
 {
-	symbol_info d;
-	auto r = ::dladdr(f, d);
-	if (r == 0) {
+	auto si = symbol_info{};
+	if (::dladdr(f.address(), &si.handle()) == 0) {
 		throw std::runtime_error{::dlerror()};
 	}
-	return d;
+	return si;
 }
 
-template <class Signature>
-cc::expected<function<Signature>>
-get_function(const char* name, const image& i)
-{
-	// The Linux manual states that the error state should be cleared before
-	// checking the error state after the next dl* function call.
-	#if PLATFORM_KERNEL == PLATFORM_KERNEL_LINUX
-		::dlerror();
-	#endif
 
-	auto t = ::dlsym(i, name);
-
-	#if PLATFORM_KERNEL == PLATFORM_KERNEL_LINUX
-		if (::dlerror() != nullptr) {
-			return std::runtime_error{"Symbol not found."};
-		}
-	#elif PLATFORM_KERNEL == PLATFORM_KERNEL_XNU
-		if (t == nullptr) {
-			return std::runtime_error{::dlerror()};
-		}
-	#endif
-
-	return function<Signature>{t};
-}
+namespace detail {
 
 /*
-** Note that this function returns an `expected<T&>`, so mutating the value type
-** from the `expected` object also mutates the original object retrieved from
-** the symbol address.
+** This is the specialization for loading non-function objects from the image.
 */
+template <class T>
+struct load_helper
+{
+	static cc::expected<T&>
+	apply(const boost::string_ref name, const image& img)
+	noexcept
+	{
+		// The Linux manual states that the error state should be cleared before
+		// checking the error state after the next `dl*` function call.
+		#if PLATFORM_KERNEL == PLATFORM_KERNEL_LINUX
+			::dlerror();
+		#endif
+
+		auto t = ::dlsym(img.handle(), name.begin());
+
+		#if PLATFORM_KERNEL == PLATFORM_KERNEL_LINUX
+			if (::dlerror() != nullptr) {
+				return std::runtime_error{"Symbol not found."};
+			}
+		#elif PLATFORM_KERNEL == PLATFORM_KERNEL_XNU
+			if (t == nullptr) {
+				return std::runtime_error{::dlerror()};
+			}
+		#endif
+
+		return *static_cast<T*>(t);
+	}
+};
+
+/*
+** This is the specialization for loading functions from the image.
+*/
+template <class R, class... Args>
+struct load_helper<R(Args...)>
+{
+	using signature = R(Args...);
+
+	/*
+	** Note that this function returns an `expected<T&>`, so mutating the value type
+	** from the `expected` object also mutates the original object retrieved from
+	** the symbol address.
+	*/
+	static cc::expected<function<signature>>
+	apply(const boost::string_ref name, const image& img)
+	noexcept
+	{
+		// The Linux manual states that the error state should be cleared before
+		// checking the error state after the next dl* function call.
+		#if PLATFORM_KERNEL == PLATFORM_KERNEL_LINUX
+			::dlerror();
+		#endif
+
+		auto t = ::dlsym(img.handle(), name.begin());
+
+		#if PLATFORM_KERNEL == PLATFORM_KERNEL_LINUX
+			if (::dlerror() != nullptr) {
+				return std::runtime_error{"Symbol not found."};
+			}
+		#elif PLATFORM_KERNEL == PLATFORM_KERNEL_XNU
+			if (t == nullptr) {
+				return std::runtime_error{::dlerror()};
+			}
+		#endif
+
+		return function<signature>{t};
+	}
+};
+
+}
 
 template <class T>
-cc::expected<T&>
-get_data(const char* name, const image& i)
-{
-	// The Linux manual states that the error state should be cleared before
-	// checking the error state after the next dl* function call.
-	#if PLATFORM_KERNEL == PLATFORM_KERNEL_LINUX
-		::dlerror();
-	#endif
-
-	auto t = ::dlsym(i, name);
-
-	#if PLATFORM_KERNEL == PLATFORM_KERNEL_LINUX
-		if (::dlerror() != nullptr) {
-			return std::runtime_error{"Symbol not found."};
-		}
-	#elif PLATFORM_KERNEL == PLATFORM_KERNEL_XNU
-		if (t == nullptr) {
-			return std::runtime_error{::dlerror()};
-		}
-	#endif
-
-	return *static_cast<T*>(t);
-}
+auto load(const boost::string_ref name, const image& img)
+noexcept -> decltype(detail::load_helper<T>::apply(name, img))
+{ return detail::load_helper<T>::apply(name, img); }
 
 }
 

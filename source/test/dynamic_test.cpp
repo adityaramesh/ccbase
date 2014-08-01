@@ -11,40 +11,41 @@
 #include <ccbase/dynamic.hpp>
 #include <ccbase/unit_test.hpp>
 
-module("test_retrieval", "Tests whether getting data works.")
+module("test_retrieval", "Tests whether loading data works.")
 {
 	using signature = std::string(std::string, std::string);
-	cc::image i{"./out/libraries/test.lib", cc::lazy};
-	auto f = cc::get_function<signature>("test", i).get();
+	auto img = cc::image{"./out/libraries/test.lib", cc::binding_mode::lazy};
+	auto f = cc::load<signature>("test", img).get();
+	auto& s = cc::load<std::string>("msg", img).get();
+
 	require(f("foo", "bar") == "foobar");
-	auto& s = cc::get_data<std::string>("msg", i).get();
 	require(s == "Original contents.");
 }
 
 module("test_mutation", "Tests whether module data is mutable.")
 {
-	cc::image i{"./out/libraries/test.lib", cc::lazy};
-	auto& s1 = cc::get_data<std::string>("msg", i).get();
+	auto img = cc::image{"./out/libraries/test.lib", cc::binding_mode::lazy};
+	auto& s1 = cc::load<std::string>("msg", img).get();
 	require(s1 == "Original contents.");
 	s1 = "New contents.";
 
-	auto& s2 = cc::get_data<std::string>("msg", i).get();
+	auto& s2 = cc::load<std::string>("msg", img).get();
 	require(s2 == "New contents.");
 }
 
 module("test_info", "Tests whether symbol address lookup works.")
 {
 	using signature = std::string(std::string, std::string);
-	cc::image i{"./out/libraries/test.lib", cc::lazy};
-	auto f = cc::get_function<signature>("test", i).get();
+	auto img = cc::image{"./out/libraries/test.lib", cc::binding_mode::lazy};
+	auto f = cc::load<signature>("test", img).get();
 	require(f("foo", "bar") == "foobar");
-	auto& s = cc::get_data<std::string>("msg", i).get();
+	auto& s = cc::load<std::string>("msg", img).get();
 	require(s == "Original contents.");
 
-	auto fi = cc::get_info(f).get();
-	auto si = cc::get_info(s).get();
-	require(std::strcmp(fi.name(), "test") == 0);
-	require(std::strcmp(si.name(), "msg") == 0);
+	auto fi = cc::query(f).get();
+	auto si = cc::query(s).get();
+	require(fi.name() == "test");
+	require(si.name() == "msg");
 }
 
 suite("Tests dynamic library loading.")
