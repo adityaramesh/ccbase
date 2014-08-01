@@ -9,7 +9,8 @@ incflags  = "-I include -isystem #{boost}"
 ldflags   = ""
 
 if cxx.include? "clang"
-	optflags  = "-Ofast -fno-fast-math -flto"
+	#optflags  = "-Ofast -fno-fast-math -flto"
+	optflags = "-O1 -ggdb"
 elsif cxx.include? "g++"
 	optflags  = "-Ofast -fno-fast-math -flto -fwhole-program"
 end
@@ -18,7 +19,7 @@ if RUBY_PLATFORM.include? "linux"
 	ldflags = "-ldl"
 end
 
-cxxflags  = "#{langflags} #{wflags} #{archflags} #{incflags} #{optflags}"
+cxxflags = "#{langflags} #{wflags} #{archflags} #{incflags} #{optflags}"
 
 lib_ppflags   = "-DCCBASE_EXPORT_SYMBOLS"
 lib_confflags = ""

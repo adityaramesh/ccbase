@@ -47,7 +47,7 @@
 /*
 ** The purpose of the 0 in the argument list is only to ensure that there is at
 ** least one variadic argument for `CC_VARIADIC_SIZE_IMPL`. Otherwise, the code
-** is technically not standards-compliant.
+** is not standards-compliant.
 */
 #define CC_VARIADIC_SIZE(...) CC_VARIADIC_SIZE_IMPL(__VA_ARGS__, 4, 3, 2, 1, 0)
 #define CC_VARIADIC_SIZE_IMPL(_1, _2, _3, _4, N, ...) N
@@ -57,40 +57,44 @@
 
 #define module_impl_1(name)                                         \
 	static const bool CC_UNUSED BOOST_PP_CAT(temp_, __LINE__) = \
-	cc::detail::module_list::add(name, __LINE__);               \
+	cc::detail::module_list::add_module(name, __LINE__);        \
 	static void BOOST_PP_CAT(module_, __COUNTER__)()
 
-#define module_impl_2(name, description)                            \
-	static const bool CC_UNUSED BOOST_PP_CAT(temp_, __LINE__) = \
-	cc::detail::module_list::add(name, __LINE__, description);  \
+#define module_impl_2(name, description)                                  \
+	static const bool CC_UNUSED BOOST_PP_CAT(temp_, __LINE__) =       \
+	cc::detail::module_list::add_module(name, __LINE__, description); \
 	static void BOOST_PP_CAT(module_, __COUNTER__)()
 
 #define require(x)                                                  \
 	static const bool CC_UNUSED BOOST_PP_CAT(temp_, __LINE__) = \
-	cc::detail::module_list::require(__LINE__, #x, (x))
+	cc::detail::module_list::add_result(__LINE__, #x, (x))
 
 #define DECL(z, n, text) \
 	BOOST_PP_CAT(text, n)();
 
+/*
+** The label is needed here, because we can only mention `__COUNTER__` once.
+*/
 #define suite(description)                                                     \
 	int main(int argc, char** argv)                                        \
 	{                                                                      \
-		if (                                                           \
-			argc <= 1 || (argc == 3 &&                             \
-			(cc::detail::equal(argv[1], "-v") ||                   \
-			cc::detail::equal(argv[1], "--verbosity")))            \
-		) {                                                            \
+		if (argc <= 1) {                                               \
+	generate:                                                              \
 			BOOST_PP_REPEAT_FROM_TO(0, __COUNTER__, DECL, module_) \
+		}                                                              \
+		else if (argc == 3) {                                          \
+			auto arg1 = boost::string_ref{argv[1]};                \
+			if (arg1 == "-v" || arg1 == "--verbosity") {           \
+				goto generate;                                 \
+			}                                                      \
 		}                                                              \
 		return cc::detail::parse_flags(argc, argv, description);       \
 	}
 
-namespace cc
-{
-namespace detail
-{
+namespace cc {
+namespace detail {
 
-enum class verbosity : unsigned
+enum class verbosity
 {
 	low,
 	medium,
@@ -104,32 +108,24 @@ Options:
 -v        --verbosity [low, medium, high]
 )";
 
-static bool
-equal(const char* a, const char* b)
+boost::string_ref get_suite(const boost::string_ref prog)
 {
-	return std::strcmp(a, b) == 0;
-}
-
-static std::string
-get_suite(const char* program)
-{
-	std::string s{program};
-	auto f = s.find_last_of("/\\");
-	if (f == std::string::npos) {
+	auto f = prog.find_last_of("/\\");
+	if (f == boost::string_ref::npos) {
 		f = 0;
 	}
 	else {
 		++f;
 	}
-	auto l = s.find_last_of(".");
-	if (l == std::string::npos) {
-		l = s.size();
+
+	auto l = prog.find_last_of(".");
+	if (l == boost::string_ref::npos) {
+		l = prog.size();
 	}
-	return s.substr(f, l - f);
+	return prog.substr(f, l - f);
 }
 
-static int
-print_error(int, char** argv, const std::string msg)
+int print_error(int, char** argv, const std::string msg)
 {
 	cc::writeln(std::cerr, "$", msg);
 	cc::writeln(std::cerr, "Please type \"$ --help\" for a list of "
@@ -137,29 +133,29 @@ print_error(int, char** argv, const std::string msg)
 	return EXIT_FAILURE;
 }
 
-static int
-run_modules(const char* program, const verbosity v)
+int run_modules(const boost::string_ref prog, verbosity v)
 {
-	unsigned p{0};
-	unsigned t{0};
-	auto suite = get_suite(program);
+	auto passed = 0;
+	auto total = 0;
+	auto suite = get_suite(prog);
+
 	for (auto& m : module_list{}) {
-		p += m.passed();
-		t += m.total();
+		passed += m.passed();
+		total += m.total();
 		if (v == verbosity::medium) {
-			for (const auto& r : m) {
-				if (!r) {
+			for (const auto& res : m) {
+				if (!res.passed()) {
 					cc::println("Failure in module \"$\", "
-					"line $: \"$\".", m.name(), r.line(),
-					r.source());
+					"line $: \"$\".", m.name(), res.line(),
+					res.source());
 				}
 			}
 		}
 		else if (v == verbosity::high) {
-			for (const auto& r : m) {
+			for (const auto& res : m) {
 				cc::println("$ in module \"$\", line $: \"$\".",
-				r ? "Success" : "Failure", m.name(), r.line(),
-				r.source());
+				res.passed() ? "Success" : "Failure", m.name(),
+				res.line(), res.source());
 			}
 		}
 		cc::println("Summary for module \"$\": $ of $ "
@@ -167,28 +163,31 @@ run_modules(const char* program, const verbosity v)
 			m.total());
 	}
 	cc::println("Summary for suite \"$\": $ of $ assertions "
-		"passed.", suite, p, t);
+		"passed.", suite, passed, total);
 	return EXIT_SUCCESS;
 }
 
-static int
-print_help()
+int print_help()
 {
+	// XXX why is there +1 here?
 	print(help_message + 1);
 	return EXIT_SUCCESS;
 }
 
-static int
-list_modules(const char* program, const char* d)
+int list_modules(
+	const boost::string_ref prog,
+	const boost::string_ref desc
+)
 {
-	if (d != nullptr) {
-		println("Suite \"$\": $.", get_suite(program), d);
+	if (desc.length() > 0) {
+		println("Suite \"$\": $.", get_suite(prog), desc);
 	}
 	else {
-		println("Suite \"$\".", get_suite(program));
+		println("Suite \"$\".", get_suite(prog));
 	}
+
 	for (const auto& m : module_list{}) {
-		if (m.description() != nullptr) {
+		if (m.description().length() > 0) {
 			println("Module \"$\": $.", m.name(), m.description());
 		}
 		else {
@@ -198,41 +197,35 @@ list_modules(const char* program, const char* d)
 	return EXIT_SUCCESS;
 }
 
-static int
-parse_flags(int argc, char** argv, const char* d = nullptr)
+int parse_flags(int argc, char** argv, const char* d = nullptr)
 {
 	if (argc <= 1) {
 		return run_modules(argv[0], verbosity::low);
 	}
 	else if (argc <= 3) {
-		if (
-			equal(argv[1], "-h") ||
-			equal(argv[1], "--help")
-		) {
+		auto arg1 = boost::string_ref{argv[1]};
+
+		if (arg1 == "-h" || arg1 == "--help") {
 			return print_help();
 		}
-		else if (
-			equal(argv[1], "-l") ||
-			equal(argv[1], "--list-modules")
-		) {
+		else if (arg1 == "-l" || arg1 == "--list-modules") {
 			return list_modules(argv[0], d);
 		}
-		else if (
-			equal(argv[1], "-v") ||
-			equal(argv[1], "--verbosity")
-		) {
+		else if (arg1 == "-v" || arg1 == "--verbosity") {
 			if (argc < 3) {
 				auto s = cc::format("Error: expected verbosity "
-					"level after \"$\" flag.", argv[1]);
+					"level after \"$\" flag.", arg1);
 				return print_error(argc, argv, s);
 			}
-			if (equal(argv[2], "low")) {
+
+			auto arg2 = boost::string_ref{argv[2]};
+			if (arg2 == "low") {
 				return run_modules(argv[0], verbosity::low);
 			}
-			else if (equal(argv[2], "medium")) {
+			else if (arg2 == "medium") {
 				return run_modules(argv[0], verbosity::medium);
 			}
-			else if (equal(argv[2], "high")) {
+			else if (arg2 == "high") {
 				return run_modules(argv[0], verbosity::high);
 			}
 			else {
@@ -242,8 +235,7 @@ parse_flags(int argc, char** argv, const char* d = nullptr)
 			}
 		}
 		else {
-			auto s = cc::format("Error: unrecognized flag \"$\".",
-				argv[1]);
+			auto s = cc::format("Error: unrecognized flag \"$\".", arg1);
 			return print_error(argc, argv, s);
 		}
 	}

@@ -9,26 +9,30 @@
 #define Z267B316A_BF50_4FF8_A898_D95A04FD7914
 
 #include <string>
+
+#include <boost/utility/string_ref.hpp>
 #include <ccbase/format.hpp>
+#include <ccbase/utility/accessors.hpp>
 
 namespace cc {
 namespace detail {
 
 class result
 {
+	std::string m_src{};
+	size_t m_line{};
+	bool m_passed{};
 public:
-	using size_type = std::size_t;
-private:
-	std::string s;
-	size_type l;
-	bool b;
-public:
-	result(size_type l, const char* s, const bool b)
-	noexcept : s{format("require($)", s)}, l{l}, b{b} {}
+	explicit result(
+		size_t line,
+		const boost::string_ref src,
+		bool passed
+	) noexcept : m_src{format("require($)", src)}, m_line{line},
+	 m_passed{passed} {}
 
-	operator bool() const { return b; }
-	const char* source() const { return s.c_str(); }
-	size_type line() const { return l; }
+	DEFINE_COPY_GETTER(passed, m_passed)
+	DEFINE_COPY_GETTER(line, m_line)
+	DEFINE_REF_GETTER(source, m_src)
 };
 
 }}

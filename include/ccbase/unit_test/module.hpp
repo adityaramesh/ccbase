@@ -10,6 +10,10 @@
 
 #include <utility>
 #include <vector>
+
+#include <boost/range/algorithm.hpp>
+#include <boost/utility/string_ref.hpp>
+#include <ccbase/utility/accessors.hpp>
 #include <ccbase/unit_test/result.hpp>
 
 namespace cc {
@@ -18,88 +22,71 @@ namespace detail {
 class module
 {
 public:
-	using size_type = std::size_t;
-	using list = std::vector<result>;
-	using iterator = typename list::iterator;
+	using list           = std::vector<result>;
+	using iterator       = typename list::iterator;
 	using const_iterator = typename list::const_iterator;
 private:
-	list r{};
-	size_type l;
-	const char* n{nullptr};
-	const char* d{nullptr};
+	list m_results{};
+	size_t m_line;
+	const boost::string_ref m_name{};
+	const boost::string_ref m_desc{};
 public:
 	explicit module() noexcept {}
 
-	explicit module(const char* n, const size_type l)
-	noexcept : l{l}, n{n} {}
+	explicit module(const boost::string_ref name, const size_t line)
+	noexcept : m_line{line}, m_name{name} {}
 
-	explicit module(const char* n, const size_type l, const char* d)
-	noexcept : l{l}, n{n}, d{d} {}
+	explicit module(
+		const boost::string_ref name,
+		const size_t line,
+		const boost::string_ref desc
+	) noexcept : m_line{line}, m_name{name}, m_desc{desc} {}
 
-	size_type line() const { return l; }
-	const char* name() const { return n; }
-	const char* description() const { return d; }
+	DEFINE_COPY_GETTER(line, m_line)
+	DEFINE_COPY_GETTER(name, m_name)
+	DEFINE_COPY_GETTER(description, m_desc)
 
 	template <class... Ts>
-	void add(Ts&&... ts)
+	void add_result(Ts&&... ts)
+	{ m_results.emplace_back(std::forward<Ts>(ts)...); }
+
+	size_t passed() const
 	{
-		r.emplace_back(std::forward<Ts>(ts)...);
+		return boost::count_if(m_results,
+			[](const result& r) { return r.passed(); });
 	}
 
-	unsigned passed() const
+	size_t failed() const
 	{
-		unsigned p{0};
-		for (const auto& i : r) {
-			p += i;
-		}
-		return p;
-	}
-
-	unsigned failed() const
-	{
-		unsigned f{0};
-		for (const auto& i : r) {
-			f += !i;
-		}
-		return f;
+		return boost::count_if(m_results,
+			[](const result& r) { return !r.passed(); });
 	}
 
 	unsigned total() const
-	{
-		return r.size();
-	}
+	{ return m_results.size(); }
 
-	iterator begin() { return r.begin(); }
-	iterator end() { return r.end(); }
-	const_iterator cbegin() const { return r.cbegin(); }
-	const_iterator cend() const { return r.cend(); }
+	iterator begin() noexcept { return m_results.begin(); }
+	iterator end() noexcept { return m_results.end(); }
+	const_iterator cbegin() const noexcept { return m_results.cbegin(); }
+	const_iterator cend() const noexcept { return m_results.cend(); }
 };
 
 typename module::iterator
-begin(module m)
-{
-	return m.begin();
-}
+begin(module& m) noexcept
+{ return m.begin(); }
 
 typename module::iterator
-end(module m)
-{
-	return m.end();
-}
+end(module& m) noexcept
+{ return m.end(); }
 
 typename module::const_iterator
-cbegin(const module m)
-{
-	return m.cbegin();
-}
+cbegin(const module& m) noexcept
+{ return m.cbegin(); }
 
 typename module::const_iterator
-cend(const module m)
-{
-	return m.cend();
-}
+cend(const module& m) noexcept
+{ return m.cend(); }
 
-}
-}
+}}
 
 #endif
