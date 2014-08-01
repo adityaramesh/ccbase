@@ -11,15 +11,17 @@
 #include <algorithm>
 #include <cstring>
 #include <stdexcept>
-#include <boost/iterator/filter_iterator.hpp>
+
 #include <boost/range/iterator_range.hpp>
+#include <boost/iterator/filter_iterator.hpp>
+#include <boost/utility/string_ref.hpp>
 #include <ccbase/filesystem/directory_iterator.hpp>
 #include <ccbase/filesystem/glob_matcher.hpp>
 
 namespace cc {
 
 boost::iterator_range<directory_iterator>
-list_files(const char* path)
+list_files(const boost::string_ref path)
 {
 	return {
 		directory_iterator{path},
@@ -27,23 +29,20 @@ list_files(const char* path)
 	};
 }
 
-boost::iterator_range<boost::filter_iterator<glob_matcher, directory_iterator>>
-match_files(const char* glob)
+boost::iterator_range<
+	boost::filter_iterator<glob_matcher, directory_iterator>
+>
+match_files(const boost::string_ref glob)
 {
-	const auto* end = std::strrchr(glob, '/');
-	if (end == nullptr) {
+	auto end = glob.rfind(PLATFORM_DIRECTORY_SEPARATOR);
+	if (end == boost::string_ref::npos) {
 		throw std::invalid_argument{"Invalid glob string."};
 	}
 
-	// TODO Change this to `std::dynarray` after the transition to C++14.
-	char buf[end - glob + 1];
-	std::copy(glob, end, buf);
-	buf[end - glob] = '\0';
-
 	return {
 		boost::make_filter_iterator(
-			glob_matcher{end + 1},
-			directory_iterator{buf},
+			glob_matcher{glob.substr(end + 1)},
+			directory_iterator{glob.substr(0, end)},
 			directory_iterator{}
 		),
 		boost::make_filter_iterator(

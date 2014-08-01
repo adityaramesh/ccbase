@@ -28,6 +28,7 @@ You can read the examples and documentation [here](documentation.md).
 
 # Upcoming Features
 
+- Use CC_ASSERT instead of assert.
 - Use `boost::string_ref` instead of returning `char*`.
 - Switch to Sphinx documentation.
 - Add documentation for `bitmask_enum`.

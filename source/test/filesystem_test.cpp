@@ -7,9 +7,10 @@
 
 #include <cstring>
 #include <unordered_set>
-#include <ccbase/filesystem/range.hpp>
+
 #include <ccbase/format.hpp>
 #include <ccbase/unit_test.hpp>
+#include <ccbase/filesystem.hpp>
 
 module("Test directory iteration.")
 {
@@ -17,13 +18,13 @@ module("Test directory iteration.")
 	auto l = cc::directory_iterator{};
 
 	while (f != l) {
-		if (std::strcmp(f->name(), "a") == 0) {
+		if (f->name() == "a") {
 			require(f->type() == cc::file_type::regular);
 		}
-		else if (std::strcmp(f->name(), "b") == 0) {
+		else if (f->name() == "b") {
 			require(f->type() == cc::file_type::symbolic_link);
 		}
-		else if (std::strcmp(f->name(), "c") == 0) {
+		else if (f->name() == "c") {
 			require(f->type() == cc::file_type::directory);
 		}
 		++f;

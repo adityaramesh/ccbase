@@ -13,8 +13,8 @@
 
 namespace cc {
 
-CC_ALWAYS_INLINE bool
-is_glob(const char c)
+bool is_glob(const char c)
+noexcept
 {
 	return c == '?' || c == '*' || c == '[' || c == ']' || c == '\\';
 }
@@ -22,15 +22,15 @@ is_glob(const char c)
 class glob_matcher
 {
 private:
-	const char* pat{};
+	const boost::string_ref m_pat{};
 public:
 	explicit glob_matcher() noexcept {}
 
-	explicit glob_matcher(const char* pat)
-	noexcept : pat{pat}
+	explicit glob_matcher(const boost::string_ref pat)
+	noexcept : m_pat{pat}
 	{
 		// If we are in debug mode, ensure that the pattern is valid.
-		assert(pat != nullptr && pat[0] != '\0');
+		assert(m_pat.length() > 0);
 
 		#ifndef NDEBUG
 		auto i = 0u;
@@ -44,7 +44,7 @@ public:
 		**   3. Any backslash not followed by a special character; this
 		**   includes trailing backslashes.
 		*/
-		do switch (pat[i]) {
+		do switch (m_pat[i]) {
 		default:
 		case '*':
 		case '?':     ++i;                            continue;
@@ -53,18 +53,18 @@ public:
 		// special character.
 		case '\\':    assert(is_glob(pat[++i])); ++i; continue;
 		regular_mode:                                 continue;
-		} while (pat[i] != '\0');
+		} while (i != pat.length());
 		return;
 		
 		// Check to ensure that the current group is valid.
 	group_mode:
-		for(;;) switch (pat[i]) {
+		for(;;) switch (m_pat[i]) {
 		default:   ++i;                            continue;
 		case ']':  ++i;                            goto regular_mode;
 		case '\\': assert(is_glob(pat[++i])); ++i; continue;
 		case '*':
 		case '?':
-		case '\0': assert(false);
+		case '\0': assert(false && "Invalid group.");
 		}
 
 		#endif
@@ -74,44 +74,44 @@ public:
 	** Determines whether the directory entry's name matches the glob
 	** pattern.
 	*/
-	bool operator()(const directory_entry& e)
+	bool operator()(const directory_entry& ent)
 	const noexcept
 	{
 		#ifndef NDEBUG
-			assert(pat != nullptr);
+			assert(m_pat.length() > 0);
 		#endif
 
 		// Offset into pattern that we are matching.
 		auto i = 0u;
 		// Offset into the file name.
 		auto j = 0u;
-		auto s = e.name();
+		auto s = ent.name();
 
-		do switch(pat[i]) {
-		default:   if (pat[i++] != s[j++])           return false; continue;
+		do switch(m_pat[i]) {
+		default:   if (m_pat[i++] != s[j++])         return false; continue;
 		case '*':  ++i; return match_wildcard(s, i, j);
 		case '?':  ++i; ++j;                                       continue;
 		case '[':  ++i; if (!match_group(s, i, j))   return false; continue;
-		case '\\': ++i; if (pat[i++] != s[j++])      return false; continue;
-		} while (pat[i] != '\0' && s[j] != '\0');
-		return (pat[i] == '\0' || pat[i] == '*') && s[j] == '\0';
+		case '\\': ++i; if (m_pat[i++] != s[j++])    return false; continue;
+		} while (i != m_pat.length() && j != s.length());
+		return (i == m_pat.length() || m_pat[i] == '*') && j == s.length();
 	}
 private:
 	/*
 	** Determines whether `s[j]` matches the group of characters starting at
-	** `pat[i]`.
+	** `m_pat[i]`.
 	*/
-	bool match_group(const char* s, unsigned& i, unsigned& j)
+	bool match_group(const boost::string_ref s, unsigned& i, unsigned& j)
 	const noexcept
 	{
 		auto b = false;
 		do {
 			// Skip past the backslash before an escaped character.
-			i += (pat[i] == '\\');
-			b = b || (pat[i] == s[j]);
+			i += (m_pat[i] == '\\');
+			b = b || (m_pat[i] == s[j]);
 			++i;
 		}
-		while (pat[i] != ']');
+		while (m_pat[i] != ']');
 		++i;
 		++j;
 		return b;
@@ -120,9 +120,9 @@ private:
 	/*
 	** After this method is called, we must iteratively test each character
 	** of `s` beginning at `s[j]` to check whether it matches the characters
-	** after the wildcards beginning at `pat[i - 1]`.
+	** after the wildcards beginning at `m_pat[i - 1]`.
 	*/
-	bool match_wildcard(const char* s, unsigned i, unsigned j)
+	bool match_wildcard(const boost::string_ref s, unsigned i, unsigned j)
 	const noexcept
 	{
 		/*
@@ -140,9 +140,9 @@ private:
 		// Current index at which we are looking for a match.
 		auto pj = j;
 
-		while (s[j] != '\0') switch (pat[i]) {
+		while (s[j] != '\0') switch (m_pat[i]) {
 			default:
-				if (pat[i] != s[j]) {
+				if (m_pat[i] != s[j]) {
 					++pj;
 					i = pi;
 					j = pj;
@@ -178,7 +178,7 @@ private:
 				** prevent this, we must anticipate what should
 				** happen in the next iteration.
 				*/
-				if (pat[i + 1] != s[j]) {
+				if (m_pat[i + 1] != s[j]) {
 					++pj;
 					i = pi;
 					j = pj;
@@ -190,7 +190,7 @@ private:
 					continue;
 				}
 		}
-		return pat[i] == '\0';
+		return i == m_pat.length();
 	}
 };
 

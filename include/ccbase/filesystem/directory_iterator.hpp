@@ -27,7 +27,10 @@
 #include <cstring>
 #include <memory>
 #include <system_error>
+
+#include <boost/range/algorithm.hpp>
 #include <boost/iterator/iterator_facade.hpp>
+#include <boost/utility/string_ref.hpp>
 #include <ccbase/platform.hpp>
 #include <ccbase/filesystem/directory_entry.hpp>
 #include <ccbase/filesystem/system_call.hpp>
@@ -114,60 +117,64 @@ public boost::iterator_facade<
 	using native_dirent = ::dirent;
 #endif
 
-	mutable std::array<char, PLATFORM_MAX_PATHNAME_LENGTH> pathbuf;
-	std::unique_ptr<char[]> buf;
-	char* f;
-	char* l;
+	mutable std::array<char, PLATFORM_MAX_PATHNAME_LENGTH> m_path_buf;
+	std::unique_ptr<char[]> m_buf{};
+	char* m_buf_cur{};
+	char* m_buf_end{};
 
 #if PLATFORM_KERNEL == PLATFORM_KERNEL_LINUX
-	int read;
+	int m_read{};
 #elif PLATFORM_KERNEL == PLATFORM_KERNEL_XNU
-	user_ssize_t read;
-	off_t        off{};
+	::user_ssize_t m_read{};
 #endif
 
-	ssize_t  bufsz;
-	int      fd;
-	int      pos{};
-	unsigned dirlen;
+	::ssize_t m_bufsz{};
+	int m_fd{-1};
+	int32_t m_pos{};
+	uint32_t m_dir_len{};
+	mutable uint32_t m_path_len{};
 public:
-	directory_iterator() noexcept : pos{-1} {}
+	explicit directory_iterator() noexcept : m_pos{-1} {}
 
-	directory_iterator(const char* dir) : dirlen(std::strlen(dir))
+	explicit directory_iterator(const boost::string_ref dir)
+	: m_dir_len(dir.length())
 	{
 		// Ensure that the string resulting from concatenating the path
 		// to the directory, the platform directory separator, and the
 		// file name can fit in the path buffer. The trailing "+ 1" term
 		// accounts for the null terminating character.
-		assert(dirlen + 1 + PLATFORM_MAX_FILENAME_LENGTH + 1 <=
+		assert(m_dir_len + 1 + PLATFORM_MAX_FILENAME_LENGTH + 1 <=
 			PLATFORM_MAX_PATHNAME_LENGTH);
 
-		fd = ::open(dir, O_RDONLY);
-		if (fd < 0) {
+		// We need to copy `dir` to `m_path_buf`, because `dir` might
+		// not be null-terminated.
+		boost::copy(dir, m_path_buf.begin());
+		m_path_buf[dir.length()] = '\0';
+		m_fd = ::open(m_path_buf.begin(), O_RDONLY);
+
+		if (m_fd < 0) {
 			throw std::system_error{errno, std::system_category(),
-				"Failed to open directory"};
+				"failed to open directory"};
 		}
 
-		struct stat s;
-		if (::fstat(fd, &s) == -1) {
+		struct stat st;
+		if (::fstat(m_fd, &st) == -1) {
 			throw std::system_error{errno, std::system_category(),
-				"Failed to get directory status"};
+				"failed to get directory status"};
 		}
 
-		bufsz = detail::rumpot(s.st_size, s.st_blksize);
-		buf   = std::unique_ptr<char[]>{new char[bufsz]};
+		m_bufsz = detail::rumpot(st.st_size, st.st_blksize);
+		m_buf = std::unique_ptr<char[]>{new char[m_bufsz]};
 
 		// We do not want to copy the null character, so we only copy
-		// until dir + dirlen rather than dir + dirlen + 1.
-		std::copy(dir, dir + dirlen, pathbuf.data());
-		pathbuf[dirlen] = PLATFORM_DIRECTORY_SEPARATOR;
+		// until dir + dir_len rather than dir + dir_len + 1.
+		boost::copy(dir, m_path_buf.data());
+		m_path_buf[m_dir_len] = PLATFORM_DIRECTORY_SEPARATOR;
 		read_chunk();
 	}
 
 	~directory_iterator()
-	{
-		::close(fd);
-	}
+	{ ::close(m_fd); }
 
 	/*
 	** Copying a directory iterator creates another one that is backed by a
@@ -177,27 +184,30 @@ public:
 	** end iterator, although no IO operations will be performed.
 	*/
 	directory_iterator(const directory_iterator& rhs) :
-	bufsz{rhs.bufsz}, dirlen{rhs.dirlen}
+	m_bufsz{rhs.m_bufsz}, m_dir_len{rhs.m_dir_len}
 	{
-		if (rhs.pos == -1) {
-			pos = -1;
+		if (rhs.m_pos == -1) {
+			m_pos = -1;
 			return;
 		}
 
-		buf = std::unique_ptr<char[]>{new char[bufsz]};
-		std::copy(rhs.pathbuf.data(), rhs.pathbuf.data() + dirlen, pathbuf.data());
-		pathbuf[dirlen] = '\0';
+		m_buf = std::unique_ptr<char[]>{new char[m_bufsz]};
+		std::copy(rhs.m_path_buf.data(), rhs.m_path_buf.data() + m_dir_len,
+			m_path_buf.data());
 
-		fd = ::open(pathbuf.data(), O_RDONLY);
-		if (fd < 0) {
+		// Careful: we need the null character at the end when
+		// interfacing with `open`.
+		m_path_buf[m_dir_len] = '\0';
+		m_fd = ::open(m_path_buf.data(), O_RDONLY);
+		if (m_fd < 0) {
 			throw std::system_error{errno, std::system_category(),
-				"Failed to open directory"};
+				"failed to open directory"};
 		}
 
-		pathbuf[dirlen] = PLATFORM_DIRECTORY_SEPARATOR;
+		m_path_buf[m_dir_len] = PLATFORM_DIRECTORY_SEPARATOR;
 		read_chunk();
 
-		while (pos != rhs.pos) {
+		while (m_pos != rhs.m_pos) {
 			increment();
 		}
 	}
@@ -208,38 +218,39 @@ private:
 	/*
 	** Mmm... chunky.
 	*/
-	void read_chunk() noexcept
+	void read_chunk()
 	{
 		#if PLATFORM_KERNEL == PLATFORM_KERNEL_LINUX
-			read = getdents(fd, buf.get(), bufsz);
+			m_read = getdents(m_fd, m_buf.get(), m_bufsz);
 		#elif PLATFORM_KERNEL == PLATFORM_KERNEL_XNU
-			read = getdirentries64(fd, buf.get(), bufsz, &off);
+			auto off = ::off_t{};
+			m_read = getdirentries64(m_fd, m_buf.get(), m_bufsz, &off);
 		#endif
 
-		if (read > 0) {
-			f = buf.get();
-			l = buf.get() + read;
+		if (m_read > 0) {
+			m_buf_cur = m_buf.get();
+			m_buf_end = m_buf.get() + m_read;
 		}
-		else if (read == 0) {
-			pos = -1;
+		else if (m_read == 0) {
+			m_pos = -1;
 		}
-		else if (read == -1) {
+		else if (m_read == -1) {
 			throw std::system_error{errno, std::system_category(),
-				"Failed to read directory entries"};
+				"failed to read directory entries"};
 		}
 	}
 
-	void increment() noexcept
+	void increment()
 	{
-		native_dirent* e;
+		native_dirent* ent;
 		do {
-			e = (native_dirent*)f;
-			f += e->d_reclen;
+			ent = (native_dirent*)m_buf_cur;
+			m_buf_cur += ent->d_reclen;
 		}
-		while (e->d_ino == 0 && f < l);
+		while (ent->d_ino == 0 && m_buf_cur < m_buf_end);
 
-		++pos;
-		if (f >= l) {
+		++m_pos;
+		if (m_buf_cur >= m_buf_end) {
 			read_chunk();
 		}
 	}
@@ -247,42 +258,44 @@ private:
 	directory_entry dereference()
 	const noexcept
 	{
-		#if PLATFORM_KERNEL == PLATFORM_KERNEL_LINUX
-			auto e  = (native_dirent*)f;
-			// The type of the file is stored in the last byte of
-			// the directory record.
-			auto t  = static_cast<file_type>(*(char*)(f + e->d_reclen - 1));
-			// Compute the length of the file name.
-			auto nl = length_type(e->d_reclen - 2 - offsetof(detail::linux_dirent, d_name));
-			return { *this, (char*)e->d_name, nl, t };
-		#elif PLATFORM_KERNEL == PLATFORM_KERNEL_XNU
-			auto e = (native_dirent*)f;
-			return { *this, e->d_name, e->d_namlen,
-				static_cast<file_type>(e->d_type) };
-		#endif
+	#if PLATFORM_KERNEL == PLATFORM_KERNEL_LINUX
+		auto ent = (native_dirent*)m_buf_cur;
+		// The type of the file is stored in the last byte of the
+		// directory record.
+		auto type = static_cast<file_type>(*(char*)(m_buf_cur + ent->d_reclen - 1));
+		// Compute the length of the file name.
+		auto len = length_type{ent->d_reclen - 2 -
+			offsetof(detail::linux_dirent, d_name)};
+		return {*this, (char*)ent->d_name, len, type};
+	#elif PLATFORM_KERNEL == PLATFORM_KERNEL_XNU
+		auto ent = (native_dirent*)m_buf_cur;
+		return {*this, ent->d_name, ent->d_namlen,
+			static_cast<file_type>(ent->d_type)};
+	#endif
 	}
 
 	bool equal(const directory_iterator& rhs)
+	const noexcept { return m_pos == rhs.m_pos; }
+
+	/*
+	** Updates the current file at the end of the directory path string.
+	*/
+	void update_path(const boost::string_ref filename)
 	const noexcept
 	{
-		return pos == rhs.pos;
+		boost::copy(filename, m_path_buf.data() + m_dir_len + 1);
+		m_path_len = m_dir_len + filename.length();
 	}
 
-	void update_path(const char* fn, length_type n)
-	const noexcept
-	{
-		std::copy(fn, fn + n, pathbuf.data() + dirlen + 1);
-		pathbuf[dirlen + 1 + n] = '\0';
-	}
-
-	const char* path() const noexcept { return pathbuf.data(); }
+	const boost::string_ref path()
+	const noexcept { return {m_path_buf.data(), m_path_len}; }
 };
 
-const char* directory_entry::path()
-const noexcept
+const boost::string_ref
+directory_entry::path() const noexcept
 {
-	p->update_path(n, len);
-	return p->path();
+	m_dir_it.update_path(m_name);
+	return m_dir_it.path();
 }
 
 using const_directory_iterator = directory_iterator;
