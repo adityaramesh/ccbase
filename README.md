@@ -29,6 +29,8 @@ You can read the examples and documentation [here](documentation.md).
 # Upcoming Features
 
 - Use `boost::string_ref` instead of returning `char*`.
+- Switch to Sphinx documentation.
+- Add documentation for `bitmask_enum`.
 
 - Add attributes for formatting.
   - E.g. `cc::println("Object ID: ${hex, align(left, 20)}.");`
@@ -69,8 +71,13 @@ without any attribution, provided that:
 
 # Prerequisites
 
-`ccbase` depends on Boost (namely, Boost.Range and Boost.Iterator). You should
-have Boost installed on your system before attempting to install `ccbase`.
+- Required dependencies:
+  - Boost 1.55.
+  - A C++11-conforming compiler. The library has been tested on recent versions
+  of ICC, GCC, and Clang.
+
+- Optional dependencies:
+  - Rake, for running the tests.
 
 # Installation
 
