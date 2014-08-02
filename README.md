@@ -7,11 +7,13 @@
 
 # Introduction
 
-`ccbase` is a header-only collection of lightweight modules that augment the
-standard library or provide abstractions over platform-specific functionality
-for Linux and OS X.
+CCBase is a header-only C++11 library intended to make day-to-day tasks more
+pleasant. It's licensed under the BSD Three-Clause License.
 
-The `ccbase` library consists of the following components:
+Installation information, along with usage examples and documentation, can be
+found [here](http://adityaramesh.com/ccbase).
+
+# Components
 
 - `ccbase.format`: Elegant syntax for printing and formatting strings.
 - `ccbase.platform`: Compile-time access to platform-specific information.
@@ -20,18 +22,28 @@ The `ccbase` library consists of the following components:
 - `ccbase.dynamic`: Dynamic library loading and symbol visibility control.
 - `ccbase.filesystem`: Fast and convenient directory iteration.
 
-The following additional components are currently under development:
+The entirety of the public API resides in the `cc` namespace.
 
-- `ccbase.tuple`: Printing and operators for `std::tuple`.
+# Dependencies
 
-You can read the examples and documentation [here](documentation.md).
+- Required dependencies:
+  - Boost 1.55.
+  - A C++11-conforming compiler. The library has been tested on recent versions
+  of ICC, GCC, and Clang.
 
-# Upcoming Features
+- Optional dependencies:
+  - Rake, for running the tests.
+  - Sphinx and the Sphinx RTD Theme, for building the documentation.
 
-- Use CC_ASSERT instead of assert.
-- Use `boost::string_ref` instead of returning `char*`.
-- Switch to Sphinx documentation.
-- Add documentation for `bitmask_enum`.
+# TODO
+
+- Adapt documentation to Sphinx.
+- Refactor installation information.
+- Document the `utility` module.
+
+- Use `CC_ASSERT` instead of assert.
+- Tuple arithmetic.
+- `match_files` with recursive directory enumeration.
 
 - Add attributes for formatting.
   - E.g. `cc::println("Object ID: ${hex, align(left, 20)}.");`
@@ -53,32 +65,6 @@ You can read the examples and documentation [here](documentation.md).
       - quote
       - uppercase
       - lowercase
-
-- Document newly-added features after sufficient use:
-  - `accessors.hpp`
-  - `bytes.hpp`
-
-- `match_files` with recursive directory enumeration.
-- Tuple arithmetic.
-
-# License
-
-This work is licensed under the [BSD Three-Clause License](LICENSE.md).
-Basically, you can use this library for both free and commercial applications
-without any attribution, provided that:
-  - Redistributions of the source must contain the [license file](LICENSE.md).
-  - You do not use my name to promote products derived from this one without
-  prior written permission.
-
-# Prerequisites
-
-- Required dependencies:
-  - Boost 1.55.
-  - A C++11-conforming compiler. The library has been tested on recent versions
-  of ICC, GCC, and Clang.
-
-- Optional dependencies:
-  - Rake, for running the tests.
 
 # Installation
 
@@ -105,18 +91,3 @@ would appreciate it if you file a bug report with the output of the unit tests
 and your platform details (in particular, your OS and compiler, along with their
 corresponding versions) either via Github or by email at `_@adityaramesh.com`.
 Thanks!
-
-# Development Notes
-
-- The include files are placed within the `include` directory to guard against
-  executables that have the same name as standard header files. (Thanks to
-  guepier from Reddit for the suggestion.)
-- Each module in `ccbase` has its own directory, along with a top-level header
-  file that includes all of the header files in the module.
-- The `src/ref` directory contains platform-specific reference programs that are
-  written to help understand how various functions work before they are
-  abstracted away behind an interface. These were especially useful when
-  developing the `dynamic` and `filesystem` modules.
-- Lesson: avoid using constexpr structures alongside macros. Although the syntax
-  may be cleaner in certain cases, it is not worth the development nightmare to
-  maintain both variants simultaneously.
