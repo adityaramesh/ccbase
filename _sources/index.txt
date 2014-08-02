@@ -2,7 +2,10 @@ Overview
 ========
 
 CCBase is a header-only C++11 library intended to make day-to-day tasks more
-pleasant. It's licensed under the BSD Three-Clause License.
+pleasant. It's licensed under the BSD Three-Clause License. Visit the Github
+repository here_.
+
+.. _here: https://github.com/adityaramesh/ccbase/
 
 .. toctree::
    :maxdepth: 1
