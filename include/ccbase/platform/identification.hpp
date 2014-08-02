@@ -106,6 +106,10 @@
 
 #define CC_COMPILER_VERSION(v, r, p) (((v) << 24) + ((r) << 16) + (p))
 
+/*
+** This is safe to do even if the components are unknown, because the macro will
+** evaluate to zero, which is the value of `PLATFORM_COMPILER_VERSION_UNKNOWN`.
+*/
 #define PLATFORM_COMPILER_VERSION                \
 	CC_COMPILER_VERSION(                     \
 		PLATFORM_COMPILER_MAJOR_VERSION, \

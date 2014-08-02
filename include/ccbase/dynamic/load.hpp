@@ -40,8 +40,8 @@ enum class binding_mode : int
 	noload = RTLD_NOLOAD,
 #endif
 
-#ifdef RTLD_DEPBIND
-	depbind = RTLD_DEPBIND,
+#ifdef RTLD_DEEPBIND
+	depbind = RTLD_DEEPBIND,
 #endif
 };
 
@@ -49,6 +49,7 @@ DEFINE_ENUM_BITWISE_OPERATORS(binding_mode)
 
 class image
 {
+	bool m_closed{false};
 	void* m_handle;
 public:
 	explicit image(const boost::string_ref path, binding_mode m)
@@ -56,26 +57,25 @@ public:
 		using integer = typename std::underlying_type<binding_mode>::type;
 		m_handle = ::dlopen(path.begin(), static_cast<integer>(m));
 		if (m_handle == nullptr) {
+			m_closed = true;
 			throw std::runtime_error{::dlerror()};
 		}
 	}
 
-	~image()
-	{
-		if (::dlclose(m_handle) != 0) {
-			// Ideally, this error should be logged.
-			::dlerror();
-		}
-	}
+	~image() { close(); }
 
 	void* handle() const noexcept
 	{ return m_handle; }
 
 	void close()
 	{
+		if (m_closed) {
+			return;
+		}
 		if (::dlclose(m_handle) != 0) {
 			throw std::runtime_error{::dlerror()};
 		}
+		m_closed = true;
 	}
 };
 
@@ -94,12 +94,10 @@ public:
 	explicit function(void* addr) noexcept :
 	m_func{reinterpret_cast<pointer>(addr)}, m_addr{addr} {}
 
-	ReturnType operator()(Args... args)
-	const noexcept(noexcept(m_func(args...)))
-	{ return m_func(args...); }
-
-	void* address() noexcept
-	{ return m_addr; }
+	template <class... Args_>
+	ReturnType operator()(Args_&&... args)
+	const noexcept(noexcept(m_func(std::forward<Args_>(args)...)))
+	{ return m_func(std::forward<Args_>(args)...); }
 
 	const void* address() const noexcept
 	{ return m_addr; }

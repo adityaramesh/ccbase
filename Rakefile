@@ -1,12 +1,18 @@
 require 'rake/clean'
 
-cxx       = ENV['CXX']
-boost     = ENV['BOOST_INCLUDE_PATH']
-langflags = "-std=c++11"
-wflags    = "-Wall -Wextra -pedantic -Wno-return-type-c-linkage"
-archflags = "-march=native"
-incflags  = "-I include -isystem #{boost}"
-ldflags   = ""
+cxx          = ENV['CXX']
+boost        = ENV['BOOST_INCLUDE_PATH']
+sphinx_build = ""
+
+if ENV.key?('PYTHON_BIN')
+	sphinx_build = "#{ENV['PYTHON_BIN']}sphinx-build"
+end
+
+langflags  = "-std=c++11"
+wflags     = "-Wall -Wextra -pedantic -Wno-return-type-c-linkage"
+archflags  = "-march=native"
+incflags   = "-I include -isystem #{boost}"
+ldflags    = ""
 
 if cxx.include? "clang"
 	optflags  = "-Ofast -fno-fast-math -flto"
@@ -55,6 +61,10 @@ task "check" => dirs + tests + libs do
 			puts r
 		end
 	end
+end
+
+task "docs" do
+	sh "#{sphinx_build} -b html docs ../gh-pages"
 end
 
 dirs.each do |d|

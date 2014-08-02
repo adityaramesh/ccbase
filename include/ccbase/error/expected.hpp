@@ -349,6 +349,13 @@ class expected<T&> : public expected_base<T&>
 private:
 	friend class expected_base<T&>;
 	using base = expected_base<T&>;
+
+	using base::t_;
+	using base::p_;
+	using base::valid_;
+	#ifndef NDEBUG
+		using base::read_;
+	#endif
 public:
 	expected(T& rhs) noexcept : base{rhs} {}
 
@@ -364,6 +371,15 @@ public:
 
 	expected(const expected& rhs) noexcept : base{static_cast<const base&>(rhs)} {}
 	expected(expected&& rhs) noexcept : base{static_cast<base&&>(rhs)} {}
+
+	T&& move()
+	{
+		#ifndef NDEBUG
+			read_ = true;
+		#endif
+		if (!valid_) std::rethrow_exception(p_);
+		return std::move(t_);
+	}
 
 	void swap(expected& rhs) noexcept
 	{
@@ -570,7 +586,7 @@ typename std::enable_if<
 	catch (...) {
 		return {};
 	}
-	return { true };
+	return {true};
 }
 
 }

@@ -25,27 +25,27 @@ namespace cc {
 
 enum class file_type : unsigned char
 {
-	block         = DT_BLK,
-	character     = DT_CHR,
-	directory     = DT_DIR,
-	fifo          = DT_FIFO,
-	symbolic_link = DT_LNK,
-	regular       = DT_REG,
-	socket        = DT_SOCK,
-	unknown       = DT_UNKNOWN
+	block_device     = DT_BLK,
+	character_device = DT_CHR,
+	directory        = DT_DIR,
+	fifo             = DT_FIFO,
+	symbolic_link    = DT_LNK,
+	regular          = DT_REG,
+	socket           = DT_SOCK,
+	unknown          = DT_UNKNOWN
 };
 
 std::ostream& operator<<(std::ostream& os, const file_type& t)
 {
 	switch (t) {
-	case file_type::block:         cc::write (os, "block");         return os;
-	case file_type::character:     cc::write (os, "character");     return os;
-	case file_type::directory:     cc::write (os, "directory");     return os;
-	case file_type::fifo:          cc::write (os, "fifo");          return os;
-	case file_type::symbolic_link: cc::write (os, "symbolic link"); return os;
-	case file_type::regular:       cc::write (os, "regular");       return os;
-	case file_type::socket:        cc::write (os, "socket");        return os;
-	case file_type::unknown:       cc::write (os, "unknown");       return os;
+	case file_type::block:         cc::write (os, "block device");     return os;
+	case file_type::character:     cc::write (os, "character device"); return os;
+	case file_type::directory:     cc::write (os, "directory");        return os;
+	case file_type::fifo:          cc::write (os, "fifo");             return os;
+	case file_type::symbolic_link: cc::write (os, "symbolic link");    return os;
+	case file_type::regular:       cc::write (os, "regular file");     return os;
+	case file_type::socket:        cc::write (os, "socket");           return os;
+	case file_type::unknown:       cc::write (os, "unknown");          return os;
 	}
 }
 
@@ -75,7 +75,7 @@ public:
 
 std::ostream& operator<<(std::ostream& os, const directory_entry& e)
 {
-	cc::write(os, "{{name: $, type: $}}", e.name(), e.type());
+	cc::write(os, "{{name: \"$\", type: \"$\"}}", e.name(), e.type());
 	return os;
 }
 
