@@ -135,29 +135,13 @@
 <p>To use this module, include <tt class="docutils literal"><span class="pre">ccbase/error.hpp</span></tt>.</p>
 <div class="section" id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
-<p>This module contains an implementation of <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> based on the one Andrei
-Alexandrescu discusses in his talk at C++ Next 2012 called &#8220;Systematic Error
-Handling&#8221; <a class="footnote-reference" href="#id3" id="id1">[1]</a>. The implementation in CCBase is extended in the following ways:</p>
-<ul class="simple">
-<li>It works for <tt class="docutils literal"><span class="pre">void</span></tt> and reference types <a class="footnote-reference" href="#id4" id="id2">[2]</a>.</li>
-<li>If <tt class="docutils literal"><span class="pre">NEO_NO_DEBUG</span></tt> is not defined, an assertion is performed to ensure that the state of the <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object is read at least once prior to destruction.</li>
-</ul>
-<table class="docutils footnote" frame="void" id="id3" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td><a class="reference external" href="http://channel9.msdn.com/Shows/Going+Deep/C-and-Beyond-2012-Andrei-Alexandrescu-Systematic-Error-Handling-in-C">http://channel9.msdn.com/Shows/Going+Deep/C-and-Beyond-2012-Andrei-Alexandrescu-Systematic-Error-Handling-in-C</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="id4" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td><a class="reference external" href="http://anto-nonco.blogspot.com/2013/03/extending-expected-to-deal-with.html">http://anto-nonco.blogspot.com/2013/03/extending-expected-to-deal-with.html</a></td></tr>
-</tbody>
-</table>
-<p>The <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> gives us a way to return arbitrarily-rich error codes from a
-given function without forcing the programmer to respond to the exception
-immediately. Here&#8217;s an example where the <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> class is used to provide an
-error-checked wrapper over a low-level POSIX function:</p>
+<p>The <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> class is a polymorphic type that is either in a <em>valid</em> or an
+<em>invalid</em> state. If an instance is in an invalid state, then it stores an
+exception; if it is in a valid state, then it stores an instance of <em>T</em>. This
+allows us to return arbitrarily-rich error codes from a given function, without
+forcing the programmer to respond to the exception immediately.</p>
+<p>Here&#8217;s an example where the <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> class is used to provide an error-checked
+wrapper over a low-level POSIX function:</p>
 <div class="highlight-cpp"><div class="highlight"><pre><span class="n">std</span><span class="o">::</span><span class="n">system_error</span> <span class="n">current_system_error</span><span class="p">()</span> <span class="n">noexcept</span>
 <span class="p">{</span> <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">system_error</span><span class="p">{</span><span class="n">errno</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">system_category</span><span class="p">()};</span> <span class="p">}</span>
 
@@ -173,6 +157,27 @@ error-checked wrapper over a low-level POSIX function:</p>
 
         <span class="k">if</span> <span class="p">(</span><span class="n">r</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">current_system_error</span><span class="p">();</span> <span class="p">}</span> <span class="p">}</span>
         <span class="k">return</span> <span class="n">r</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="n">main</span><span class="p">()</span>
+<span class="p">{</span>
+        <span class="n">try</span> <span class="p">{</span>
+                <span class="c1">// Deferences the returned `expected` object, which</span>
+                <span class="c1">// returns the stored value or throws the stored</span>
+                <span class="c1">// exception.</span>
+                <span class="k">auto</span> <span class="n">fd</span> <span class="o">=</span> <span class="o">*</span><span class="n">safe_open</span><span class="p">(</span><span class="s">&quot;test.txt&quot;</span><span class="p">,</span> <span class="n">O_RDONLY</span><span class="p">);</span>
+        <span class="k">catch</span> <span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">system_error</span><span class="o">&amp;</span> <span class="n">e</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">// Respond to the exception here.</span>
+        <span class="p">}</span>
+
+        <span class="c1">// This time, we defer responding to the exception.</span>
+        <span class="k">auto</span> <span class="n">exp</span> <span class="o">=</span> <span class="n">safe_open</span><span class="p">(</span><span class="s">&quot;test.txt&quot;</span><span class="p">,</span> <span class="n">O_RDONLY</span><span class="p">);</span>
+
+        <span class="c1">// Do other stuff.</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">exp</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">// Respond to the error.</span>
+        <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -193,6 +198,26 @@ function does not really return anything. Consider the following example:</p>
 <span class="p">}</span>
 </pre></div>
 </div>
+<p>This module&#8217;s implementation of <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> is based on the one Andrei
+Alexandrescu discusses in his talk at C++ Next 2012 called &#8220;Systematic Error
+Handling&#8221; <a class="footnote-reference" href="#id3" id="id1">[1]</a>. The implementation in CCBase is extended in the following ways:</p>
+<ul class="simple">
+<li>Several useful member functions and overloaded operators have been added.</li>
+<li>It works for <tt class="docutils literal"><span class="pre">void</span></tt> and reference types <a class="footnote-reference" href="#id4" id="id2">[2]</a>.</li>
+<li>If <tt class="docutils literal"><span class="pre">NEO_NO_DEBUG</span></tt> is not defined, an assertion is performed to ensure that the state of the <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object is read at least once prior to destruction.</li>
+</ul>
+<table class="docutils footnote" frame="void" id="id3" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td><a class="reference external" href="http://channel9.msdn.com/Shows/Going+Deep/C-and-Beyond-2012-Andrei-Alexandrescu-Systematic-Error-Handling-in-C">http://channel9.msdn.com/Shows/Going+Deep/C-and-Beyond-2012-Andrei-Alexandrescu-Systematic-Error-Handling-in-C</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id4" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td><a class="reference external" href="http://anto-nonco.blogspot.com/2013/03/extending-expected-to-deal-with.html">http://anto-nonco.blogspot.com/2013/03/extending-expected-to-deal-with.html</a></td></tr>
+</tbody>
+</table>
 </div>
 <div class="section" id="reference">
 <h2>Reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h2>

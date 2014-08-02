@@ -18,20 +18,14 @@ To use this module, include ``ccbase/error.hpp``.
 Overview
 --------
 
-This module contains an implementation of |expected| based on the one Andrei
-Alexandrescu discusses in his talk at C++ Next 2012 called "Systematic Error
-Handling" [#]_. The implementation in CCBase is extended in the following ways:
+The |expected| class is a polymorphic type that is either in a *valid* or an
+*invalid* state. If an instance is in an invalid state, then it stores an
+exception; if it is in a valid state, then it stores an instance of *T*. This
+allows us to return arbitrarily-rich error codes from a given function, without
+forcing the programmer to respond to the exception immediately.
 
-- It works for ``void`` and reference types [#]_.
-- If ``NEO_NO_DEBUG`` is not defined, an assertion is performed to ensure that the state of the |expected| object is read at least once prior to destruction.
-
-.. [#] http://channel9.msdn.com/Shows/Going+Deep/C-and-Beyond-2012-Andrei-Alexandrescu-Systematic-Error-Handling-in-C 
-.. [#] http://anto-nonco.blogspot.com/2013/03/extending-expected-to-deal-with.html
-
-The |expected| gives us a way to return arbitrarily-rich error codes from a
-given function without forcing the programmer to respond to the exception
-immediately. Here's an example where the |expected| class is used to provide an
-error-checked wrapper over a low-level POSIX function: ::
+Here's an example where the |expected| class is used to provide an error-checked
+wrapper over a low-level POSIX function: ::
 
         std::system_error current_system_error() noexcept
         { return std::system_error{errno, std::system_category()}; }
@@ -50,6 +44,27 @@ error-checked wrapper over a low-level POSIX function: ::
         	return r;
         }
 
+        int main()
+        {
+                try {
+                        // Deferences the returned `expected` object, which
+                        // returns the stored value or throws the stored
+                        // exception.
+                        auto fd = *safe_open("test.txt", O_RDONLY);
+                catch (const std::system_error& e) {
+                        // Respond to the exception here.
+                }
+                
+                // This time, we defer responding to the exception.
+                auto exp = safe_open("test.txt", O_RDONLY);
+
+                // Do other stuff.
+
+                if (!exp) {
+                        // Respond to the error.
+                }
+        }
+
 Sometimes it makes sense to return an |expected| object from a function, even if
 function does not really return anything. Consider the following example: ::
 
@@ -66,6 +81,17 @@ function does not really return anything. Consider the following example: ::
         		if (errno != EINTR) { current_system_error(); }
         	}
         }
+
+This module's implementation of |expected| is based on the one Andrei
+Alexandrescu discusses in his talk at C++ Next 2012 called "Systematic Error
+Handling" [#]_. The implementation in CCBase is extended in the following ways:
+
+- Several useful member functions and overloaded operators have been added.
+- It works for ``void`` and reference types [#]_.
+- If ``NEO_NO_DEBUG`` is not defined, an assertion is performed to ensure that the state of the |expected| object is read at least once prior to destruction.
+
+.. [#] http://channel9.msdn.com/Shows/Going+Deep/C-and-Beyond-2012-Andrei-Alexandrescu-Systematic-Error-Handling-in-C 
+.. [#] http://anto-nonco.blogspot.com/2013/03/extending-expected-to-deal-with.html
 
 Reference
 ---------
