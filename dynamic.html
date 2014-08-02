@@ -1,0 +1,446 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>The Dynamic Module &mdash; CCBase 1.0 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="CCBase 1.0 documentation" href="index.html"/>
+        <link rel="next" title="The Filesystem Module" href="filesystem.html"/>
+        <link rel="prev" title="The Platform Module" href="platform.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="index.html" class="fa fa-home"> CCBase</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Using CCBase</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#library-structure">Library Structure</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="format.html">Format Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="format.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="format.html#reference">Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="platform.html">Platform Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="platform.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="platform.html#platform-identification">Platform Identification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="platform.html#compiler-attributes">Compiler Attributes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="platform.html#compiler-intrinsics">Compiler Intrinsics</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Dynamic Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#loading-dynamic-libraries">Loading Dynamic Libraries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#controlling-symbol-visibility">Controlling Symbol Visibility</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="filesystem.html">Filesystem Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="filesystem.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="filesystem.html#reference">Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="error.html">Error Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="error.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="error.html#reference">Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="unit_test.html">Unit Test Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="unit_test.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unit_test.html#reference">Reference</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">CCBase</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>The Dynamic Module</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="_sources/dynamic.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <span class="target" id="ccbase-dynamic-module"></span><div class="section" id="the-dynamic-module">
+<h1>The Dynamic Module<a class="headerlink" href="#the-dynamic-module" title="Permalink to this headline">¶</a></h1>
+<p>To use this module, include <tt class="docutils literal"><span class="pre">ccbase/dynamic.hpp</span></tt>. Please note that this module
+currently works on OS X and Linux only.</p>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>This module does the following two things:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Provides clean, cross-platform syntax for loading functions and symbols from dynamic libraries.</li>
+<li>Provides cross-platform macros to control symbol visibility.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="loading-dynamic-libraries">
+<h2>Loading Dynamic Libraries<a class="headerlink" href="#loading-dynamic-libraries" title="Permalink to this headline">¶</a></h2>
+<p>Suppose that you have a library called <tt class="docutils literal"><span class="pre">test.dll</span></tt>, which defines two symbols
+of interest: <em>msg</em>, a <tt class="xref cpp cpp-type docutils literal"><span class="pre">std::string</span></tt> and <tt class="xref cpp cpp-func docutils literal"><span class="pre">test()</span></tt>, a function with the
+signature <tt class="docutils literal"><span class="pre">std::string(std::string,</span> <span class="pre">std::string)</span></tt>. Assuming that both symbols
+have C linkage, then you could load them as follows:</p>
+<div class="highlight-cpp"><div class="highlight"><pre><span class="k">using</span> <span class="n">sig</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">);</span>
+<span class="k">auto</span> <span class="n">img</span>  <span class="o">=</span> <span class="n">cc</span><span class="o">::</span><span class="n">image</span><span class="p">{</span><span class="s">&quot;test.dll&quot;</span><span class="p">,</span> <span class="n">cc</span><span class="o">::</span><span class="n">binding_mode</span><span class="o">::</span><span class="n">lazy</span><span class="p">};</span>
+<span class="k">auto</span> <span class="n">test</span> <span class="o">=</span> <span class="n">cc</span><span class="o">::</span><span class="n">load</span><span class="o">&lt;</span><span class="n">signature</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;test&quot;</span><span class="p">,</span> <span class="n">img</span><span class="p">).</span><span class="n">get</span><span class="p">();</span>
+<span class="k">auto</span><span class="o">&amp;</span> <span class="n">msg</span> <span class="o">=</span> <span class="n">cc</span><span class="o">::</span><span class="n">load</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;msg&quot;</span><span class="p">,</span> <span class="n">img</span><span class="p">).</span><span class="n">get</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>The function <a class="reference internal" href="#load:T:__boost::string_refC.imageCR" title="load&lt;T&gt;"><tt class="xref cpp cpp-func docutils literal"><span class="pre">load&lt;T&gt;()</span></tt></a> returns an <tt class="xref cpp cpp-type docutils literal"><span class="pre">expected&lt;T&gt;</span></tt> object, which contains either the
+object loaded from the symbol, or the exception that prevented the object from
+being loaded.  Invoking <tt class="xref cpp cpp-func docutils literal"><span class="pre">get()</span></tt> on the <tt class="xref cpp cpp-type docutils literal"><span class="pre">expected&lt;T&gt;</span></tt> objects throws the stored
+exception if the object is in an invalid state, and returns the stored value
+otherwise.</p>
+<p>Notice that when we loaded <em>msg</em> from the image, we accepted the return value by
+reference rather than by value. This is because <a class="reference internal" href="#load:T:__boost::string_refC.imageCR" title="load&lt;T&gt;"><tt class="xref cpp cpp-func docutils literal"><span class="pre">load&lt;T&gt;()</span></tt></a> returns a reference to
+the object at the symbol&#8217;s address, so mutating the reference will also change
+the data at the symbol&#8217;s address in memory.</p>
+<p>One can also query information about the loaded objects, as in the following
+example:</p>
+<div class="highlight-cpp"><div class="highlight"><pre><span class="k">using</span> <span class="n">sig</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">);</span>
+<span class="k">auto</span> <span class="n">img</span>  <span class="o">=</span> <span class="n">cc</span><span class="o">::</span><span class="n">image</span><span class="p">{</span><span class="s">&quot;test.dll&quot;</span><span class="p">,</span> <span class="n">cc</span><span class="o">::</span><span class="n">binding_mode</span><span class="o">::</span><span class="n">lazy</span><span class="p">};</span>
+<span class="k">auto</span> <span class="n">test</span> <span class="o">=</span> <span class="n">cc</span><span class="o">::</span><span class="n">load</span><span class="o">&lt;</span><span class="n">signature</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;test&quot;</span><span class="p">,</span> <span class="n">img</span><span class="p">).</span><span class="n">get</span><span class="p">();</span>
+
+<span class="k">auto</span> <span class="n">test_info</span> <span class="o">=</span> <span class="n">cc</span><span class="o">::</span><span class="n">query</span><span class="p">(</span><span class="n">test</span><span class="p">).</span><span class="n">get</span><span class="p">();</span>
+<span class="n">cc</span><span class="o">::</span><span class="n">println</span><span class="p">(</span><span class="n">test_info</span><span class="p">.</span><span class="n">name</span><span class="p">());</span>
+<span class="c1">// Prints &quot;test&quot;.</span>
+<span class="n">cc</span><span class="o">::</span><span class="n">println</span><span class="p">(</span><span class="n">test_info</span><span class="p">.</span><span class="n">address</span><span class="p">());</span>
+<span class="c1">// Prints the address of `test`.</span>
+</pre></div>
+</div>
+<div class="section" id="reference">
+<h3>Reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="binding_mode">
+<em class="property">class </em><tt class="descname">binding_mode</tt> : <em>int</em><a class="headerlink" href="#binding_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specifies the way in which the symbols in the library are loaded. A valid
+<a class="reference internal" href="#binding_mode" title="binding_mode"><tt class="xref cpp cpp-class docutils literal"><span class="pre">binding_mode</span></tt></a> consists of either <a class="reference internal" href="#binding_mode::lazy__binding_mode" title="binding_mode::lazy"><tt class="xref cpp cpp-member docutils literal"><span class="pre">lazy</span></tt></a> or <a class="reference internal" href="#binding_mode::now__binding_mode" title="binding_mode::now"><tt class="xref cpp cpp-member docutils literal"><span class="pre">now</span></tt></a> OR&#8217;d
+with zero or more of the other enum values.</p>
+<dl class="member">
+<dt id="binding_mode::lazy__binding_mode">
+binding_mode <tt class="descname">lazy</tt><a class="headerlink" href="#binding_mode::lazy__binding_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Equivalent in function to the POSIX macro <tt class="docutils literal"><span class="pre">RTLD_LAZY</span></tt>.</p>
+</dd></dl>
+
+<dl class="member">
+<dt id="binding_mode::now__binding_mode">
+binding_mode <tt class="descname">now</tt><a class="headerlink" href="#binding_mode::now__binding_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Equivalent in function to the POSIX macro <tt class="docutils literal"><span class="pre">RTLD_NOW</span></tt>.</p>
+</dd></dl>
+
+<dl class="member">
+<dt id="binding_mode::global__binding_mode">
+binding_mode <tt class="descname">global</tt><a class="headerlink" href="#binding_mode::global__binding_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Equivalent in function to the POSIX macro <tt class="docutils literal"><span class="pre">RTLD_GLOBAL</span></tt>.</p>
+</dd></dl>
+
+<dl class="member">
+<dt id="binding_mode::local__binding_mode">
+binding_mode <tt class="descname">local</tt><a class="headerlink" href="#binding_mode::local__binding_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Equivalent in function to the POSIX macro <tt class="docutils literal"><span class="pre">RTLD_LOCAL</span></tt>.</p>
+</dd></dl>
+
+<dl class="member">
+<dt id="binding_mode::nodelete__binding_mode">
+binding_mode <tt class="descname">nodelete</tt><a class="headerlink" href="#binding_mode::nodelete__binding_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defined only if the Linux-specific macro <tt class="docutils literal"><span class="pre">RTLD_NODELETE</span></tt> is defined.</p>
+</dd></dl>
+
+<dl class="member">
+<dt id="binding_mode::noload__binding_mode">
+binding_mode <tt class="descname">noload</tt><a class="headerlink" href="#binding_mode::noload__binding_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defined only if the Linux-specific macro <tt class="docutils literal"><span class="pre">RTLD_NOLOAD</span></tt> is defined.</p>
+</dd></dl>
+
+<dl class="member">
+<dt id="binding_mode::deepbind__binding_mode">
+binding_mode <tt class="descname">deepbind</tt><a class="headerlink" href="#binding_mode::deepbind__binding_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defined only if the Linux-specific macro <tt class="docutils literal"><span class="pre">RTLD_DEEPBIND</span></tt> is defined.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="image">
+<em class="property">class </em><tt class="descname">image</tt><a class="headerlink" href="#image" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class provides a wrapper over the platform-specific handle to a loaded
+dynamic library.</p>
+<dl class="function">
+<dt id="image::image__boost::string_refC.binding_mode">
+<em class="property">explicit</em>  <tt class="descname">image</tt><big>(</big>const boost::string_ref <em>path</em>, binding_mode <em>mode</em><big>)</big><a class="headerlink" href="#image::image__boost::string_refC.binding_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves a handle to the dynamic library at the given path, using the
+specified mode.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Throws:</th><td class="field-body"><tt class="xref cpp cpp-class docutils literal"><span class="pre">std::runtime_exception</span></tt> If the dynamic library could not be accessed.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="image::~image">
+ <tt class="descname">~image</tt><big>(</big><big>)</big><a class="headerlink" href="#image::~image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Closes the handle to the dynamic library, if the handle is valid.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="image::handleC">
+void* <tt class="descname">handle</tt><big>(</big><big>)</big><tt class="descclassname"> const</tt><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#image::handleC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the internal handle to the dynamic library.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="image::close">
+void <tt class="descname">close</tt><big>(</big><big>)</big><a class="headerlink" href="#image::close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Closes the handle to the dynamic library, if the handle is valid.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="function:Signature:">
+<em class="property">class </em><tt class="descname">function&lt;Signature&gt;</tt><a class="headerlink" href="#function:Signature:" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class is used to represent a function loaded from a dynamic library.</p>
+<dl class="function">
+<dt id="function:Signature:::call-operator__ArgsRRC">
+ReturnType <tt class="descname">operator()</tt><big>(</big>Args&amp;&amp; <em>args</em><big>)</big><tt class="descclassname"> const</tt><a class="headerlink" href="#function:Signature:::call-operator__ArgsRRC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Invokes the function by forwarding the given arguments.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Noexcept:</th><td class="field-body">True iff the function has the <tt class="docutils literal"><span class="pre">noexcept</span></tt> property when called with the fowarded arguments.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="symbol_info">
+<em class="property">class </em><tt class="descname">symbol_info</tt><a class="headerlink" href="#symbol_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class is used to store the information obtained after querying a symbol
+loaded from a dynamic library.</p>
+<dl class="function">
+<dt id="symbol_info::pathC">
+const boost::string_ref <tt class="descname">path</tt><big>(</big><big>)</big><tt class="descclassname"> const</tt><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#symbol_info::pathC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the path to the dynamic library file.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="symbol_info::nameC">
+const boost::string_ref <tt class="descname">name</tt><big>(</big><big>)</big><tt class="descclassname"> const</tt><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#symbol_info::nameC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the name of the symbol.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="symbol_info::base_addressC">
+const void* <tt class="descname">base_address</tt><big>(</big><big>)</big><tt class="descclassname"> const</tt><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#symbol_info::base_addressC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the base address of the dynamic library.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="query__TCR">
+expected&lt;symbol_info&gt; <tt class="descname">query</tt><big>(</big>const T&amp; <em>t</em><big>)</big><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#query__TCR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the symbol information associated with the given object.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="query__function:Signature:CR">
+expected&lt;symbol_info&gt; <tt class="descname">query</tt><big>(</big>const function&lt;Signature&gt;&amp; <em>f</em><big>)</big><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#query__function:Signature:CR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the symbol information associated with the given function.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="load:T:__boost::string_refC.imageCR">
+expected&lt;T&amp;&gt; <tt class="descname">load&lt;T&gt;</tt><big>(</big>const boost::string_ref <em>name</em>, const image&amp; <em>img</em><big>)</big><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#load:T:__boost::string_refC.imageCR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads the object symbol with the given name from the image file.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="load:Signature:__boost::string_refC.imageCR">
+expected&lt;function&lt;Signature&gt;&gt; <tt class="descname">load&lt;Signature&gt;</tt><big>(</big>const boost::string_ref <em>name</em>, const image&amp; <em>img</em><big>)</big><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#load:Signature:__boost::string_refC.imageCR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads the function symbol with the given name from the image file.</p>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="controlling-symbol-visibility">
+<h2>Controlling Symbol Visibility<a class="headerlink" href="#controlling-symbol-visibility" title="Permalink to this headline">¶</a></h2>
+<p>The following macros can be used to set symbol visibility when compiling shared
+libraries.</p>
+<div class="highlight-cpp"><div class="highlight"><pre><span class="c1">// Used for public symbols in a header for a shared library that is to</span>
+<span class="c1">// be implicitly linked into the final executable.</span>
+<span class="n">IMPORT_SYMBOL</span>
+
+<span class="c1">// Used for public symbols in source code that is to be compiled into a</span>
+<span class="c1">// shared library.</span>
+<span class="n">EXPORT_SYMBOL</span>
+
+<span class="c1">// Used to hide symbols in source code that is to be compiled into a</span>
+<span class="c1">// shared library.</span>
+<span class="n">HIDDEN_SYMBOL</span>
+</pre></div>
+</div>
+<p>Often times, it is the case that the same header file is used both by the source
+code that is compiled into the shared library, and by the source code that links
+to the shared library. In the first case, public symbols should be prefixed by
+<tt class="docutils literal"><span class="pre">EXPORT_SYMBOL</span></tt>; in the second case, public symbols should be prefixed by
+<tt class="docutils literal"><span class="pre">IMPORT_SYMBOL</span></tt>. In both cases, private symbols that are not included in the
+shared library should be prefixed by <tt class="docutils literal"><span class="pre">HIDDEN_SYMBOL</span></tt>. The following macros are
+provided to make this task easier:</p>
+<div class="highlight-cpp"><div class="highlight"><pre><span class="n">PUBLIC_SYMBOL</span>
+<span class="n">PRIVATE_SYMBOL</span>
+</pre></div>
+</div>
+<p><tt class="docutils literal"><span class="pre">PUBLIC_SYMBOL</span></tt> expands to <tt class="docutils literal"><span class="pre">IMPORT_SYMBOL</span></tt> if <tt class="docutils literal"><span class="pre">CCBASE_IMPORT_SYMBOLS</span></tt> is
+defined, or <tt class="docutils literal"><span class="pre">EXPORT_SYMBOL</span></tt> if <tt class="docutils literal"><span class="pre">CCBASE_EXPORT_SYMBOLS</span></tt> is defined. If neither of
+the two macros is defined, then <tt class="docutils literal"><span class="pre">PUBLIC_SYMBOL</span></tt> expands to nothing.
+<tt class="docutils literal"><span class="pre">PRIVATE_SYMBOL</span></tt> expands to <tt class="docutils literal"><span class="pre">HIDDEN_SYMBOL</span></tt> if either of the two macros is
+defined, and nothing otherwise.</p>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="filesystem.html" class="btn btn-neutral float-right" title="The Filesystem Module"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="platform.html" class="btn btn-neutral" title="The Platform Module"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014, Aditya Ramesh.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

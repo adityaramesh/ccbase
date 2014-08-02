@@ -1,0 +1,348 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>The Filesystem Module &mdash; CCBase 1.0 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="CCBase 1.0 documentation" href="index.html"/>
+        <link rel="next" title="The Error Module" href="error.html"/>
+        <link rel="prev" title="The Dynamic Module" href="dynamic.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="index.html" class="fa fa-home"> CCBase</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Using CCBase</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#library-structure">Library Structure</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="format.html">Format Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="format.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="format.html#reference">Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="platform.html">Platform Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="platform.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="platform.html#platform-identification">Platform Identification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="platform.html#compiler-attributes">Compiler Attributes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="platform.html#compiler-intrinsics">Compiler Intrinsics</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dynamic.html">Dynamic Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dynamic.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic.html#loading-dynamic-libraries">Loading Dynamic Libraries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic.html#controlling-symbol-visibility">Controlling Symbol Visibility</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Filesystem Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#reference">Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="error.html">Error Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="error.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="error.html#reference">Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="unit_test.html">Unit Test Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="unit_test.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unit_test.html#reference">Reference</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">CCBase</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>The Filesystem Module</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="_sources/filesystem.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="the-filesystem-module">
+<span id="ccbase-filesystem-module"></span><h1>The Filesystem Module<a class="headerlink" href="#the-filesystem-module" title="Permalink to this headline">¶</a></h1>
+<p>To use this module, include <tt class="docutils literal"><span class="pre">ccbase/filesystem.hpp</span></tt>. Please note that this
+module currently works on OS X and Linux only.</p>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>Using this header, you can do the following <strong>without any static library
+dependencies.</strong></p>
+<div class="highlight-cpp"><div class="highlight"><pre><span class="c1">// Iterate over all JPG files in the `dat` directory after applying a</span>
+<span class="c1">// Bash glob filter.</span>
+<span class="k">for</span> <span class="p">(</span><span class="k">const</span> <span class="k">auto</span><span class="o">&amp;</span> <span class="n">e</span> <span class="o">:</span> <span class="n">cc</span><span class="o">::</span><span class="n">match_files</span><span class="p">(</span><span class="s">&quot;dat/frame_[abc]*.jpg&quot;</span><span class="p">))</span> <span class="p">{</span>
+        <span class="n">cc</span><span class="o">::</span><span class="n">println</span><span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="n">name</span><span class="p">());</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>If you do not need a glob filter, then use <a class="reference internal" href="#match_files__boost::string_refC" title="match_files"><tt class="xref cpp cpp-func docutils literal"><span class="pre">match_files()</span></tt></a> instead. This
+function is more efficient, since it does not pass each file name through a glob
+filter. Note that <tt class="docutils literal"><span class="pre">.</span></tt>, <tt class="docutils literal"><span class="pre">..</span></tt>, and other dotfiles will appear in the range of
+matched files. You will need to check for these explicitly if you do not want to
+process them. Here&#8217;s an example:</p>
+<div class="highlight-cpp"><div class="highlight"><pre><span class="k">for</span> <span class="p">(</span><span class="k">const</span> <span class="k">auto</span><span class="o">&amp;</span> <span class="n">e</span> <span class="o">:</span> <span class="n">cc</span><span class="o">::</span><span class="n">list_files</span><span class="p">(</span><span class="s">&quot;dat&quot;</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">e</span><span class="p">.</span><span class="n">starts_with</span><span class="p">(</span><span class="sc">&#39;.&#39;</span><span class="p">))</span> <span class="p">{</span>
+                <span class="n">cc</span><span class="o">::</span><span class="n">println</span><span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="n">name</span><span class="p">());</span>
+        <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="reference">
+<h2>Reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="file_type">
+<em class="property">class </em><tt class="descname">file_type</tt> : <em>unsigned char</em><a class="headerlink" href="#file_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is an <tt class="docutils literal"><span class="pre">enum</span> <span class="pre">class</span></tt> used to indicate the type of the current
+<a class="reference internal" href="#directory_entry" title="directory_entry"><tt class="xref cpp cpp-class docutils literal"><span class="pre">directory_entry</span></tt></a>.</p>
+<dl class="member">
+<dt id="file_type::block_device__file_type">
+file_type <tt class="descname">block_device</tt><a class="headerlink" href="#file_type::block_device__file_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="member">
+<dt id="file_type::character_device__file_type">
+file_type <tt class="descname">character_device</tt><a class="headerlink" href="#file_type::character_device__file_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="member">
+<dt id="file_type::directory__file_type">
+file_type <tt class="descname">directory</tt><a class="headerlink" href="#file_type::directory__file_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="member">
+<dt id="file_type::fifo__file_type">
+file_type <tt class="descname">fifo</tt><a class="headerlink" href="#file_type::fifo__file_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="member">
+<dt id="file_type::symbolic_link__file_type">
+file_type <tt class="descname">symbolic_link</tt><a class="headerlink" href="#file_type::symbolic_link__file_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="member">
+<dt id="file_type::regular__file_type">
+file_type <tt class="descname">regular</tt><a class="headerlink" href="#file_type::regular__file_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="member">
+<dt id="file_type::socket__file_type">
+file_type <tt class="descname">socket</tt><a class="headerlink" href="#file_type::socket__file_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="member">
+<dt id="file_type::unknown__file_type">
+file_type <tt class="descname">unknown</tt><a class="headerlink" href="#file_type::unknown__file_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="directory_entry">
+<em class="property">class </em><tt class="descname">directory_entry</tt><a class="headerlink" href="#directory_entry" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class is used to store the information pertaining to a directory entry.</p>
+<dl class="function">
+<dt id="directory_entry::pathC">
+const boost::string_ref <tt class="descname">path</tt><big>(</big><big>)</big><tt class="descclassname"> const</tt><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#directory_entry::pathC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the path to the file referenced by this directory entry.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="directory_entry::nameC">
+const boost::string_ref <tt class="descname">name</tt><big>(</big><big>)</big><tt class="descclassname"> const</tt><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#directory_entry::nameC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the name of the file referenced by this directory entry.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="directory_entry::typeC">
+file_type <tt class="descname">type</tt><big>(</big><big>)</big><tt class="descclassname"> const</tt><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#directory_entry::typeC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the type of the file referenced by this directory entry.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="lshift-operator__osR.directory_entryCR">
+std::ostream&amp; <tt class="descname">operator&lt;&lt;</tt><big>(</big>std::ostream&amp; <em>os</em>, const directory_entry&amp; <em>e</em><big>)</big><a class="headerlink" href="#lshift-operator__osR.directory_entryCR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes the representation of the given <a class="reference internal" href="#directory_entry" title="directory_entry"><tt class="xref cpp cpp-class docutils literal"><span class="pre">directory_entry</span></tt></a> to the given
+<tt class="xref cpp cpp-class docutils literal"><span class="pre">ostream</span></tt> object. This representation consists of the name and type of
+the file referenced by the directory entry. Example output:</p>
+<div class="highlight-cpp"><div class="highlight"><pre><span class="p">{</span><span class="n">name</span><span class="o">:</span> <span class="s">&quot;text.txt&quot;</span><span class="p">,</span> <span class="n">type</span><span class="o">:</span> <span class="s">&quot;regular file&quot;</span><span class="p">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="list_files__boost::string_refC">
+Range <tt class="descname">list_files</tt><big>(</big>const boost::string_ref <em>path</em><big>)</big><a class="headerlink" href="#list_files__boost::string_refC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a range object that can be used to traverse the contents of the
+directory at <em>path</em>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Throws:</th><td class="field-body"><tt class="xref cpp cpp-class docutils literal"><span class="pre">std::runtime_error</span></tt> if an IO error occurs while accessing the directory.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="match_files__boost::string_refC">
+Range <tt class="descname">match_files</tt><big>(</big>const boost::string_ref <em>glob</em><big>)</big><a class="headerlink" href="#match_files__boost::string_refC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a range object that can be used to traverse the contents of the
+directory referenced by <em>glob</em>. Any characters following the last occurrence
+of the platform directory separator in <em>glob</em> are used interpreted as a glob
+pattern. This glob pattern is used to filter the files in the directory by
+name.</p>
+<p>Note that recursive directory enumeration is currently unsupported.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Throws:</th><td class="field-body"><tt class="xref cpp cpp-class docutils literal"><span class="pre">std::runtime_error</span></tt> if an IO error occurs while accessing the directory.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="error.html" class="btn btn-neutral float-right" title="The Error Module"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="dynamic.html" class="btn btn-neutral" title="The Dynamic Module"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014, Aditya Ramesh.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

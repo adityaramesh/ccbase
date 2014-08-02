@@ -1,0 +1,280 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>The Unit Test Module &mdash; CCBase 1.0 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="CCBase 1.0 documentation" href="index.html"/>
+        <link rel="prev" title="The Error Module" href="error.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="index.html" class="fa fa-home"> CCBase</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Using CCBase</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#library-structure">Library Structure</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="format.html">Format Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="format.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="format.html#reference">Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="platform.html">Platform Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="platform.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="platform.html#platform-identification">Platform Identification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="platform.html#compiler-attributes">Compiler Attributes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="platform.html#compiler-intrinsics">Compiler Intrinsics</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dynamic.html">Dynamic Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dynamic.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic.html#loading-dynamic-libraries">Loading Dynamic Libraries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic.html#controlling-symbol-visibility">Controlling Symbol Visibility</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="filesystem.html">Filesystem Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="filesystem.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="filesystem.html#reference">Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="error.html">Error Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="error.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="error.html#reference">Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Unit Test Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#reference">Reference</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">CCBase</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>The Unit Test Module</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="_sources/unit_test.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="the-unit-test-module">
+<span id="ccbase-unit-test-module"></span><h1>The Unit Test Module<a class="headerlink" href="#the-unit-test-module" title="Permalink to this headline">¶</a></h1>
+<p>To use this module, include <tt class="docutils literal"><span class="pre">ccbase/unit_test.hpp</span></tt>.</p>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>This header provides utilities for very basic unit testing. Tests are
+implemented as modules, and a set of related modules is gathered in a suite.
+Here is an example of a file called <tt class="docutils literal"><span class="pre">test.cpp</span></tt> which uses the unit testing
+functionality.</p>
+<div class="highlight-cpp"><div class="highlight"><pre><span class="cp">#include &lt;ccbase/unit_test.hpp&gt;</span>
+
+<span class="n">module</span><span class="p">(</span><span class="s">&quot;Test 1&quot;</span><span class="p">,</span> <span class="s">&quot;This module always passes.&quot;</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="n">require</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">module</span><span class="p">(</span><span class="s">&quot;Test 2&quot;</span><span class="p">,</span> <span class="s">&quot;This module always fails.&quot;</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="n">require</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// The description is optional.</span>
+<span class="n">module</span><span class="p">(</span><span class="s">&quot;Test 3&quot;</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="n">require</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// This declaration is required, and should appear at the end of the</span>
+<span class="c1">// test file.</span>
+<span class="n">suite</span><span class="p">(</span><span class="s">&quot;This is an example test suite.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>By default, compiling <tt class="docutils literal"><span class="pre">test.cpp</span></tt> and running the resulting executable will
+output the following.</p>
+<div class="highlight-cpp"><div class="highlight"><pre><span class="n">Summary</span> <span class="k">for</span> <span class="n">module</span> <span class="s">&quot;Test 1&quot;</span><span class="o">:</span> <span class="mi">1</span> <span class="n">of</span> <span class="mi">1</span> <span class="n">assertions</span> <span class="n">passed</span><span class="p">.</span>
+<span class="n">Summary</span> <span class="k">for</span> <span class="n">module</span> <span class="s">&quot;Test 2&quot;</span><span class="o">:</span> <span class="mi">0</span> <span class="n">of</span> <span class="mi">1</span> <span class="n">assertions</span> <span class="n">passed</span><span class="p">.</span>
+<span class="n">Summary</span> <span class="k">for</span> <span class="n">module</span> <span class="s">&quot;Test 3&quot;</span><span class="o">:</span> <span class="mi">1</span> <span class="n">of</span> <span class="mi">1</span> <span class="n">assertions</span> <span class="n">passed</span><span class="p">.</span>
+<span class="n">Summary</span> <span class="k">for</span> <span class="n">suite</span> <span class="s">&quot;test&quot;</span><span class="o">:</span> <span class="mi">2</span> <span class="n">of</span> <span class="mi">3</span> <span class="n">assertions</span> <span class="n">passed</span><span class="p">.</span>
+</pre></div>
+</div>
+<p>If you wish to see more information about the assertions in the modules, then
+you can control the level of the verbosity using the <tt class="docutils literal"><span class="pre">-v</span></tt> flag. For example,
+running the executable with the option <tt class="docutils literal"><span class="pre">-v</span> <span class="pre">medium</span></tt> displays the following.</p>
+<div class="highlight-cpp"><div class="highlight"><pre><span class="n">Summary</span> <span class="k">for</span> <span class="n">module</span> <span class="s">&quot;Test 1&quot;</span><span class="o">:</span> <span class="mi">1</span> <span class="n">of</span> <span class="mi">1</span> <span class="n">assertions</span> <span class="n">passed</span><span class="p">.</span>
+<span class="n">Failure</span> <span class="n">in</span> <span class="n">module</span> <span class="s">&quot;Test 2&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">17</span><span class="o">:</span> <span class="s">&quot;require(false)&quot;</span><span class="p">.</span>
+<span class="n">Summary</span> <span class="k">for</span> <span class="n">module</span> <span class="s">&quot;Test 2&quot;</span><span class="o">:</span> <span class="mi">0</span> <span class="n">of</span> <span class="mi">1</span> <span class="n">assertions</span> <span class="n">passed</span><span class="p">.</span>
+<span class="n">Summary</span> <span class="k">for</span> <span class="n">module</span> <span class="s">&quot;Test 2&quot;</span><span class="o">:</span> <span class="mi">1</span> <span class="n">of</span> <span class="mi">1</span> <span class="n">assertions</span> <span class="n">passed</span><span class="p">.</span>
+<span class="n">Summary</span> <span class="k">for</span> <span class="n">suite</span> <span class="s">&quot;test&quot;</span><span class="o">:</span> <span class="mi">2</span> <span class="n">of</span> <span class="mi">3</span> <span class="n">assertions</span> <span class="n">passed</span><span class="p">.</span>
+</pre></div>
+</div>
+<p>Medium verbosity causes the line number and source code for failed assertions
+within each module to be printed along with the summary statistics. High
+verbosity prints this information for all assertions, regardless of success or
+failure.</p>
+</div>
+<div class="section" id="reference">
+<h2>Reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h2>
+<p>The following is a summary of the options available when running an executable
+file compiled with the unit test module.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="22%" />
+<col width="78%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Option</th>
+<th class="head">Flags</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Help</td>
+<td><tt class="docutils literal"><span class="pre">-h</span></tt>, <tt class="docutils literal"><span class="pre">--help</span></tt></td>
+</tr>
+<tr class="row-odd"><td>List modules</td>
+<td><tt class="docutils literal"><span class="pre">-l</span></tt>, <tt class="docutils literal"><span class="pre">--list-modules</span></tt></td>
+</tr>
+<tr class="row-even"><td>Verbosity</td>
+<td><tt class="docutils literal"><span class="pre">-v</span></tt>, <tt class="docutils literal"><span class="pre">--verbosity</span> <span class="pre">[low,</span> <span class="pre">medium,</span> <span class="pre">high]</span></tt></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="error.html" class="btn btn-neutral" title="The Error Module"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014, Aditya Ramesh.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

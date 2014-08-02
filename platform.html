@@ -1,0 +1,423 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>The Platform Module &mdash; CCBase 1.0 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="CCBase 1.0 documentation" href="index.html"/>
+        <link rel="next" title="The Dynamic Module" href="dynamic.html"/>
+        <link rel="prev" title="The Format Module" href="format.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="index.html" class="fa fa-home"> CCBase</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Using CCBase</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#library-structure">Library Structure</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="format.html">Format Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="format.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="format.html#reference">Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Platform Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#platform-identification">Platform Identification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#compiler-attributes">Compiler Attributes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#compiler-intrinsics">Compiler Intrinsics</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dynamic.html">Dynamic Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dynamic.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic.html#loading-dynamic-libraries">Loading Dynamic Libraries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic.html#controlling-symbol-visibility">Controlling Symbol Visibility</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="filesystem.html">Filesystem Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="filesystem.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="filesystem.html#reference">Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="error.html">Error Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="error.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="error.html#reference">Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="unit_test.html">Unit Test Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="unit_test.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unit_test.html#reference">Reference</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">CCBase</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>The Platform Module</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="_sources/platform.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="the-platform-module">
+<span id="ccbase-platform-module"></span><h1>The Platform Module<a class="headerlink" href="#the-platform-module" title="Permalink to this headline">¶</a></h1>
+<p>To use this module, include <tt class="docutils literal"><span class="pre">ccbase/platform.hpp</span></tt>.</p>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>This module does the following three things:</p>
+<ul class="simple">
+<li>Provides macros to identify various features describing the host platform.</li>
+<li>Provides macros to invoke compiler attributes in a cross-platform way.</li>
+<li>Provides clean, cross-platform syntax to access compiler intrinsics.</li>
+</ul>
+</div>
+<div class="section" id="platform-identification">
+<h2>Platform Identification<a class="headerlink" href="#platform-identification" title="Permalink to this headline">¶</a></h2>
+<p>This module attempts to identify the following features of the host platform:</p>
+<ul class="simple">
+<li>The compiler.</li>
+<li>The compiler version.</li>
+<li>The processor architecture.</li>
+<li>The processor ABI.</li>
+<li>The operating system.</li>
+<li>The kernel.</li>
+<li>The integer byte order. (Note that the floating-point byte order can potentially be different from the integer byte order, but the header makes no attempt to identify the latter.)</li>
+<li>The platform newline character.</li>
+<li>The platform directory separator.</li>
+<li>The maximum permissible file and path name lengths.</li>
+</ul>
+<p>Here are some examples of what this module lets you do:</p>
+<div class="highlight-cpp"><div class="highlight"><pre>// Safely include platform-specific header files.
+#if PLATFORM_KERNEL == PLATFORM_KERNEL_LINUX || \
+    PLATFORM_KERNEL == PLATFORM_KERNEL_XNU
+        #include &lt;unistd.h&gt;
+#else
+        #error Unsupported platform.
+#endif
+
+// Safely include compiler-specific header files.
+#if PLATFORM_COMPILER == PLATFORM_COMPILER_GCC   || \
+    PLATFORM_COMPILER == PLATFORM_COMPILER_CLANG || \
+    PLATFORM_COMPILER == PLATFORM_COMPILER_ICC
+        #include &lt;cpuid.h&gt;
+#else
+        #error Unsupported compiler.
+#endif
+
+// Parse a big-endian value.
+auto val = get_big_endian_value();
+#if PLATFORM_INTEGER_BYTE_ORDER == PLATFORM_BYTE_ORDER_BIG
+        // Do nothing.
+#elif PLATFORM_INTEGER_BYTE_ORDER == PLATFORM_BYTE_ORDER_LITTLE
+        val = cc::bswap(val);
+#else
+        #error Unsupported platform byte order.
+#endif
+
+// Deploy workarounds for buggy compilers.
+#if PLATFORM_COMPILER_VERSION &lt; CC_COMPILER_VERSION(3, 2, 1)
+        // Use workaround.
+#else
+        // Use normal method.
+#endif
+</pre></div>
+</div>
+<p>Since this module relies on knowledge of predefined preprocessor macros, not all
+of the features tabulated below may be succesfully identified. In the case that
+a particular feature (say, <tt class="docutils literal"><span class="pre">XXX</span></tt>) is not successfully identified, the
+corresponding macro <tt class="docutils literal"><span class="pre">PLATFORM_XXX</span></tt> is usually set to the value
+<tt class="docutils literal"><span class="pre">PLATFORM_XXX_UNKNOWN</span></tt>. However, this is not always the case. Consult the
+table below for details.</p>
+<div class="section" id="reference">
+<h3>Reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h3>
+<p>The macros defined by the preprocessor are listed in the table below. Where
+<tt class="docutils literal"><span class="pre">*</span></tt> is used to indicate the value of a macro, the name of the macro is to be
+substituted.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="21%" />
+<col width="22%" />
+<col width="56%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Macro</th>
+<th class="head">Description</th>
+<th class="head">Possible Values</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">PLATFORM_ARCH</span></tt></td>
+<td>Platform CPU architecture.</td>
+<td><tt class="docutils literal"><span class="pre">*_ARM,</span> <span class="pre">*_ITANIUM,</span> <span class="pre">*_X86,</span> <span class="pre">*_UNKNOWN</span></tt></td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">PLATFORM_COMPILER</span></tt></td>
+<td>Platform compiler.</td>
+<td><tt class="docutils literal"><span class="pre">*_CLANG,</span> <span class="pre">*_COMEAU,</span> <span class="pre">*_GCC,</span> <span class="pre">*_ICC,</span> <span class="pre">*_MSVC,</span> <span class="pre">*_UNKNOWN</span></tt></td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">PLATFORM_COMPILER_VERSION</span></tt></td>
+<td>Platform compiler version.</td>
+<td>Integer value or <tt class="docutils literal"><span class="pre">*_UNKNOWN</span></tt>; compare to <tt class="docutils literal"><span class="pre">CC_COMPILER_VERSION(version,</span> <span class="pre">revision,</span> <span class="pre">patch)</span></tt>.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">PLATFORM_COMPILER_MAJOR_VERSION</span></tt></td>
+<td>Platform compiler major version.</td>
+<td>Integer value or <tt class="docutils literal"><span class="pre">*_UNKNOWN</span></tt>.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">PLATFORM_COMPILER_MINOR_VERSION</span></tt></td>
+<td>Platform compiler minor version.</td>
+<td>Integer value or <tt class="docutils literal"><span class="pre">*_UNKNOWN</span></tt>.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">PLATFORM_COMPILER_PATCH_LEVEL</span></tt></td>
+<td>Platform compiler patch level.</td>
+<td>Integer value or <tt class="docutils literal"><span class="pre">*_UNKNOWN</span></tt>.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">PLATFORM_INTEGER_BYTE_ORDER</span></tt></td>
+<td>Platform byte order.</td>
+<td><tt class="docutils literal"><span class="pre">(*</span> <span class="pre">=</span> <span class="pre">PLATFORM_BYTE_ORDER)</span> <span class="pre">*_LITTLE,</span> <span class="pre">*_BIG,</span> <span class="pre">*_LITTLE_WORD,</span> <span class="pre">*_UNKNOWN</span></tt></td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">PLATFORM_KERNEL</span></tt></td>
+<td>Platform kernel.</td>
+<td><tt class="docutils literal"><span class="pre">*_LINUX,</span> <span class="pre">*_WINDOWS_NT,</span> <span class="pre">*_XNU,</span> <span class="pre">*_UNKNOWN</span></tt></td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">PLATFORM_OS</span></tt></td>
+<td>Platform operating system.</td>
+<td><tt class="docutils literal"><span class="pre">*_LINUX,</span> <span class="pre">*_WINDOWS,</span> <span class="pre">*_OS_X,</span> <span class="pre">*_UNKNOWN</span></tt></td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">PLATFORM_WORD_SIZE</span></tt></td>
+<td>Platform word size.</td>
+<td><tt class="docutils literal"><span class="pre">32,</span> <span class="pre">64,</span> <span class="pre">*_UNKNOWN</span></tt></td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">PLATFORM_NEWLINE</span></tt></td>
+<td>Platform newline.</td>
+<td><tt class="docutils literal"><span class="pre">&quot;\n&quot;</span></tt>, <tt class="docutils literal"><span class="pre">&quot;\r\n&quot;</span></tt>, or undefined.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">PLATFORM_NEWLINE_LENGTH</span></tt></td>
+<td>Platform newline length.</td>
+<td>Integer value or <tt class="docutils literal"><span class="pre">*_UNKNOWN</span></tt>.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">PLATFORM_DIRECTORY_SEPARATOR</span></tt></td>
+<td>Platform directory separator.</td>
+<td>Character literal or undefined.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">PLATFORM_MAX_FILENAME_LENGTH</span></tt></td>
+<td>Maximum permissible file name length.</td>
+<td>Integer value or undefined.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">PLATFORM_MAX_PATHNAME_LENGTH</span></tt></td>
+<td>Maximum permissible path name length.</td>
+<td>Integer value or undefined.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="compiler-attributes">
+<h2>Compiler Attributes<a class="headerlink" href="#compiler-attributes" title="Permalink to this headline">¶</a></h2>
+<p>This following macros provide access to nonstandard attributes that are commonly
+implemented by compilers. If the host compiler does not implement the attribute
+corresponding to a given macro, then the macro expands to nothing.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Macro</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">CC_ALWAYS_INLINE</span></tt></td>
+<td>Forces the compiler to inline the designated function.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">CC_NEVER_INLINE</span></tt></td>
+<td>Instructs the compiler not to inline the designated function.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">CC_CONST</span></tt></td>
+<td>Tells the compiler that the designated function does not access global memory.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">CC_PURE</span></tt></td>
+<td>Tells the compiler that the designated function does not modify any global memory.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">CC_RESTRICT</span></tt></td>
+<td>Expands to the compiler&#8217;s equivalent of the C99 <tt class="docutils literal"><span class="pre">restrict</span></tt> keyword.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">CC_ALIGN(n)</span></tt></td>
+<td>Used to align addresses of static arrays to multiples of <tt class="docutils literal"><span class="pre">n</span></tt>.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="compiler-intrinsics">
+<h2>Compiler Intrinsics<a class="headerlink" href="#compiler-intrinsics" title="Permalink to this headline">¶</a></h2>
+<p>The following functions provide access to intrinsics commonly defined by
+compilers.</p>
+<dl class="function">
+<dt id="bswap__T">
+T <tt class="descname">bswap</tt><big>(</big>T <em>value</em><big>)</big><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#bswap__T" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is defined for each arithmetic type <em>T</em>. It returns a copy of
+the variable <em>value</em> with the order of the bytes reversed. If the compiler
+defines an intrinsic to perform this operation, then the intrinsic is used.
+Otherwise, the library resorts to a default implementation.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="yield_processor">
+void <tt class="descname">yield_processor</tt><big>(</big><big>)</big><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#yield_processor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluates to the compiler intrinsic that emits the <tt class="docutils literal"><span class="pre">pause</span></tt> instruction for
+x86_64 CPUs, if such an intrinsic is available. Otherwise, this function does
+nothing. Using the <tt class="docutils literal"><span class="pre">pause</span></tt> instruction in spinlocks is beneficial for the
+following three reasons <a class="footnote-reference" href="#id2" id="id1">[1]</a>:</p>
+<ul class="simple">
+<li>Improves performance by decreasing memory contention within the processor.</li>
+<li>Decreases power consumption.</li>
+<li>Improves performance in the context of hyperthreading, because it avoids saturating use of the ALU.</li>
+</ul>
+</dd></dl>
+
+<table class="docutils footnote" frame="void" id="id2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td><a class="reference external" href="http://www.1024cores.net/home/lock-free-algorithms/tricks/spinning">http://www.1024cores.net/home/lock-free-algorithms/tricks/spinning</a></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="dynamic.html" class="btn btn-neutral float-right" title="The Dynamic Module"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="format.html" class="btn btn-neutral" title="The Format Module"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014, Aditya Ramesh.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

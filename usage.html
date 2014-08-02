@@ -1,0 +1,236 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Using CCBase &mdash; CCBase 1.0 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="CCBase 1.0 documentation" href="index.html"/>
+        <link rel="next" title="The Format Module" href="format.html"/>
+        <link rel="prev" title="Overview" href="index.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="index.html" class="fa fa-home"> CCBase</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="">Using CCBase</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#library-structure">Library Structure</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="format.html">Format Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="format.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="format.html#reference">Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="platform.html">Platform Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="platform.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="platform.html#platform-identification">Platform Identification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="platform.html#compiler-attributes">Compiler Attributes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="platform.html#compiler-intrinsics">Compiler Intrinsics</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dynamic.html">Dynamic Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dynamic.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic.html#loading-dynamic-libraries">Loading Dynamic Libraries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic.html#controlling-symbol-visibility">Controlling Symbol Visibility</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="filesystem.html">Filesystem Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="filesystem.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="filesystem.html#reference">Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="error.html">Error Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="error.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="error.html#reference">Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="unit_test.html">Unit Test Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="unit_test.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unit_test.html#reference">Reference</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">CCBase</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Using CCBase</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="_sources/usage.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="using-ccbase">
+<span id="ccbase-usage"></span><h1>Using CCBase<a class="headerlink" href="#using-ccbase" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>The sources can be downloaded <a class="reference external" href="https://github.com/adityaramesh/ccbase/archive/master.zip">here</a>. The library is header-only, so you can
+start using it right away by adding the <tt class="docutils literal"><span class="pre">include</span></tt> directory to your include
+path. However, it is recommended that you compile and run the unit tests to make
+sure that things are working as intended.</p>
+<div class="section" id="compiling-the-unit-tests">
+<h3>Compiling the Unit Tests<a class="headerlink" href="#compiling-the-unit-tests" title="Permalink to this headline">¶</a></h3>
+<p>To compile the unit tests, you will need to have Rake installed on your system.
+Then, configure the following environment variables:</p>
+<ul class="simple">
+<li>Set <tt class="docutils literal"><span class="pre">CXX</span></tt> to a C++11-conforming compiler. The library has been tested on GCC (versions 4.7, 4.8, and 4.9), Clang (versions 3.3 and 3.4), and ICC (versions 13.0 and 14.0).</li>
+<li>Set <tt class="docutils literal"><span class="pre">BOOST_INCLUDE_PATH</span></tt> to your Boost installation directory. CCBase requires Boost version 1.55 or above.</li>
+</ul>
+<p>Finally, run the following commands:</p>
+<div class="highlight-cpp"><div class="highlight"><pre><span class="n">rake</span>
+<span class="n">rake</span> <span class="n">check</span>
+</pre></div>
+</div>
+<p>If <tt class="docutils literal"><span class="pre">rake</span> <span class="pre">check</span></tt> produced no output, then all of the units tests passed.
+Otherwise, please <a class="reference external" href="https://github.com/adityaramesh/ccbase/issues">file an issue</a> with the output of the unit tests and your
+platform details (your OS and compiler versions, along with any other relevant
+information).</p>
+</div>
+</div>
+<div class="section" id="library-structure">
+<h2>Library Structure<a class="headerlink" href="#library-structure" title="Permalink to this headline">¶</a></h2>
+<p>For each module in CCBase, there is a header file in the <tt class="docutils literal"><span class="pre">ccbase</span></tt> directory
+that brings the public API into the <tt class="docutils literal"><span class="pre">cc</span></tt> namespace. For example, to use the
+format module, include <tt class="docutils literal"><span class="pre">ccbase/format.hpp</span></tt>. Each module is also associated
+with a subdirectory in <tt class="docutils literal"><span class="pre">ccbase</span></tt>. Each subdirectory contains the header files
+that comprise the associated module.</p>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="format.html" class="btn btn-neutral float-right" title="The Format Module"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="Overview"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014, Aditya Ramesh.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
