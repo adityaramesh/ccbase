@@ -46,22 +46,31 @@ The entirety of the public API resides in the `cc` namespace.
 - `match_files` with recursive directory enumeration.
 
 - Add attributes for formatting.
-  - E.g. `cc::println("Object ID: ${hex, align(left, 20)}.");`
+  - E.g. `cc::println("Object ID: ${hex, align(L, 20)}.");`
+  - Accept `boost::string_ref` as parameter.
   - Allow use of numbers to refer to previously-formatted objects.
   - Allow support for user-defined attributes?
   - Supported attributes:
     - General attributes:
-      - Adjustment/centering/fill characters
+      - Adjustment/centering/fill characters `align(L|R|C, padding, fill)`
     - Integral type attributes:
-      - binary
-      - octal
-      - hex
-      - bool
+      - binary `bin`
+      - decimal `dec`
+      - octal `oct`
+      - hex `hex`
+      - bool `bool`
+      - character `char`
+      - number `num`
+      - To add prefix for binary, octal, and hex: `prefix`
+      - Locale-dependent digit separator: `sep`
+      - Money: `money`
     - Floating-point type attributes:
-      - precision
-      - fixed
-      - scientific
+      - precision `prec(N)`
+      - fixed `fixed`
+      - scientific `sci`
+      - percent `%`
+      - sign `sign(always|space)`
     - String attributes:
-      - quote
-      - uppercase
-      - lowercase
+      - quote `quote`
+      - uppercase `upper`
+      - lowercase `lower`
