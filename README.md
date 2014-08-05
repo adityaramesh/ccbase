@@ -37,40 +37,31 @@ The entirety of the public API resides in the `cc` namespace.
 
 ## TODO
 
-- Adapt documentation to Sphinx.
-- Refactor installation information.
-- Document the `utility` module.
-
+- Document the utility module after sufficient usage.
 - Use `CC_ASSERT` instead of assert.
 - Tuple arithmetic.
 - `match_files` with recursive directory enumeration.
 
-- Add attributes for formatting.
-  - E.g. `cc::println("Object ID: ${hex, align(L, 20)}.");`
-  - Accept `boost::string_ref` as parameter.
-  - Allow use of numbers to refer to previously-formatted objects.
-  - Allow support for user-defined attributes?
-  - Supported attributes:
-    - General attributes:
-      - Adjustment/centering/fill characters `align(L|R|C, padding, fill)`
-    - Integral type attributes:
-      - binary `bin`
-      - decimal `dec`
-      - octal `oct`
-      - hex `hex`
-      - bool `bool`
-      - character `char`
-      - number `num`
-      - To add prefix for binary, octal, and hex: `prefix`
-      - Locale-dependent digit separator: `sep`
-      - Money: `money`
-    - Floating-point type attributes:
-      - precision `prec(N)`
-      - fixed `fixed`
-      - scientific `sci`
-      - percent `%`
-      - sign `sign(always|space)`
-    - String attributes:
-      - quote `quote`
-      - uppercase `upper`
-      - lowercase `lower`
+## Attribute TODO
+
+- TODO: Since the manipulator syntax works for all types, and not just
+arithmetic types, we can also use it on tuples. Show this in the documentation.
+
+- Make the printing functions return the formatter that was used in the process
+of printing the output.
+
+- Implementations of integer -> integer attributes (do this at the next highest
+level).
+- Parsing attribute arguments.
+
+  - Use `copyfmt` to save and restore the stream state before and after each
+  format argument with attributes that add manipulators. (This saves the locale,
+  as well.)
+  - http://stackoverflow.com/questions/4217704/roll-back-or-undo-any-manipulators-applied-to-a-stream-without-knowing-what-th
+
+  - To apply a type to string attribute to the stringstream instead of a string
+  argument, do the following:
+    - Save the contents of the stringstream using `.str()`.
+    - Clear the contents of the stringstream using `.str("")`.
+    - Pass the saved contents of the stringstream to the `apply_type_to_string`
+    function.
