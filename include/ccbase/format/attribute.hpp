@@ -121,7 +121,6 @@ public:
 			{"oct",   {attribute_id::octal,      adds_manipulators, 1, 0, 0}},
 			{"dec",   {attribute_id::decimal,    adds_manipulators, 1, 0, 0}},
 			{"hex",   {attribute_id::hex,        adds_manipulators, 1, 0, 0}},
-			{"bool",  {attribute_id::bool_,      adds_manipulators, 1, 0, 0}},
 			{"prec",  {attribute_id::precision,  adds_manipulators, 1, 1, 1}},
 			{"fixed", {attribute_id::fixed,      adds_manipulators, 1, 0, 0}},
 			{"sci",   {attribute_id::scientific, adds_manipulators, 1, 0, 0}},
@@ -129,6 +128,7 @@ public:
 			{"char",  {attribute_id::char_,  number_to_number, 1, 0, 0}},
 			{"num",   {attribute_id::number, number_to_number, 1, 0, 0}},
 
+			{"bool",  {attribute_id::bool_,   number_to_string, 2, 0, 0}},
 			{"money", {attribute_id::money,   number_to_string, 2, 0, 1}},
 			{"sign",  {attribute_id::sign,    number_to_string, 2, 1, 1}},
 			{"bin",   {attribute_id::binary,  number_to_string, 2, 0, 0}},
@@ -143,8 +143,8 @@ public:
 
 		auto it = attr_map.find(static_cast<std::string>(name));
 		if (it == attr_map.end()) {
-			std::ostringstream msg{"Unknown attribute name \""};
-			msg << name << "\".";
+			std::ostringstream msg{};
+			msg << "Unknown attribute name \"" << name << "\".";
 			throw std::runtime_error{msg.str()};
 		}
 		else {
@@ -193,10 +193,13 @@ Char parse_argument(
 			}
 		}
 		else if (num == 2) {
-			if (str.length() > 1) {
-				throw std::runtime_error{"Argument too long."};
+			/*
+			** TODO: this is broken for escape sequences.
+			*/
+			if (str.length() != 3) {
+				throw std::runtime_error{"Invalid argument."};
 			}
-			return str[0];
+			return str[1];
 		}
 	}
 	else if (t.id() == attribute_id::sign) {
@@ -399,9 +402,6 @@ void apply_manipulator_attribute(
 	case attribute_id::hex:
 		dst << std::hex;
 		break;
-	case attribute_id::bool_:
-		dst << std::boolalpha;
-		break;
 	case attribute_id::base:
 		if (attr.arguments() == 0) {
 			dst << std::showbase;
@@ -436,7 +436,12 @@ void apply_string_output_attribute(
 {
 	auto id = attr.type().id();
 
-	if (id == attribute_id::money) {
+	if (id == attribute_id::bool_) {
+		auto flags = dst.flags();
+		dst << std::boolalpha << (bool)t;
+		dst.setf(flags);
+	}
+	else if (id == attribute_id::money) {
 		auto flags = dst.flags();
 		if (attr.arguments() == 0) {
 			dst << std::showbase
@@ -457,10 +462,10 @@ void apply_string_output_attribute(
 		}
 		else {
 			if (t >= 0) {
-				dst << " " << t;
+				dst << std::noshowpos << " " << t;
 			}
 			else {
-				dst << t;
+				dst << std::noshowpos << t;
 			}
 		}
 		dst.setf(flags);
@@ -538,7 +543,7 @@ void apply_string_output_attribute(
 		auto old_fill = dst.fill();
 
 		auto dir = (char)attr.argument(0);
-		auto width = (int)attr.argument(1);
+		auto width = (size_t)attr.argument(1);
 
 		if (dir == 'C') {
 			auto fill = ' ';
@@ -556,11 +561,11 @@ void apply_string_output_attribute(
 				size_t fill_left = (width - str.length()) / 2;
 				size_t fill_right = width - str.length() - fill_left;
 
-				for (auto i = 0; i != fill_left; ++i) {
+				for (size_t i = 0; i != size_t{fill_left}; ++i) {
 					dst << fill;
 				}
 				dst << str;
-				for (auto i = 0; i != fill_right; ++i) {
+				for (size_t i = 0; i != size_t{fill_right}; ++i) {
 					dst << fill;
 				}
 			}

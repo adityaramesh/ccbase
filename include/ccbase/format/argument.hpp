@@ -154,7 +154,7 @@ void apply_manipulator_attributes(
 template <class T, class Char, class Traits>
 void apply_string_output_attributes(
 	const argument<Char, Traits>& arg,
-	const T& t,
+	const T&,
 	std::basic_ostringstream<Char, Traits>& buf,
 	uint8_t priority
 )

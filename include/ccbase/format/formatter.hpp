@@ -8,52 +8,10 @@
 #ifndef Z0487E9FF_B46E_4414_B607_847246DE0874
 #define Z0487E9FF_B46E_4414_B607_847246DE0874
 
-#include <array>
 #include <cctype>
-#include <cstdint>
-#include <boost/utility/string_ref.hpp>
+#include <ccbase/format/argument.hpp>
 
 namespace cc {
-
-class argument
-{
-	static constexpr auto max_attributes = 5;
-
-	std::array<attribute, 5> m_attrs;
-	uint8_t m_attr_count{};
-	uint8_t m_index{};
-public:
-	explicit argument(uint8_t index)
-	noexcept : m_index{index} {}
-
-	uint8_t index() const noexcept
-	{ return m_index; }
-
-	uint8_t attributes() const noexcept
-	{ return m_attr_count; }
-
-	argument& add_attribute(attribute_type t)
-	noexcept
-	{
-		assert(m_attr_count != max_attributes);
-		m_attrs[m_attr_count++] = attribute{t};
-		return *this;
-	}
-
-	attribute& attribute(uint8_t n)
-	noexcept
-	{
-		assert(n < attributes());
-		return m_attrs[n];
-	}
-
-	attribute& attribute(uint8_t n)
-	const noexcept
-	{
-		assert(n < attributes());
-		return m_attrs[n];
-	}
-};
 
 // TODO specialize for Args == 0
 
@@ -64,43 +22,52 @@ template <class Char, class Traits, uint8_t Args>
 class formatter
 {
 	using string_ref = boost::basic_string_ref<Char, Traits>;
+	using m_argument = argument<Char, Traits>;
 	using substr = std::tuple<size_t, size_t>;
 
-	// This array is used to store the indices and lengths of each substring
-	// in the format string that occurs between two argument strings. Note
-	// that a substring may contain `$$` or `{{` that should be escaped when
-	// printing.
+	/*
+	** This array is used to store the indices and lengths of each substring
+	** in the format string that occurs between two argument strings. Note
+	** that:
+	**   - A substring may contain a `$$` or `{{` that should be escaped
+	**   when printing.
+	**   - A substring may have length zero. This is can happen in cases
+	**   like the following: "$" (two empty substrings), "${}${}" (three
+	**   empty substrings).
+	*/
 	std::array<substr, Args + 1> m_substrs;
-	std::array<arguments, Args> m_args;
+	std::array<m_argument, Args> m_args;
 	std::basic_ostringstream<Char, Traits> m_str{};
 public:
 	explicit formatter(const boost::basic_string_ref<Char> fmt_str)
 	{
-		auto cur_index  = size_t{};
-		auto cur_substr = uint8_t{};
-		auto cur_arg    = uint8_t{};
-		auto mode       = parsing_mode{};
+		auto cur_index   = size_t{};
+		auto cur_substr  = uint8_t{};
+		auto cur_arg     = uint8_t{};
+		auto outside_arg = bool{true};
 		start_substring(0, 0);
 
-		while (cur_index != fmt_str.length()) {
-			if (mode == outside_argument) {
+		for (;;) {
+			if (outside_arg) {
 				// Find the next argument.
-				while (fmt_str[cur_index] != '$' &&
-					cur_index != fmt_str.length()) {
+				while (cur_index != fmt_str.length() &&
+					fmt_str[cur_index] != '$')
+				{
 					++cur_index;
 				}
-
 				if (cur_index == fmt_str.length()) {
-					end_subtring(cur_index, cur_substr);
+					end_substring(cur_index, cur_substr);
 					break;
 				}
 
-				parse_argument(fmt_str, cur_index, cur_substr, cur_arg, mode);
+				parse_argument(fmt_str, cur_index, cur_substr,
+					cur_arg, outside_arg);
 			}
-			else if (mode == inside_attribute_list) {
+			else {
 				// Find the beginning of the next attribute.
-				while (std::isspace(fmt_str[cur_index]) &&
-					cur_index != fmt_str.length()) {
+				while (cur_index != fmt_str.length() &&
+					std::isspace(fmt_str[cur_index]))
+				{
 					++cur_index;
 				}
 
@@ -109,17 +76,18 @@ public:
 				}
 				else if (fmt_str[cur_index] == '}') {
 					++cur_index;
-					mode = outside_attribute;
+					outside_arg = true;
+					start_substring(cur_index, cur_substr);
 					continue;
 				}
 
-				parse_attribute(fmt_str, cur_index, cur_substr, cur_arg, mode);
+				parse_attribute(fmt_str, cur_index, cur_substr,
+					cur_arg, outside_arg);
 			}
-			// TODO should we check for/implement other modes?
-			// if not, change the above else if to else
 		}
-
-		// TODO check that mode == outside_argument.
+		
+		assert(cur_substr == Args);
+		assert(outside_arg);
 	}
 private:
 	void parse_argument(
@@ -127,7 +95,7 @@ private:
 		uint8_t& cur_index,
 		uint8_t& cur_substr,
 		uint8_t& cur_arg,
-		parsing_mode mode
+		bool& outside_arg
 	)
 	{
 		/*
@@ -136,6 +104,8 @@ private:
 		if (cur_index == fmt_str.length() - 1) {
 			add_argument(cur_arg, cur_arg);
 			end_substring(cur_index, cur_substr);
+			++cur_index;
+			start_substring(cur_index, cur_substr);
 			return;
 		}
 
@@ -151,6 +121,7 @@ private:
 		// to `cur_arg`.
 		auto index = size_t{cur_arg};
 
+		// Does the argument have an explicit index?
 		if (std::isdigit(fmt_str[cur_index])) {
 			index = 0;
 
@@ -174,11 +145,12 @@ private:
 			if (cur_index == fmt_str.length()) {
 				add_argument(cur_arg, index);
 				end_substring(dollar_index, cur_substr);
+				start_substring(cur_index, cur_substr);
 				return;
 			}
 		}
 
-		if (fmr_str[cur_index] != '{') {
+		if (fmt_str[cur_index] != '{') {
 			add_argument(cur_arg, index);
 			end_substring(dollar_index, cur_substr);
 			start_substring(cur_index, cur_substr);
@@ -198,13 +170,13 @@ private:
 			return;
 		}
 
-		mode = inside_attribute_list;
+		outside_arg = false;
 	}
 
 	bool is_attribute_character(Char c)
 	const noexcept
 	{
-		return std::isalpha(c) || c == '$' || c == '%';
+		return std::isalpha(c) || c == '%';
 	}
 
 	void parse_attribute(
@@ -212,22 +184,144 @@ private:
 		uint8_t& cur_index,
 		uint8_t& cur_substr,
 		uint8_t& cur_arg,
-		parsing_mode mode
+		bool& outside_arg
 	)
 	{
 		auto attr_start = cur_index;
-		while (is_attribute_character(fmt_str[cur_index]) &&
-			cur_index != fmt_str.length())
+
+		while (cur_index != fmt_str.length() &&
+			is_attribute_character(fmt_str[cur_index]))
 		{
 			++cur_index;
 		}
-
 		if (cur_index == fmt_str.length()) {
 			throw std::runtime_error{"Unclosed attribute list."};
 		}
 
 		add_attribute(fmt_str.substr(attr_start,
 			cur_index - attr_start), cur_arg);
+
+		while (cur_index != fmt_str.length() &&
+			std::isspace(fmt_str[cur_index]))
+		{
+			++cur_index;
+		}
+		if (cur_index == fmt_str.length()) {
+			throw std::runtime_error{"Unclosed attribute list."};
+		}
+
+		if (fmt_str[cur_index] == '(') {
+			++cur_index;
+			parse_attribute_arguments(fmt_str, cur_index,
+				cur_substr, cur_arg, outside_arg);
+
+			while (std::isspace(fmt_str[cur_index] &&
+				cur_index != fmt_str.length())) {
+				++cur_index;
+			}
+			if (cur_index == fmt_str.length()) {
+				throw std::runtime_error{"Unclosed attribute list."};
+			}
+		}
+
+		if (fmt_str[cur_index] == ',') {
+			++cur_index;
+			return;
+		}
+		if (fmt_str[cur_index] == '}') {
+			++cur_index;
+			outside_arg = true;
+			start_substring(cur_index, cur_substr);
+			return;
+		}
+		throw std::runtime_error{"Invalid character after attribute."};
+	}
+
+	void parse_attribute_arguments(
+		const boost::string_ref fmt_str,
+		uint8_t& cur_index,
+		uint8_t& cur_substr,
+		uint8_t& cur_arg,
+		bool& outside_arg
+	)
+	{
+		for (;;) {
+			while (cur_index != fmt_str.length() &&
+				std::isspace(fmt_str[cur_index]))
+			{
+				++cur_index;
+			}
+			if (cur_index == fmt_str.length()) {
+				throw std::runtime_error{"Unclosed attribute argument list."};
+			}
+
+			if (fmt_str[cur_index] == ')') {
+				++cur_index;
+				return;
+			}
+			else {
+				parse_attribute_argument(fmt_str, cur_index,
+					cur_substr, cur_arg, outside_arg);
+			}
+		}
+	}
+
+	bool is_attribute_argument_character(Char c)
+	const noexcept
+	{
+		return std::isalpha(c) || std::isdigit(c);
+	}
+
+	void parse_attribute_argument(
+		const boost::string_ref fmt_str,
+		uint8_t& cur_index,
+		uint8_t& cur_substr,
+		uint8_t& cur_arg,
+		bool& outside_arg
+	)
+	{
+		if (cur_index == fmt_str.length()) {
+			throw std::runtime_error{"Unclosed attribute argument "
+				"list."};
+		}
+
+		auto arg_start = cur_index;
+
+		if (fmt_str[cur_index] == '\'') {
+			do {
+				++cur_index;
+			}
+			while (cur_index != fmt_str.length() &&
+				fmt_str[cur_index] != '\'');
+		}
+		else {
+			while (cur_index != fmt_str.length() &&
+				is_attribute_argument_character(fmt_str[cur_index]))
+			{
+				++cur_index;
+			}
+		}
+
+		add_attribute_argument(fmt_str.substr(arg_start,
+			cur_index - arg_start), cur_arg);
+
+		while (cur_index != fmt_str.length() &&
+			std::isspace(fmt_str[cur_index]))
+		{
+			++cur_index;
+		}
+		if (cur_index == fmt_str.length()) {
+			throw std::runtime_error{"Unclosed attribute argument "
+				"list."};
+		}
+
+		if (fmt_str[cur_arg] == ',') {
+			++cur_arg;
+		}
+		else if (fmt_str[cur_arg] != ')') {
+			throw std::runtime_error{"Unexpected character in "
+				"attribute argument list."};
+		}
 	}
 
 	void start_substring(uint8_t& cur_index, uint8_t& cur_substr)
@@ -242,7 +336,7 @@ private:
 	{
 		std::get<1>(m_substrs[cur_substr]) =
 			cur_index - std::get<0>(m_substrs[cur_substr]);
-		break;
+		++cur_substr;
 	}
 
 	void add_argument(uint8_t& cur_arg, uint8_t index)
@@ -253,12 +347,18 @@ private:
 		if (index >= Args) {
 			throw std::runtime_error{"Argument index too large."};
 		}
-		m_args[cur_arg++] = argument{index};
+		m_args[cur_arg++] = m_argument{index};
 	}
 
-	void add_attribute(const boost::string_ref name, uint8_t cur_arg)
+	void add_attribute(const string_ref name, uint8_t cur_arg)
 	{
+		m_args[cur_arg].add_attribute(name);
+	}
 
+	void add_attribute_argument(const string_ref name, uint8_t cur_arg)
+	{
+		m_args[cur_arg][m_args[cur_arg].attributes() - 1].
+			add_argument(name);
 	}
 };
 
