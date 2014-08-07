@@ -1,5 +1,5 @@
 /*
-** File Name: attribute_test.cpp
+** File Name: argument_test.cpp
 ** Author:    Aditya Ramesh
 ** Date:      08/06/2014
 ** Contact:   _@adityaramesh.com
@@ -127,6 +127,13 @@ module("test integer formatting")
 	arg5.add_attribute("bin");
 	arg5.add_attribute("base");
 
+	auto arg6 = cc::argument<char, std::char_traits<char>>{0};
+	arg6.add_attribute("data");
+
+	auto arg7 = cc::argument<char, std::char_traits<char>>{0};
+	arg7.add_attribute("data");
+	arg7[0].add_argument("dec");
+
 	cc::apply(arg1, 'A', dst, buf);
 	require(dst.str() == "01000001");
 	dst.str("");
@@ -145,6 +152,22 @@ module("test integer formatting")
 
 	cc::apply(arg5, 'A', dst, buf);
 	require(dst.str() == "0b01000001");
+	dst.str("");
+
+	cc::apply(arg6, 10, dst, buf);
+	require(dst.str() == "10 B");
+	dst.str("");
+
+	cc::apply(arg6, 10485760, dst, buf);
+	require(dst.str() == "10 MiB");
+	dst.str("");
+
+	cc::apply(arg7, 10, dst, buf);
+	require(dst.str() == "10 B");
+	dst.str("");
+
+	cc::apply(arg7, 10000000, dst, buf);
+	require(dst.str() == "10 MB");
 	dst.str("");
 }
 

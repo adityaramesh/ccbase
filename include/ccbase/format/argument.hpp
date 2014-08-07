@@ -461,7 +461,7 @@ struct apply_argument_helper<boost::basic_string_ref<Char, Traits>, void>
 };
 
 template <class Char, class Traits, class T>
-void apply_argument(
+void apply(
 	const argument<Char, Traits>& arg,
 	const T& t,
 	std::basic_ostream<Char, Traits>& dst,

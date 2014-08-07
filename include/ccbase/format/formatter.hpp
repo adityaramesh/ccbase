@@ -103,7 +103,7 @@ struct formatter_helper<
 		*/
 		using helper = select_argument<0, ArgumentIndex, Args...>;
 		auto val = helper::apply(std::forward<Args>(args)...);
-		apply_argument(arg, val, os, fmt.buffer());
+		cc::apply(arg, val, os, fmt.buffer());
 
 		if (restore) {
 			os.copyfmt(state);
@@ -335,16 +335,6 @@ public:
 
 	buffer_type& buffer() const noexcept
 	{ return m_buf; }
-
-	template <class... Args_>
-	void apply(ostream& dst, Args_&&... args)
-	{
-		using helper = formatter_helper<false, 0, 0, Args>;
-		static_assert(sizeof...(Args_) == Args, "");
-
-		m_buf.copyfmt(dst);
-		helper::apply(*this, dst, std::forward<Args_>(args)...);
-	}
 private:
 	void parse_argument(
 		size_t& cur_index,
@@ -630,6 +620,18 @@ private:
 			add_argument(name);
 	}
 };
+
+template <class Char, class Traits, class... Args>
+void apply(
+	const basic_formatter<Char, Traits, sizeof...(Args)>& fmt,
+	std::basic_ostream<Char, Traits>& dst,
+	Args&&... args
+)
+{
+	using helper = formatter_helper<false, 0, 0, sizeof...(Args)>;
+	fmt.buffer().copyfmt(dst);
+	helper::apply(fmt, dst, std::forward<Args>(args)...);
+}
 
 template <uint8_t Args>
 using formatter = basic_formatter<char, std::char_traits<char>, Args>;

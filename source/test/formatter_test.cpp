@@ -46,7 +46,7 @@ module("test formatting")
 	** correctly.
 	*/
 	auto fmt1 = cc::formatter<1>("${hex, base(upper), align(R, 20), quote}");
-	fmt1.apply(os, 1);
+	apply(fmt1, os, 1);
 	require(os.str() == "               \"0X1\"");
 }
 

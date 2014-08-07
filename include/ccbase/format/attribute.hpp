@@ -9,7 +9,9 @@
 #define ZF1D988C4_9465_4056_A062_2E7B7FB28FE7
 
 #include <cassert>
+#include <cmath>
 #include <cstdint>
+#include <algorithm>
 #include <limits>
 
 #include <array>
@@ -41,6 +43,7 @@ enum class attribute_id
 	octal,
 	decimal,
 	hex,
+	data,
 	bool_,
 	char_,
 	number,
@@ -129,6 +132,7 @@ public:
 			{"num",   {attribute_id::number, number_to_number, 1, 0, 0}},
 
 			{"bool",  {attribute_id::bool_,   number_to_string, 2, 0, 0}},
+			{"data",  {attribute_id::data,    number_to_string, 2, 0, 1}},
 			{"money", {attribute_id::money,   number_to_string, 2, 0, 1}},
 			{"sign",  {attribute_id::sign,    number_to_string, 2, 1, 1}},
 			{"bin",   {attribute_id::binary,  number_to_string, 2, 0, 0}},
@@ -232,6 +236,16 @@ Char parse_argument(
 	else if (t.id() == attribute_id::base) {
 		if (num == 0) {
 			if (str == "upper") {
+				return 1;
+			}
+			else {
+				throw std::runtime_error{"Invalid argument."};
+			}
+		}
+	}
+	else if (t.id() == attribute_id::data) {
+		if (num == 0) {
+			if (str == "dec") {
 				return 1;
 			}
 			else {
@@ -441,6 +455,39 @@ void apply_string_output_attribute(
 		dst << std::boolalpha << (bool)t;
 		dst.setf(flags);
 	}
+	else if (id == attribute_id::data) {
+		if (attr.arguments() == 0) {
+			auto log = (unsigned long long)std::log2(t);
+			auto base = std::min((unsigned)(log - log % 10), 60u);
+			auto sig = (long double)t / (1 << base);
+
+			switch (base) {
+			case 0u:  dst << sig << " B"; break;
+			case 10u: dst << sig << " KiB"; break;
+			case 20u: dst << sig << " MiB"; break;
+			case 30u: dst << sig << " GiB"; break;
+			case 40u: dst << sig << " TiB"; break;
+			case 50u: dst << sig << " PiB"; break;
+			case 60u: dst << sig << " EiB"; break;
+			}
+		}
+		else {
+			auto log = (unsigned long long)std::log10(t);
+			auto base = std::min((unsigned)(log - log % 3), 18u);
+			auto sig = (long double)t / std::pow(10, base);
+
+			switch (base) {
+			case 0u:  dst << sig << " B"; break;
+			case 3u:  dst << sig << " KB"; break;
+			case 6u:  dst << sig << " MB"; break;
+			case 9u:  dst << sig << " GB"; break;
+			case 12u: dst << sig << " TB"; break;
+			case 15u: dst << sig << " PB"; break;
+			case 18u: dst << sig << " EB"; break;
+			}
+		}
+
+	}
 	else if (id == attribute_id::money) {
 		auto flags = dst.flags();
 		if (attr.arguments() == 0) {
@@ -493,6 +540,7 @@ void apply_string_output_attribute(
 			throw std::runtime_error{"Percent attribute only "
 				"applies to floating-point types."};
 		}
+
 		auto flags = dst.flags();
 		dst << std::fixed << (100 * t) << "%";
 		dst.flags(flags);
