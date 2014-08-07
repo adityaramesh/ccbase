@@ -48,6 +48,37 @@ struct select_argument<TargetIndex, TargetIndex, Args...>
 template <class Char, class Traits, uint8_t Args>
 class basic_formatter;
 
+/*
+** Prints a substring of a format string, escaping any characters as needed.
+*/
+template <class Char, class Traits>
+void print_format_substring(
+	const boost::basic_string_ref<Char, Traits>& substr,
+	std::basic_ostream<Char, Traits>& os
+)
+{
+	auto cur_index = size_t{};
+
+	do {
+		// Do we need to escape a '$' or '{'?
+		if (cur_index != substr.length() - 1 && substr[cur_index] == '$') {
+			if (substr[cur_index + 1] == '$') {
+				os << '$';
+				cur_index += 2;
+			}
+			else if (substr[cur_index + 1] == '{') {
+				os << "${";
+				cur_index += 3;
+			}
+		}
+		else {
+			os << substr[cur_index];
+			++cur_index;
+		}
+	}
+	while (cur_index != substr.length());
+}
+
 template <
 	bool    PrintArgument,
 	uint8_t ArgumentIndex,
@@ -81,8 +112,8 @@ struct formatter_helper<
 		uint8_t ArgCount,
 		class... Args
 	>
-	static CC_ALWAYS_INLINE void
-	apply(
+	static CC_ALWAYS_INLINE
+	void apply(
 		const basic_formatter<Char, Traits, ArgCount>& fmt,
 		std::basic_ostream<Char, Traits>& os,
 		Args&&... args
@@ -138,8 +169,8 @@ struct formatter_helper<
 		uint8_t ArgCount,
 		class... Args
 	>
-	static CC_ALWAYS_INLINE void
-	apply(
+	static CC_ALWAYS_INLINE
+	void apply(
 		const basic_formatter<Char, Traits, ArgCount>& fmt,
 		std::basic_ostream<Char, Traits>& os,
 		Args&&... args
@@ -154,26 +185,11 @@ struct formatter_helper<
 			return;
 		}
 
-		auto& fmt_str  = fmt.format_string();
-		auto substr    = fmt_str.substr(idx, len);
-		auto cur_index = size_t{0};
+		auto& fmt_str = fmt.format_string();
+		auto substr   = fmt_str.substr(idx, len);
+
 		assert(idx != fmt_str.length());
-
-		do {
-			// Do we need to escape a '$' or '{'?
-			if (cur_index != substr.length() - 1) {
-				if (
-					(substr[cur_index] == '$' &&
-					substr[cur_index + 1] == '$') ||
-					(substr[cur_index] == '{' &&
-					substr[cur_index + 1] == '{')
-				) { ++cur_index; }
-			}
-			os << substr[cur_index];
-			++cur_index;
-		}
-		while (cur_index != substr.length());
-
+		print_format_substring(substr, os);
 		next::apply(fmt, os, std::forward<Args>(args)...);
 	}
 };
@@ -195,8 +211,8 @@ struct formatter_helper<
 		uint8_t ArgCount,
 		class... Args
 	>
-	static CC_ALWAYS_INLINE void
-	apply(
+	static CC_ALWAYS_INLINE
+	void apply(
 		const basic_formatter<Char, Traits, ArgCount>& fmt,
 		std::basic_ostream<Char, Traits>& os,
 		Args&&...
@@ -210,29 +226,13 @@ struct formatter_helper<
 			return;
 		}
 
-		auto& fmt_str  = fmt.format_string();
-		auto substr    = fmt_str.substr(idx, len);
-		auto cur_index = size_t{0};
-		assert(idx != fmt_str.length());
+		auto& fmt_str = fmt.format_string();
+		auto substr   = fmt_str.substr(idx, len);
 
-		do {
-			// Do we need to escape a '$' or '{'?
-			if (cur_index != substr.length() - 1) {
-				if (
-					(substr[cur_index] == '$' &&
-					substr[cur_index + 1] == '$') ||
-					(substr[cur_index] == '{' &&
-					substr[cur_index + 1] == '{')
-				) { ++cur_index; }
-			}
-			os << substr[cur_index];
-			++cur_index;
-		}
-		while (cur_index != substr.length());
+		assert(idx != fmt_str.length());
+		print_format_substring(substr, os);
 	}
 };
-
-// TODO specialize for Args == 0
 
 template <class Char, class Traits, uint8_t Args>
 class basic_formatter
@@ -260,7 +260,7 @@ private:
 	std::array<argument_type, Args> m_args;
 	mutable buffer_type m_buf{};
 public:
-	explicit basic_formatter(const boost::basic_string_ref<Char> fmt_str) :
+	explicit basic_formatter(const string_ref fmt_str) :
 	m_fmt_str{fmt_str}
 	{
 		auto cur_index   = size_t{};
@@ -416,6 +416,7 @@ private:
 
 		++cur_index;
 		if (m_fmt_str[cur_index] == '{') {
+			start_substring(cur_index, cur_substr);
 			++cur_index;
 			return;
 		}
@@ -621,6 +622,21 @@ private:
 	}
 };
 
+template <class Char, class Traits>
+class basic_formatter<Char, Traits, 0>
+{
+public:
+	using string_ref = boost::basic_string_ref<Char, Traits>;
+private:
+	string_ref m_fmt_str;
+public:
+	explicit basic_formatter(const string_ref fmt_str) :
+	m_fmt_str{fmt_str} {}
+
+	const string_ref format_string()
+	const noexcept { return m_fmt_str; }
+};
+
 template <class Char, class Traits, class... Args>
 void apply(
 	const basic_formatter<Char, Traits, sizeof...(Args)>& fmt,
@@ -631,6 +647,15 @@ void apply(
 	using helper = formatter_helper<false, 0, 0, sizeof...(Args)>;
 	fmt.buffer().copyfmt(dst);
 	helper::apply(fmt, dst, std::forward<Args>(args)...);
+}
+
+template <class Char, class Traits>
+void apply(
+	const basic_formatter<Char, Traits, 0>& fmt,
+	std::basic_ostream<Char, Traits>& dst
+)
+{
+	print_format_substring(fmt.format_string(), dst);
 }
 
 template <uint8_t Args>

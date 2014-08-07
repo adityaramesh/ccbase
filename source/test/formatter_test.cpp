@@ -48,6 +48,17 @@ module("test formatting")
 	auto fmt1 = cc::formatter<1>("${hex, base(upper), align(R, 20), quote}");
 	apply(fmt1, os, 1);
 	require(os.str() == "               \"0X1\"");
+	os.str("");
+
+	auto fmt2 = cc::formatter<0>("$${{$${{");
+	apply(fmt2, os);
+	require(os.str() == "${{${{");
+	os.str("");
+
+	auto fmt3 = cc::formatter<1>("${{");
+	apply(fmt3, os, "");
+	require(os.str() == "{");
+	os.str("");
 }
 
 suite("Tests the formatter class in the format module.")
