@@ -18,11 +18,11 @@ namespace cc {
 template <class Char, class Traits>
 class argument
 {
-	using m_attribute = attribute<Char, Traits>;
+	using attribute_type = attribute<Char, Traits>;
 	using string_ref = boost::basic_string_ref<Char, Traits>;
 	static constexpr auto max_attributes = 5;
 
-	std::array<m_attribute, max_attributes> m_attrs;
+	std::array<attribute_type, max_attributes> m_attrs;
 	std::array<uint8_t, num_attribute_functions> m_attr_counts{};
 	uint8_t m_attr_count{};
 	uint8_t m_index{};
@@ -47,11 +47,11 @@ public:
 	uint8_t attributes() const noexcept
 	{ return m_attr_count; }
 
-	argument& add_attribute(attribute_type t)
+	argument& add_attribute(attribute_description t)
 	{
 		assert(m_attr_count != max_attributes);
-		m_attrs[m_attr_count] = m_attribute{t};
-		update_attribute_counts(m_attrs[m_attr_count].type().function());
+		m_attrs[m_attr_count] = attribute_type{t};
+		update_attribute_counts(m_attrs[m_attr_count].description().function());
 		++m_attr_count;
 		return *this;
 	}
@@ -59,8 +59,8 @@ public:
 	argument& add_attribute(const string_ref str)
 	{
 		assert(m_attr_count != max_attributes);
-		m_attrs[m_attr_count] = m_attribute{str};
-		update_attribute_counts(m_attrs[m_attr_count].type().function());
+		::new (&m_attrs[m_attr_count]) attribute_type{str};
+		update_attribute_counts(m_attrs[m_attr_count].description().function());
 		++m_attr_count;
 		return *this;
 	}
@@ -73,14 +73,14 @@ public:
 		return m_attr_counts[n];
 	}
 
-	m_attribute& operator[](uint8_t n)
+	attribute_type& operator[](uint8_t n)
 	noexcept
 	{
 		assert(n < attributes());
 		return m_attrs[n];
 	}
 
-	const m_attribute& operator[](uint8_t n)
+	const attribute_type& operator[](uint8_t n)
 	const noexcept
 	{
 		assert(n < attributes());
@@ -121,7 +121,7 @@ void apply_number_to_number_attribute(
 )
 {
 	for (auto i = 0; i != arg.attributes(); ++i) {
-		if (arg[i].type().id() == attribute_id::char_) {
+		if (arg[i].description().id() == attribute_id::char_) {
 			if (!std::is_integral<T>::value) {
 				throw std::runtime_error{"The char attribute "
 					"can only be applied to integral "
@@ -131,7 +131,7 @@ void apply_number_to_number_attribute(
 			func1(arg, c, dst, buf);
 			return;
 		}
-		else if (arg[i].type().id() == attribute_id::number) {
+		else if (arg[i].description().id() == attribute_id::number) {
 			func2(arg, +t, dst, buf);
 			return;
 		}
@@ -145,7 +145,7 @@ void apply_manipulator_attributes(
 )
 {
 	for (auto i = 0; i != arg.attributes(); ++i) {
-		if (arg[i].type().function() == attribute_function::adds_manipulators) {
+		if (arg[i].description().function() == attribute_function::adds_manipulators) {
 			apply_manipulator_attribute(arg[i], os);
 		}
 	}
@@ -162,7 +162,7 @@ void apply_string_output_attributes(
 	using string_ref = boost::basic_string_ref<Char, Traits>;
 
 	for (auto i = 0; i != arg.attributes(); ++i) {
-		if (arg[i].type().priority() == priority) {
+		if (arg[i].description().priority() == priority) {
 			auto str = buf.str();
 			buf.str("");
 			apply_string_output_attribute(arg[i], string_ref{str}, buf);
@@ -178,7 +178,7 @@ void apply_first_string_output_attribute(
 )
 {
 	for (auto i = 0; i != arg.attributes(); ++i) {
-		auto f = arg[i].type().function();
+		auto f = arg[i].description().function();
 		if (
 			f == attribute_function::number_to_string ||
 			f == attribute_function::string_to_string ||
@@ -199,7 +199,7 @@ void apply_first_string_output_attribute(
 )
 {
 	for (auto i = 0; i != arg.attributes(); ++i) {
-		if (arg[i].type().priority() == priority) {
+		if (arg[i].description().priority() == priority) {
 			apply_string_output_attribute(arg[i], t, os);
 			return;
 		}
@@ -461,7 +461,7 @@ struct apply_argument_helper<boost::basic_string_ref<Char, Traits>, void>
 };
 
 template <class Char, class Traits, class T>
-void apply(
+void apply_argument(
 	const argument<Char, Traits>& arg,
 	const T& t,
 	std::basic_ostream<Char, Traits>& dst,

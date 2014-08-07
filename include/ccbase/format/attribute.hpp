@@ -66,7 +66,7 @@ enum class attribute_function : uint8_t
 
 static constexpr auto num_attribute_functions = 5;
 
-class attribute_type
+class attribute_description
 {
 public:
 	static constexpr auto max_priority = 1;
@@ -78,9 +78,9 @@ private:
 	uint8_t m_min_args{};
 	uint8_t m_max_args{};
 public:
-	attribute_type() noexcept {}
+	attribute_description() noexcept {}
 
-	attribute_type(
+	attribute_description(
 		attribute_id id,
 		attribute_function func,
 		uint8_t priority,
@@ -104,7 +104,7 @@ public:
 	uint8_t max_args() const noexcept
 	{ return m_max_args; }
 
-	static attribute_type
+	static attribute_description
 	from_name(const boost::string_ref name)
 	{
 		static constexpr auto adds_manipulators = attribute_function::adds_manipulators;
@@ -114,7 +114,7 @@ public:
 		static constexpr auto string_to_string  = attribute_function::string_to_string;
 
 		static const auto attr_map =
-		std::unordered_map<std::string, attribute_type>
+		std::unordered_map<std::string, attribute_description>
 		{
 			{"loc",   {attribute_id::locale,     adds_manipulators, 1, 1, 1}},
 			{"base",  {attribute_id::base,       adds_manipulators, 1, 0, 1}},
@@ -161,7 +161,7 @@ enum class sign_option : uint8_t
 
 template <class Char, class Traits>
 Char parse_argument(
-	const attribute_type& t,
+	const attribute_description& t,
 	uint8_t num,
 	const boost::basic_string_ref<Char, Traits> str
 )
@@ -262,7 +262,7 @@ public:
 	using string_ref = boost::basic_string_ref<Char, Traits>;
 	static constexpr auto max_arg_count = 3;
 private:
-	attribute_type m_type;
+	attribute_description m_type;
 	uint8_t m_arg_count{};
 	union {
 		std::array<Char, max_arg_count> m_args;
@@ -271,11 +271,11 @@ private:
 public:
 	explicit attribute() noexcept {}
 
-	explicit attribute(attribute_type t) noexcept
+	explicit attribute(attribute_description t) noexcept
 	: m_type{t} {}
 
 	explicit attribute(const boost::string_ref name)
-	: m_type{attribute_type::from_name(name)} {}
+	: m_type{attribute_description::from_name(name)} {}
 
 	attribute(const attribute& rhs) noexcept
 	: m_type{rhs.m_type}, m_arg_count{rhs.m_arg_count}
@@ -339,13 +339,13 @@ public:
 		return *this;
 	}
 
-	attribute_type type()
+	attribute_description description()
 	const noexcept { return m_type; }
 
 	uint8_t arguments()
 	const noexcept { return m_arg_count; }
 
-	attribute& type(attribute_type t)
+	attribute& type(attribute_description t)
 	noexcept
 	{
 		m_type = t;
@@ -367,7 +367,7 @@ public:
 		return *this;
 	}
 
-	const Char& argument(size_t n)
+	const Char& operator[](uint8_t n)
 	const noexcept
 	{
 		assert(n <= max_arg_count);
@@ -388,7 +388,7 @@ void apply_manipulator_attribute(
 	std::basic_ostream<Char, Traits>& dst
 )
 {
-	switch (attr.type().id()) {
+	switch (attr.description().id()) {
 	case attribute_id::locale:
 		using string = std::basic_string<Char, Traits>;
 		dst.imbue(std::locale(static_cast<string>(attr.locale_name())));
@@ -411,7 +411,7 @@ void apply_manipulator_attribute(
 		}
 		break;
 	case attribute_id::precision:
-		dst << std::setprecision(attr.argument(1));
+		dst << std::setprecision(attr[1]);
 		break;
 	case attribute_id::fixed:
 		dst << std::fixed;
@@ -434,7 +434,7 @@ void apply_string_output_attribute(
 	std::basic_ostream<Char, Traits>& dst
 )
 {
-	auto id = attr.type().id();
+	auto id = attr.description().id();
 
 	if (id == attribute_id::bool_) {
 		auto flags = dst.flags();
@@ -455,7 +455,7 @@ void apply_string_output_attribute(
 		dst.setf(flags);
 	}
 	else if (id == attribute_id::sign) {
-		auto s = static_cast<sign_option>(attr.argument(0));
+		auto s = static_cast<sign_option>(attr[0]);
 		auto flags = dst.flags();
 		if (s == sign_option::always) {
 			dst << std::showpos << t;
@@ -512,7 +512,7 @@ void apply_string_output_attribute(
 	std::basic_ostream<Char, Traits>& dst
 )
 {
-	auto id = attr.type().id();
+	auto id = attr.description().id();
 
 	if (id == attribute_id::quote) {
 		dst << "\"" << t << "\"";
@@ -530,7 +530,7 @@ void apply_string_output_attribute(
 )
 {
 	using string = std::basic_string<Char1, Traits1>;
-	auto id = attr.type().id();
+	auto id = attr.description().id();
 
 	if (id == attribute_id::align) {
 		if (attr.arguments() < 2 || attr.arguments() > 3) {
@@ -542,22 +542,24 @@ void apply_string_output_attribute(
 		auto old_width = dst.width();
 		auto old_fill = dst.fill();
 
-		auto dir = (char)attr.argument(0);
-		auto width = (size_t)attr.argument(1);
+		auto dir = (char)attr[0];
+		auto width = (size_t)attr[1];
 
 		if (dir == 'C') {
 			auto fill = ' ';
 			if (attr.arguments() == 3) {
-				fill = attr.argument(2);
+				fill = attr[2];
 			}
 
 			if (str.length() >= width) {
 				dst << str.substr(0, width);
 			}
 			else {
-				// XXX: This is broken for unicode strings,
-				// because we should not determine length by
-				// counting elements.
+				/*
+				** FIXME: This is broken for unicode strings,
+				** because we should not determine length by
+				** counting elements.
+				*/
 				size_t fill_left = (width - str.length()) / 2;
 				size_t fill_right = width - str.length() - fill_left;
 
@@ -578,7 +580,7 @@ void apply_string_output_attribute(
 			dst << std::right << std::setw(width);
 		}
 		if (attr.arguments() == 3) {
-			dst << std::setfill((char)attr.argument(2));
+			dst << std::setfill((char)attr[2]);
 		}
 		dst << str;
 	restore:
