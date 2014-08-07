@@ -8,159 +8,66 @@
 #ifndef Z9DCE86DF_558B_497F_B6CC_4DCDFD6070FC
 #define Z9DCE86DF_558B_497F_B6CC_4DCDFD6070FC
 
-#include <cassert>
-#include <cstdlib>
-#include <cstring>
-#include <ios>
-#include <iostream>
-#include <sstream>
-#include <stdexcept>
-#include <string>
-#include <ccbase/platform.hpp>
+#include <ccbase/platform/attributes.hpp>
+#include <ccbase/format/formatter.hpp>
 
 namespace cc {
 
-namespace detail {
-
-/*
-** We do not use the `isdigit` function from `<cctype>`, because the only
-** characters that we treat as digits for argument indexing purposes are those
-** from 0--9.
-*/
-
-template <class T>
-static CC_ALWAYS_INLINE bool
-is_digit(const T t)
-noexcept
-{
-	return T{'0'} <= t && t <= T{'9'};
-}
-
-template <class T, class Traits = std::char_traits<T>>
-static CC_ALWAYS_INLINE void
-write_arg(const std::basic_ostream<T, Traits>&, const std::size_t)
-{
-	throw std::out_of_range{"Not enough arguments."};
-}
-
-template <class T, class Traits = std::char_traits<T>, class U, class... Us>
-static CC_ALWAYS_INLINE void
-write_arg(
-	std::basic_ostream<T, Traits>& os,
-	const std::size_t n,
-	const U arg,
-	const Us... args
+template <class Char, class Traits = std::char_traits<Char>, class... Args>
+basic_formatter<Char, Traits, sizeof...(Args)>
+write(
+	std::basic_ostream<Char, Traits>& os,
+	const boost::basic_string_ref<Char, Traits>& fmt,
+	const Args&&... args
 )
 {
-	if (n > 0) {
-		return write_arg(os, n - 1, args...);
-	}
+	auto fmt = basic_formatter<Char, Traits, sizeof...(Args)>{fmt};
+	apply(fmt, os, std::forward<Args>(args)...);
+	return fmt;
+}
+
+template <class Char, class Traits = std::char_traits<Char>, class Arg>
+CC_ALWAYS_INLINE void
+write(std::basic_ostream<Char, Traits>& os, const Arg& arg)
+{
 	os << arg;
 }
 
-}
-
-template <class T, class Traits = std::char_traits<T>, class... Us>
-void write(std::basic_ostream<T, Traits>& os, const T* s, const Us... args)
+template <class Char, class Traits = std::char_traits<Char>, class... Args>
+basic_formatter<Char, Traits, sizeof...(Args)>
+writeln(std::basic_ostream<Char, Traits>& os, const Args&&... args)
 {
-	using detail::is_digit;
-	using detail::write_arg;
-
-	// Used to keep track of the segment of the string to be printed before
-	// printing the next format argument.
-	auto f = s;
-	auto l = s;
-
-	// Used to keep track of the next format argument to be printed.
-	auto i = 0u;
-
-	// We disallow printing the null string.
-	assert(l != nullptr && "Format string is null.");
-	// We disallow printing the empty string.
-	assert(*l != 0 && "Format string is empty.");
-
-	do {
-		if (*l == T{'$'}) {
-			os.write(f, l - f);
-			++l;
-			f = l;
-			write_arg(os, i, args...);
-			++i;
-		}
-		else if (*l == T{'{'}) {
-			if (*(l + 1) == T{'$'}) {
-				assert(*(l + 2) == '}' && "Expected '}'.");
-				os.write(f, l - f);
-				os.write("$", 1);
-				l += 3;
-				f = l;
-			}
-			else if (*(l + 1) == T{'{'}) {
-				++l;
-				os.write(f, l - f);
-				++l;
-				f = l;
-			}
-			else {
-				assert(false && "Invalid use of '{'.");
-			}
-		}
-		else if (*l == T{'}'}) {
-			assert(*(l + 1) == '}' && "Unexpected '}'.");
-			++l;
-			os.write(f, l - f);
-			++l;
-			f = l;
-		}
-		else {
-			++l;
-		}
-	}
-	while (*l != 0);
-	os.write(f, l - f);
-}
-
-template <class T, class Traits = std::char_traits<T>, class U>
-CC_ALWAYS_INLINE void
-write(std::basic_ostream<T, Traits>& os, const U& u)
-{
-	os << u;
-}
-
-template <class T, class Traits = std::char_traits<T>, class... Ts>
-CC_ALWAYS_INLINE void
-writeln(std::basic_ostream<T, Traits>& os, const Ts... args)
-{
-	write(os, args...);
+	auto tmp = write(os, args...);
 	os << std::endl;
+	return tmp;
+}
+
+template <class... Args>
+basic_formatter<Char, Traits, sizeof...(Args)>
+print(const Args&&... args)
+{
+	return write(std::cout, std::forward<Args>(args)...);
+}
+
+template <class... Args>
+basic_formatter<Char, Traits, sizeof...(Args)>
+println(const Args&&... args)
+{
+	return writeln(std::cout, std::forward<Args>(args)...);
+}
+
+template <class... Args>
+basic_formatter<Char, Traits, sizeof...(Args)>
+err(const Args&&... args)
+{
+	return write(std::cerr, std::forward<Args>(args)...);
 }
 
 template <class... Ts>
-CC_ALWAYS_INLINE void
-print(const Ts... args)
+basic_formatter<Char, Traits, sizeof...(Args)>
+errln(const Args&&... args)
 {
-	write(std::cout, args...);
-}
-
-template <class... Ts>
-CC_ALWAYS_INLINE void
-println(const Ts... args)
-{
-	writeln(std::cout, args...);
-}
-
-template <class... Ts>
-CC_ALWAYS_INLINE void
-err(const Ts... args)
-{
-	write(std::cerr, args...);
-}
-
-template <class... Ts>
-CC_ALWAYS_INLINE void
-errln(const Ts... args)
-{
-	writeln(std::cerr, args...);
+	return writeln(std::cerr, std::forward<Args>(args)...);
 }
 
 /*
@@ -168,23 +75,25 @@ errln(const Ts... args)
 ** the type of string to return otherwise.
 */
 
-template <class T, class... Us>
-CC_ALWAYS_INLINE auto
-format(const T* s, const Us... args) ->
-std::basic_string<T, std::char_traits<T>>
+template <class Char, class Traits, class... Args>
+auto format(
+	const boost::basic_string_ref<Char, Traits>& fmt,
+	const Args&&... args
+) -> std::basic_string<Char, Traits>
 {
-	std::basic_ostringstream<T, std::char_traits<T>> ss; 
-	write(ss, s, args...);
+	std::basic_ostringstream<Char, Traits> ss{}; 
+	write(ss, fmt, std::forward<Args>(args)...);
 	return ss.str();
 }
 
-template <class T, class... Us>
-CC_ALWAYS_INLINE auto
-formatln(const T* s, const Us... args) ->
-std::basic_string<T, std::char_traits<T>>
+template <class Char, class Traits, class... Args>
+auto formatln(
+	const boost::basic_string_ref<Char, Traits>& fmt,
+	const Args&&... args
+) -> std::basic_string<Char, Traits>
 {
-	std::basic_ostringstream<T, std::char_traits<T>> ss; 
-	writeln(ss, s, args...);
+	std::basic_ostringstream<Char, Traits> ss{}; 
+	writeln(ss, fmt, std::forward<Args>(args)...);
 	return ss.str();
 }
 

@@ -13,6 +13,7 @@
 #include <cstdint>
 #include <algorithm>
 #include <limits>
+#include <stdexcept>
 
 #include <array>
 #include <bitset>
