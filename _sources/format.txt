@@ -8,7 +8,10 @@
    :class:`boost::string_ref`
 
 .. |formatter| replace::
-   :class:`cc::formatter\<N>`
+   :class:`cc::formatter\<Args>`
+
+.. |basic_formatter| replace::
+   :class:`cc::formatter\<Char, Traits, Args>`
 
 The Format Module
 =================
@@ -243,6 +246,7 @@ Reference
 .. class:: basic_formatter<Char, Traits, Args>
 
    This class has the following aliases defined:
+
    - :type:`formatter` (with ``Char = char``, ``Traits = std::char_traits<char>``)
    - :type:`wformatter` (with ``Char = wchar_t``, ``Traits = std::char_traits<wchar_t>``)
    - :type:`u16formatter` (with ``Char = char16_t``, ``Traits = std::char_traits<char16_t>``)
@@ -250,6 +254,6 @@ Reference
 
    .. function:: basic_formatter(const boost::string_ref<Char, Traits> fmt_str)
 
-      Creates a formatter object from the format string *fmt_str*.
+      Creates a |basic_formatter| object from the format string *fmt_str*.
 
       :throws: :class:`std::runtime_error` if an error occurs while parsing *fmt_str*.

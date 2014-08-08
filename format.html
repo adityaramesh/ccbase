@@ -493,12 +493,12 @@ after the argument.</p>
 </div>
 <div class="section" id="using-the-formatter">
 <h2>Using the Formatter<a class="headerlink" href="#using-the-formatter" title="Permalink to this headline">¶</a></h2>
-<p>The <tt class="xref cpp cpp-class docutils literal"><span class="pre">cc::formatter&lt;N&gt;</span></tt> class performs the actual work involving in parsing the format
+<p>The <tt class="xref cpp cpp-class docutils literal"><span class="pre">cc::formatter&lt;Args&gt;</span></tt> class performs the actual work involving in parsing the format
 string and storing the arguments and attributes. Each time one of the formatting
-functions like <tt class="xref cpp cpp-func docutils literal"><span class="pre">cc::println()</span></tt> is called, a <tt class="xref cpp cpp-class docutils literal"><span class="pre">cc::formatter&lt;N&gt;</span></tt> object is created,
+functions like <tt class="xref cpp cpp-func docutils literal"><span class="pre">cc::println()</span></tt> is called, a <tt class="xref cpp cpp-class docutils literal"><span class="pre">cc::formatter&lt;Args&gt;</span></tt> object is created,
 used to format the arguments, and subsequently returned. In the event that the
 same format string is used several times, it is more efficient to reuse the
-<tt class="xref cpp cpp-class docutils literal"><span class="pre">cc::formatter&lt;N&gt;</span></tt> object returned by the formatting function than to invoke the
+<tt class="xref cpp cpp-class docutils literal"><span class="pre">cc::formatter&lt;Args&gt;</span></tt> object returned by the formatting function than to invoke the
 function repeatedly. Here is an example that shows how this is done:</p>
 <div class="highlight-cpp"><div class="highlight"><pre><span class="k">auto</span> <span class="n">fmt</span> <span class="o">=</span> <span class="n">cc</span><span class="o">::</span><span class="n">writeln</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="s">&quot;Ten-fold CV error: ${%, prec(2)}.&quot;</span><span class="p">,</span> <span class="mf">0.12345</span><span class="p">);</span>
 <span class="c1">// Writes &quot;Ten-fold CV error: 12.35%.&quot; to the log stream.</span>
@@ -506,7 +506,7 @@ function repeatedly. Here is an example that shows how this is done:</p>
 <span class="c1">// Writes &quot;Ten-fold CV error: 10.11%.&quot; to the log stream.</span>
 </pre></div>
 </div>
-<p>The <tt class="xref cpp cpp-class docutils literal"><span class="pre">cc::formatter&lt;N&gt;</span></tt> object can also be created independently of the formatting
+<p>The <tt class="xref cpp cpp-class docutils literal"><span class="pre">cc::formatter&lt;Args&gt;</span></tt> object can also be created independently of the formatting
 functions, as shown in the following example.</p>
 <div class="highlight-cpp"><div class="highlight"><pre><span class="k">auto</span> <span class="n">fmt</span> <span class="o">=</span> <span class="n">cc</span><span class="o">::</span><span class="n">formatter</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">{</span><span class="s">&quot;Ten-fold CV error: ${%, prec(2)}.&quot;</span><span class="p">};</span>
 <span class="c1">// The template parameter specifies the number of arguments.</span>
@@ -520,15 +520,17 @@ functions, as shown in the following example.</p>
 <dl class="class">
 <dt id="basic_formatter:Char.Traits.Args:">
 <em class="property">class </em><tt class="descname">basic_formatter&lt;Char, Traits, Args&gt;</tt><a class="headerlink" href="#basic_formatter:Char.Traits.Args:" title="Permalink to this definition">¶</a></dt>
-<dd><p>This class has the following aliases defined:
-- <tt class="xref cpp cpp-type docutils literal"><span class="pre">formatter</span></tt> (with <tt class="docutils literal"><span class="pre">Char</span> <span class="pre">=</span> <span class="pre">char</span></tt>, <tt class="docutils literal"><span class="pre">Traits</span> <span class="pre">=</span> <span class="pre">std::char_traits&lt;char&gt;</span></tt>)
-- <tt class="xref cpp cpp-type docutils literal"><span class="pre">wformatter</span></tt> (with <tt class="docutils literal"><span class="pre">Char</span> <span class="pre">=</span> <span class="pre">wchar_t</span></tt>, <tt class="docutils literal"><span class="pre">Traits</span> <span class="pre">=</span> <span class="pre">std::char_traits&lt;wchar_t&gt;</span></tt>)
-- <tt class="xref cpp cpp-type docutils literal"><span class="pre">u16formatter</span></tt> (with <tt class="docutils literal"><span class="pre">Char</span> <span class="pre">=</span> <span class="pre">char16_t</span></tt>, <tt class="docutils literal"><span class="pre">Traits</span> <span class="pre">=</span> <span class="pre">std::char_traits&lt;char16_t&gt;</span></tt>)
-- <tt class="xref cpp cpp-type docutils literal"><span class="pre">u32formatter</span></tt> (with <tt class="docutils literal"><span class="pre">Char</span> <span class="pre">=</span> <span class="pre">char32_t</span></tt>, <tt class="docutils literal"><span class="pre">Traits</span> <span class="pre">=</span> <span class="pre">std::char_traits&lt;char32_t&gt;</span></tt>)</p>
+<dd><p>This class has the following aliases defined:</p>
+<ul class="simple">
+<li><tt class="xref cpp cpp-type docutils literal"><span class="pre">formatter</span></tt> (with <tt class="docutils literal"><span class="pre">Char</span> <span class="pre">=</span> <span class="pre">char</span></tt>, <tt class="docutils literal"><span class="pre">Traits</span> <span class="pre">=</span> <span class="pre">std::char_traits&lt;char&gt;</span></tt>)</li>
+<li><tt class="xref cpp cpp-type docutils literal"><span class="pre">wformatter</span></tt> (with <tt class="docutils literal"><span class="pre">Char</span> <span class="pre">=</span> <span class="pre">wchar_t</span></tt>, <tt class="docutils literal"><span class="pre">Traits</span> <span class="pre">=</span> <span class="pre">std::char_traits&lt;wchar_t&gt;</span></tt>)</li>
+<li><tt class="xref cpp cpp-type docutils literal"><span class="pre">u16formatter</span></tt> (with <tt class="docutils literal"><span class="pre">Char</span> <span class="pre">=</span> <span class="pre">char16_t</span></tt>, <tt class="docutils literal"><span class="pre">Traits</span> <span class="pre">=</span> <span class="pre">std::char_traits&lt;char16_t&gt;</span></tt>)</li>
+<li><tt class="xref cpp cpp-type docutils literal"><span class="pre">u32formatter</span></tt> (with <tt class="docutils literal"><span class="pre">Char</span> <span class="pre">=</span> <span class="pre">char32_t</span></tt>, <tt class="docutils literal"><span class="pre">Traits</span> <span class="pre">=</span> <span class="pre">std::char_traits&lt;char32_t&gt;</span></tt>)</li>
+</ul>
 <dl class="function">
 <dt id="basic_formatter:Char.Traits.Args:::basic_formatter__boost::string_ref:Char.Traits:C">
  <tt class="descname">basic_formatter</tt><big>(</big>const boost::string_ref&lt;Char, Traits&gt; <em>fmt_str</em><big>)</big><a class="headerlink" href="#basic_formatter:Char.Traits.Args:::basic_formatter__boost::string_ref:Char.Traits:C" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a formatter object from the format string <em>fmt_str</em>.</p>
+<dd><p>Creates a <tt class="xref cpp cpp-class docutils literal"><span class="pre">cc::formatter&lt;Char,</span> <span class="pre">Traits,</span> <span class="pre">Args&gt;</span></tt> object from the format string <em>fmt_str</em>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
