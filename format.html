@@ -150,6 +150,9 @@ printable.</p>
 <div class="highlight-cpp"><div class="highlight"><pre><span class="n">cc</span><span class="o">::</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;Hello, world!&quot;</span><span class="p">);</span>
 <span class="c1">// Prints &quot;Hello, world!&quot; to stdout.</span>
 
+<span class="n">cc</span><span class="o">::</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;Employee name: $.&quot;</span><span class="p">,</span> <span class="s">&quot;Gibble McGobblefart&quot;</span><span class="p">);</span>
+<span class="c1">// Prints &quot;Employee name: Gibble McGobblefart&quot; to stdout.</span>
+
 <span class="n">cc</span><span class="o">::</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;File name: ${quote}, size: ${data}, version: $.&quot;</span><span class="p">,</span>
         <span class="s">&quot;test.txt&quot;</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
 <span class="c1">// Prints &quot;File name: &quot;test.txt&quot;, size: 1 KiB, version: 1.&quot; to stdout.</span>
@@ -221,11 +224,11 @@ format state.</td></tr>
 </table>
 <p>With a few exceptions, the order in which an attribute is applied relative to
 other attributes is determined by the attribute&#8217;s function. The priorities of
-attribute functions are given by the list above, with a priority of one being
-the highest.</p>
+attribute functions are given by the list above, with the priority one being the
+highest.</p>
 <p>Attributes with functions (2) or (3) cannot be applied to non-arithmetic types.
-Additional restrictions can apply to certain attributes: these are given in the
-table below.</p>
+Additional restrictions can apply to certain attributes: these are described in
+the table below.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="25%" />
@@ -546,7 +549,7 @@ functions, as shown in the following example.</p>
 <dl class="function">
 <dt id="apply__basic_formatterCR.std::basic_ostreamR.ArgsRR">
 void <tt class="descname">apply</tt><big>(</big>const basic_formatter&amp; <em>fmt</em>, std::basic_ostream&amp; <em>dst</em>, Args&amp;&amp; <em>args</em><big>)</big><a class="headerlink" href="#apply__basic_formatterCR.std::basic_ostreamR.ArgsRR" title="Permalink to this definition">¶</a></dt>
-<dd><p>Applies <em>fmt</em> to <em>args</em>, and writes the result to <em>dst</em>.</p>
+<dd><p>Applies <em>fmt</em> to the parameter pack <em>args</em>, and writes the result to <em>dst</em>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -555,6 +558,70 @@ void <tt class="descname">apply</tt><big>(</big>const basic_formatter&amp; <em>f
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="function">
+<dt id="write__std::basic_ostreamR.boost::basic_string_refCR.ArgsRR">
+basic_formatter <tt class="descname">write</tt><big>(</big>std::basic_ostream&amp; <em>os</em>, const boost::basic_string_ref&amp; <em>fmt</em>, Args&amp;&amp; <em>args</em><big>)</big><a class="headerlink" href="#write__std::basic_ostreamR.boost::basic_string_refCR.ArgsRR" title="Permalink to this definition">¶</a></dt>
+<dt id="print__boost::basic_string_refCR.ArgsRR">
+basic_formatter <tt class="descname">print</tt><big>(</big>const boost::basic_string_ref&amp; <em>fmt</em>, Args&amp;&amp; <em>args</em><big>)</big><a class="headerlink" href="#print__boost::basic_string_refCR.ArgsRR" title="Permalink to this definition">¶</a></dt>
+<dt id="err__boost::basic_string_refCR.ArgsRR">
+basic_formatter <tt class="descname">err</tt><big>(</big>const boost::basic_string_ref&amp; <em>fmt</em>, Args&amp;&amp; <em>args</em><big>)</big><a class="headerlink" href="#err__boost::basic_string_refCR.ArgsRR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Interprets <em>fmt</em> as a format string, and applies it to the parameter pack
+<em>args</em>. The result is written to the destination output stream, and the
+<tt class="xref cpp cpp-class docutils literal"><span class="pre">cc::basic_formatter&lt;Char,</span> <span class="pre">Traits,</span> <span class="pre">Args&gt;</span></tt> object that is created in the process is returned.</p>
+<ul class="simple">
+<li>For <a class="reference internal" href="#write__std::basic_ostreamR.boost::basic_string_refCR.ArgsRR" title="write"><tt class="xref cpp cpp-func docutils literal"><span class="pre">write()</span></tt></a>, the destination output stream is <em>os</em>.</li>
+<li>For <a class="reference internal" href="#print__boost::basic_string_refCR.ArgsRR" title="print"><tt class="xref cpp cpp-func docutils literal"><span class="pre">print()</span></tt></a>, the destination output stream is <tt class="xref cpp cpp-type docutils literal"><span class="pre">std::cout</span></tt>.</li>
+<li>For <a class="reference internal" href="#err__boost::basic_string_refCR.ArgsRR" title="err"><tt class="xref cpp cpp-func docutils literal"><span class="pre">err()</span></tt></a>, the destination output stream is <tt class="xref cpp cpp-type docutils literal"><span class="pre">std::cerr</span></tt>.</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Throws:</th><td class="field-body"><tt class="xref cpp cpp-class docutils literal"><span class="pre">std::runtime_error</span></tt> if an error occurs while parsing <em>fmt</em> or applying <em>fmt</em> to <em>args</em>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="writeln__std::basic_ostreamR.boost::basic_string_refCR.ArgsRR">
+basic_formatter <tt class="descname">writeln</tt><big>(</big>std::basic_ostream&amp; <em>os</em>, const boost::basic_string_ref&amp; <em>fmt</em>, Args&amp;&amp; <em>args</em><big>)</big><a class="headerlink" href="#writeln__std::basic_ostreamR.boost::basic_string_refCR.ArgsRR" title="Permalink to this definition">¶</a></dt>
+<dt id="println__boost::basic_string_refCR.ArgsRR">
+basic_formatter <tt class="descname">println</tt><big>(</big>const boost::basic_string_ref&amp; <em>fmt</em>, Args&amp;&amp; <em>args</em><big>)</big><a class="headerlink" href="#println__boost::basic_string_refCR.ArgsRR" title="Permalink to this definition">¶</a></dt>
+<dt id="errln__boost::basic_string_refCR.ArgsRR">
+basic_formatter <tt class="descname">errln</tt><big>(</big>const boost::basic_string_ref&amp; <em>fmt</em>, Args&amp;&amp; <em>args</em><big>)</big><a class="headerlink" href="#errln__boost::basic_string_refCR.ArgsRR" title="Permalink to this definition">¶</a></dt>
+<dd><p>These functions are similar to their counterparts that do not end in <tt class="docutils literal"><span class="pre">ln</span></tt>,
+but these functions append newlines to thier destination output streams
+after performing the formatting operations.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Throws:</th><td class="field-body"><tt class="xref cpp cpp-class docutils literal"><span class="pre">std::runtime_error</span></tt> if an error occurs while parsing <em>fmt</em> or applying <em>fmt</em> to <em>args</em>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="write__basic_ostreamR.ArgRR">
+void <tt class="descname">write</tt><big>(</big>basic_ostream&amp; <em>os</em>, Arg&amp;&amp; <em>arg</em><big>)</big><a class="headerlink" href="#write__basic_ostreamR.ArgRR" title="Permalink to this definition">¶</a></dt>
+<dt id="writeln__basic_ostreamR.ArgRR">
+void <tt class="descname">writeln</tt><big>(</big>basic_ostream&amp; <em>os</em>, Arg&amp;&amp; <em>arg</em><big>)</big><a class="headerlink" href="#writeln__basic_ostreamR.ArgRR" title="Permalink to this definition">¶</a></dt>
+<dt id="print__basic_ostreamR.ArgRR">
+void <tt class="descname">print</tt><big>(</big>basic_ostream&amp; <em>os</em>, Arg&amp;&amp; <em>arg</em><big>)</big><a class="headerlink" href="#print__basic_ostreamR.ArgRR" title="Permalink to this definition">¶</a></dt>
+<dt id="println__basic_ostreamR.ArgRR">
+void <tt class="descname">println</tt><big>(</big>basic_ostream&amp; <em>os</em>, Arg&amp;&amp; <em>arg</em><big>)</big><a class="headerlink" href="#println__basic_ostreamR.ArgRR" title="Permalink to this definition">¶</a></dt>
+<dt id="err__basic_ostreamR.ArgRR">
+void <tt class="descname">err</tt><big>(</big>basic_ostream&amp; <em>os</em>, Arg&amp;&amp; <em>arg</em><big>)</big><a class="headerlink" href="#err__basic_ostreamR.ArgRR" title="Permalink to this definition">¶</a></dt>
+<dt id="errln__basic_ostreamR.ArgRR">
+void <tt class="descname">errln</tt><big>(</big>basic_ostream&amp; <em>os</em>, Arg&amp;&amp; <em>arg</em><big>)</big><a class="headerlink" href="#errln__basic_ostreamR.ArgRR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whereas the functions mentioned previously accept format string parameters,
+these do not. These functions are intended to be used when only a single
+argument needs to be printed, in which case the use of a format string
+containing a single <tt class="docutils literal"><span class="pre">$</span></tt> would be redundant.</p>
 </dd></dl>
 
 </div>

@@ -37,6 +37,9 @@ Examples
         cc::println("Hello, world!");
         // Prints "Hello, world!" to stdout.
 
+        cc::println("Employee name: $.", "Gibble McGobblefart");
+        // Prints "Employee name: Gibble McGobblefart" to stdout.
+
         cc::println("File name: ${quote}, size: ${data}, version: $.",
                 "test.txt", 1024, 1);
         // Prints "File name: "test.txt", size: 1 KiB, version: 1." to stdout.
@@ -102,12 +105,12 @@ exactly one of the following functions:
 
 With a few exceptions, the order in which an attribute is applied relative to
 other attributes is determined by the attribute's function. The priorities of
-attribute functions are given by the list above, with a priority of one being
-the highest.
+attribute functions are given by the list above, with the priority one being the
+highest.
 
 Attributes with functions (2) or (3) cannot be applied to non-arithmetic types.
-Additional restrictions can apply to certain attributes: these are given in the
-table below.
+Additional restrictions can apply to certain attributes: these are described in
+the table below.
 
 ============== ==========================================
 Attribute Name Description
@@ -265,6 +268,42 @@ Reference
 
 .. function:: void apply(const basic_formatter& fmt, std::basic_ostream& dst, Args&& args)
 
-   Applies *fmt* to *args*, and writes the result to *dst*.
+   Applies *fmt* to the parameter pack *args*, and writes the result to *dst*.
 
    :throws: |runtime_error| if an error occurs while applying *fmt* to *args*.
+
+.. function:: basic_formatter write(std::basic_ostream& os, const boost::basic_string_ref& fmt, Args&& args)
+              basic_formatter print(const boost::basic_string_ref& fmt, Args&& args)
+              basic_formatter err(const boost::basic_string_ref& fmt, Args&& args)
+
+    Interprets *fmt* as a format string, and applies it to the parameter pack
+    *args*. The result is written to the destination output stream, and the
+    |basic_formatter| object that is created in the process is returned.
+
+    - For :func:`write`, the destination output stream is *os*.
+    - For :func:`print`, the destination output stream is :type:`std::cout`.
+    - For :func:`err`, the destination output stream is :type:`std::cerr`.
+
+    :throws: |runtime_error| if an error occurs while parsing *fmt* or applying *fmt* to *args*.
+
+.. function:: basic_formatter writeln(std::basic_ostream& os, const boost::basic_string_ref& fmt, Args&& args)
+              basic_formatter println(const boost::basic_string_ref& fmt, Args&& args)
+              basic_formatter errln(const boost::basic_string_ref& fmt, Args&& args)
+
+    These functions are similar to their counterparts that do not end in ``ln``,
+    but these functions append newlines to thier destination output streams
+    after performing the formatting operations.
+
+    :throws: |runtime_error| if an error occurs while parsing *fmt* or applying *fmt* to *args*.
+
+.. function:: void write(basic_ostream& os, Arg&& arg)
+              void writeln(basic_ostream& os, Arg&& arg)
+              void print(basic_ostream& os, Arg&& arg)
+              void println(basic_ostream& os, Arg&& arg)
+              void err(basic_ostream& os, Arg&& arg)
+              void errln(basic_ostream& os, Arg&& arg)
+
+    Whereas the functions mentioned previously accept format string parameters,
+    these do not. These functions are intended to be used when only a single
+    argument needs to be printed, in which case the use of a format string
+    containing a single ``$`` would be redundant.
