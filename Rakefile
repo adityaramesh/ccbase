@@ -18,7 +18,7 @@ if cxx.include? "clang"
 	optflags     = "-Ofast -fno-fast-math -flto"
 	lib_optflags = "-Ofast -fno-fast-math -flto"
 elsif cxx.include? "g++"
-	optflags      = "-Ofast -fno-fast-math -flto -fwhole-program"
+	optflags      = "-Ofast -fno-fast-math -flto"
 	lib_optflags  = "-Ofast -fno-fast-math -flto"
 end
 

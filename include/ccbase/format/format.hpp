@@ -13,8 +13,7 @@
 
 namespace cc {
 
-#if PLATFORM_COMPILER == PLATFORM_COMPILER_GCC || \
-    PLATFORM_COMPILER == PLATFORM_COMPILER_ICC
+#ifdef __GLIBCXX__
 
 /*
 ** Move constructors for streams *still* have not been added to libstdc++, we
