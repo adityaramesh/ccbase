@@ -520,7 +520,26 @@ functions, as shown in the following example.</p>
 <dl class="class">
 <dt id="basic_formatter:Char.Traits.Args:">
 <em class="property">class </em><tt class="descname">basic_formatter&lt;Char, Traits, Args&gt;</tt><a class="headerlink" href="#basic_formatter:Char.Traits.Args:" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>This class has the following aliases defined:
+- <tt class="xref cpp cpp-type docutils literal"><span class="pre">formatter</span></tt> (with <tt class="docutils literal"><span class="pre">Char</span> <span class="pre">=</span> <span class="pre">char</span></tt>, <tt class="docutils literal"><span class="pre">Traits</span> <span class="pre">=</span> <span class="pre">std::char_traits&lt;char&gt;</span></tt>)
+- <tt class="xref cpp cpp-type docutils literal"><span class="pre">wformatter</span></tt> (with <tt class="docutils literal"><span class="pre">Char</span> <span class="pre">=</span> <span class="pre">wchar_t</span></tt>, <tt class="docutils literal"><span class="pre">Traits</span> <span class="pre">=</span> <span class="pre">std::char_traits&lt;wchar_t&gt;</span></tt>)
+- <tt class="xref cpp cpp-type docutils literal"><span class="pre">u16formatter</span></tt> (with <tt class="docutils literal"><span class="pre">Char</span> <span class="pre">=</span> <span class="pre">char16_t</span></tt>, <tt class="docutils literal"><span class="pre">Traits</span> <span class="pre">=</span> <span class="pre">std::char_traits&lt;char16_t&gt;</span></tt>)
+- <tt class="xref cpp cpp-type docutils literal"><span class="pre">u32formatter</span></tt> (with <tt class="docutils literal"><span class="pre">Char</span> <span class="pre">=</span> <span class="pre">char32_t</span></tt>, <tt class="docutils literal"><span class="pre">Traits</span> <span class="pre">=</span> <span class="pre">std::char_traits&lt;char32_t&gt;</span></tt>)</p>
+<dl class="function">
+<dt id="basic_formatter:Char.Traits.Args:::basic_formatter__boost::string_ref:Char.Traits:C">
+ <tt class="descname">basic_formatter</tt><big>(</big>const boost::string_ref&lt;Char, Traits&gt; <em>fmt_str</em><big>)</big><a class="headerlink" href="#basic_formatter:Char.Traits.Args:::basic_formatter__boost::string_ref:Char.Traits:C" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a formatter object from the format string <em>fmt_str</em>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Throws:</th><td class="field-body"><tt class="xref cpp cpp-class docutils literal"><span class="pre">std::runtime_error</span></tt> if an error occurs while parsing <em>fmt_str</em>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
 
 </div>
 </div>
