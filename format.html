@@ -65,6 +65,11 @@
 </li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Format Module</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#syntax">Syntax</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#attributes">Attributes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#escaping-characters">Escaping Characters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-formatter-class">The Formatter Class</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#reference">Reference</a></li>
 </ul>
 </li>
@@ -130,10 +135,8 @@
 </div>
           <div role="main">
             
-  <div class="section" id="the-format-module">
-<span id="ccbase-format-module"></span><h1>The Format Module<a class="headerlink" href="#the-format-module" title="Permalink to this headline">¶</a></h1>
-<p><strong>Warning:</strong> this documentation does not reflect the current state of the format
-module. Please ignore this documentation for now.</p>
+  <span class="target" id="ccbase-format-module"></span><div class="section" id="the-format-module">
+<h1>The Format Module<a class="headerlink" href="#the-format-module" title="Permalink to this headline">¶</a></h1>
 <p>To use this module, include <tt class="docutils literal"><span class="pre">ccbase/format.hpp</span></tt>.</p>
 <div class="section" id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
@@ -141,42 +144,360 @@ module. Please ignore this documentation for now.</p>
 this module is built on top of IOStreams, the function <tt class="docutils literal"><span class="pre">std::ostream&amp;</span>
 <span class="pre">operator&lt;&lt;(std::ostream&amp;,</span> <span class="pre">T)</span></tt> must be defined for a given type <em>T</em> to be
 printable.</p>
-<div class="section" id="printing-to-output-streams">
-<h3>Printing to Output Streams<a class="headerlink" href="#printing-to-output-streams" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-cpp"><div class="highlight"><pre><span class="n">cc</span><span class="o">::</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;Hello, world!&quot;</span><span class="p">);</span>
-<span class="c1">// Prints &quot;Hello, world!&quot;.</span>
+<span class="c1">// Prints &quot;Hello, world!&quot; to stdout.</span>
 
-<span class="n">cc</span><span class="o">::</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;File name: $, size: $, version: $.&quot;</span><span class="p">,</span> <span class="s">&quot;test.txt&quot;</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">);</span>
-<span class="c1">// Prints &quot;File name: test.txt, size: 1024, version: 1.0.&quot;.</span>
+<span class="n">cc</span><span class="o">::</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;File name: ${quote}, size: ${data}, version: $.&quot;</span><span class="p">,</span>
+        <span class="s">&quot;test.txt&quot;</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+<span class="c1">// Prints &quot;File name: &quot;test.txt&quot;, size: 1 KiB, version: 1.&quot; to stdout.</span>
 
-<span class="n">cc</span><span class="o">::</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;Hello $, my name is $. Bye, $1.&quot;</span><span class="p">,</span> <span class="s">&quot;Gibble&quot;</span><span class="p">,</span> <span class="s">&quot;Gobble&quot;</span><span class="p">);</span>
-<span class="c1">// Prints &quot;Hello Gibble, my name is Gobble. Bye, Gibble.&quot;.</span>
+<span class="n">cc</span><span class="o">::</span><span class="n">writeln</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="s">&quot;Ten-fold CV error: ${%, prec(2)}.&quot;</span><span class="p">,</span> <span class="mf">0.12345</span><span class="p">);</span>
+<span class="c1">// Write &quot;Ten-fold CV error: 12.35%.&quot; to the log.</span>
+
+<span class="n">cc</span><span class="o">::</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;${money, loc(en_US)} == ${money, loc(ja_JP)}.&quot;</span><span class="p">,</span>
+        <span class="mi">10000</span><span class="p">,</span> <span class="mf">10210.15</span><span class="p">);</span>
+<span class="c1">// Prints &quot;$100.00 == ¥10,210.&quot; to stdout.</span>
+
+<span class="n">cc</span><span class="o">::</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;${money(intl), loc(en_US)} == ${money(intl), loc(ja_JP)}.&quot;</span><span class="p">,</span>
+        <span class="mi">10000</span><span class="p">,</span> <span class="mf">10210.15</span><span class="p">);</span>
+<span class="c1">// Prints &quot;USD 100.00 == JPY 10,210.&quot; to stdout.</span>
+
+<span class="n">cc</span><span class="o">::</span><span class="n">errln</span><span class="p">(</span><span class="s">&quot;${align(C, 50, &#39;*&#39;), upper}&quot;</span><span class="p">,</span> <span class="s">&quot;System rebooting now!&quot;</span><span class="p">);</span>
+<span class="c1">// Prints &quot;**************SYSTEM REBOOTING NOW!***************&quot; to</span>
+<span class="c1">// stderr.</span>
+
+<span class="k">auto</span> <span class="n">msg</span> <span class="o">=</span> <span class="n">cc</span><span class="o">::</span><span class="n">format</span><span class="p">(</span><span class="s">&quot;{Name: ${quote}, ID: ${hex, base}}&quot;</span><span class="p">,</span>
+        <span class="s">&quot;test&quot;</span><span class="p">,</span> <span class="mi">256</span><span class="p">);</span>
+<span class="c1">// Creates a string whose contents are &quot;{Name: &quot;test&quot;, ID: 0x100}&quot;.</span>
 </pre></div>
 </div>
-<p>In the third example, we used a number after the last <tt class="docutils literal"><span class="pre">$</span></tt> to refer to the
-first argument. We could in fact number each <tt class="docutils literal"><span class="pre">$</span></tt>, but most of the time, this
-is uneccessary.</p>
-<p>The function <tt class="xref cpp cpp-func docutils literal"><span class="pre">errln()</span></tt> can be used to write to <tt class="docutils literal"><span class="pre">stderr</span></tt> instead of
-<tt class="docutils literal"><span class="pre">stdout</span></tt>, and <tt class="xref cpp cpp-func docutils literal"><span class="pre">writeln()</span></tt> can be used to write to an arbitrary
-<tt class="xref cpp cpp-class docutils literal"><span class="pre">ostream</span></tt>. Each function that ends in <tt class="docutils literal"><span class="pre">ln</span></tt> also has a variant that does
-not end in <tt class="docutils literal"><span class="pre">ln</span></tt>. Use the latter functions if you do not want newlines appended
-to the output.</p>
 </div>
-<div class="section" id="formatting-objects">
-<h3>Formatting Objects<a class="headerlink" href="#formatting-objects" title="Permalink to this headline">¶</a></h3>
-<p>TODO</p>
+<div class="section" id="syntax">
+<h2>Syntax<a class="headerlink" href="#syntax" title="Permalink to this headline">¶</a></h2>
+<p>Each function in this module takes a <em>format string</em> as an argument. This format
+string can either be a string literal, a <tt class="xref cpp cpp-class docutils literal"><span class="pre">std::string</span></tt> or a <tt class="xref cpp cpp-class docutils literal"><span class="pre">boost::string_ref</span></tt>. The format
+string can contain zero or more <em>arguments;</em> each argument can contain zero or
+more <em>attributes;</em> and each <em>attribute</em> can itself consist of zero or more
+<em>attribute arguments.</em></p>
+<p>Arguments are indicated by the <tt class="docutils literal"><span class="pre">$</span></tt> character. If an argument accepts
+attributes, then the attributes must be provided in a brace-enclosed
+comma-separated list that occurs immediately after the <tt class="docutils literal"><span class="pre">$</span></tt>. For example, the
+format string <tt class="docutils literal"><span class="pre">&quot;${hex,</span> <span class="pre">base}&quot;</span></tt> contains a single argument, and this argument
+contains two attributes.</p>
+<p>Some attributes have optional or required arguments. Attribute arguments must be
+provided in a parenthesis-enclosed comma-separated list that occurs after the
+attribute name, similar to the C syntax for function invocation. For example,
+the format string <tt class="docutils literal"><span class="pre">${align(C,</span> <span class="pre">50,</span> <span class="pre">'*')}</span></tt> has a single argument with a single
+attribute. This attribute contains three attribute arguments.</p>
+</div>
+<div class="section" id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h2>
+<p>Not all attributes can be used with all types. In general, an attribute performs
+exactly one of the following functions:</p>
+<ol class="arabic simple">
+<li>Adds manipulators to the destination stream <a class="footnote-reference" href="#id3" id="id1">[*]</a>.</li>
+<li>Converts a numeric type to another numeric type.</li>
+<li>Converts a numeric type to a string <a class="footnote-reference" href="#id4" id="id2">[†]</a>.</li>
+<li>Converts any type to a string.</li>
+<li>Converts a string to another string.</li>
+</ol>
+<table class="docutils footnote" frame="void" id="id3" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[*]</a></td><td>The format state of the destination output stream is saved and restored
+before and after the application of each argument that modifies the stream&#8217;s
+format state.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id4" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[†]</a></td><td>Strings in this context are taken to be character literals,
+:class:<a href="#id5"><span class="problematic" id="id6">`</span></a>std::string`s, or :class:<a href="#id7"><span class="problematic" id="id8">`</span></a>boost::string_ref`s.</td></tr>
+</tbody>
+</table>
+<p>With a few exceptions, the order in which an attribute is applied relative to
+other attributes is determined by the attribute&#8217;s function. The priorities of
+attribute functions are given by the list above, with a priority of one being
+the highest.</p>
+<p>Attributes with functions (2) or (3) cannot be applied to non-arithmetic types.
+Additional restrictions can apply to certain attributes: these are given in the
+table below.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="25%" />
+<col width="75%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Attribute Name</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>loc</td>
+<td>Changes locale.</td>
+</tr>
+<tr class="row-odd"><td>base</td>
+<td>Adds manipulator <tt class="xref cpp cpp-type docutils literal"><span class="pre">std::showbase</span></tt>.</td>
+</tr>
+<tr class="row-even"><td>oct</td>
+<td>Adds manipulator <tt class="xref cpp cpp-type docutils literal"><span class="pre">std::oct</span></tt>.</td>
+</tr>
+<tr class="row-odd"><td>dec</td>
+<td>Adds manipulator <tt class="xref cpp cpp-type docutils literal"><span class="pre">std::dec</span></tt>.</td>
+</tr>
+<tr class="row-even"><td>hex</td>
+<td>Adds manipulator <tt class="xref cpp cpp-type docutils literal"><span class="pre">std::hex</span></tt>.</td>
+</tr>
+<tr class="row-odd"><td>prec</td>
+<td>Adds manipulator <tt class="xref cpp cpp-type docutils literal"><span class="pre">std::prec</span></tt>.</td>
+</tr>
+<tr class="row-even"><td>fixed</td>
+<td>Adds manipulator <tt class="xref cpp cpp-type docutils literal"><span class="pre">std::fixed</span></tt>.</td>
+</tr>
+<tr class="row-odd"><td>sci</td>
+<td>Adds manipulator <tt class="xref cpp cpp-type docutils literal"><span class="pre">std::sci</span></tt>.</td>
+</tr>
+<tr class="row-even"><td>char</td>
+<td>Prints integral type as <tt class="xref cpp cpp-type docutils literal"><span class="pre">char</span></tt>.</td>
+</tr>
+<tr class="row-odd"><td>num</td>
+<td>Promotes arithmetic type before printing.</td>
+</tr>
+<tr class="row-even"><td>bool</td>
+<td>Prints arithmetic type as <tt class="xref cpp cpp-type docutils literal"><span class="pre">bool</span></tt>.</td>
+</tr>
+<tr class="row-odd"><td>data</td>
+<td>Prints data size in human-readable format.</td>
+</tr>
+<tr class="row-even"><td>money</td>
+<td>Prints currency according to locale.</td>
+</tr>
+<tr class="row-odd"><td>sign</td>
+<td>Controls sign for arithmetic types.</td>
+</tr>
+<tr class="row-even"><td>bin</td>
+<td>Prints arithmetic type as binary.</td>
+</tr>
+<tr class="row-odd"><td>%</td>
+<td>Prints floating-point type as percentage.</td>
+</tr>
+<tr class="row-even"><td>upper</td>
+<td>Converts string to upper case.</td>
+</tr>
+<tr class="row-odd"><td>lower</td>
+<td>Converts string to lower case.</td>
+</tr>
+<tr class="row-even"><td>quote</td>
+<td>Quotes the argument.</td>
+</tr>
+<tr class="row-odd"><td>align</td>
+<td>Aligns the argument in fixed-width field.</td>
+</tr>
+</tbody>
+</table>
+<p>The following table gives the function, priority, and minimum and maximum
+parameter counts for each attribute.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="34%" />
+<col width="11%" />
+<col width="18%" />
+<col width="18%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Attribute Name</th>
+<th class="head">Function</th>
+<th class="head">Priority</th>
+<th class="head">Min Parameters</th>
+<th class="head">Max Parameters</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>loc</td>
+<td>Adds manipulators.</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr class="row-odd"><td>base</td>
+<td>Adds manipulators.</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr class="row-even"><td>oct</td>
+<td>Adds manipulators.</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="row-odd"><td>dec</td>
+<td>Adds manipulators.</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="row-even"><td>hex</td>
+<td>Adds manipulators.</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="row-odd"><td>prec</td>
+<td>Adds manipulators.</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr class="row-even"><td>fixed</td>
+<td>Adds manipulators.</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="row-odd"><td>sci</td>
+<td>Adds manipulators.</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="row-even"><td>char</td>
+<td>Converts number to number.</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="row-odd"><td>num</td>
+<td>Converts number to number.</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="row-even"><td>bool</td>
+<td>Converts number to string.</td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="row-odd"><td>data</td>
+<td>Converts number to string.</td>
+<td>2</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr class="row-even"><td>money</td>
+<td>Converts number to string.</td>
+<td>2</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr class="row-odd"><td>sign</td>
+<td>Converts number to string.</td>
+<td>2</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr class="row-even"><td>bin</td>
+<td>Converts number to string.</td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="row-odd"><td>%</td>
+<td>Converts number to string.</td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="row-even"><td>upper</td>
+<td>Converts string to string.</td>
+<td>3</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="row-odd"><td>lower</td>
+<td>Converts string to string.</td>
+<td>3</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="row-even"><td>quote</td>
+<td>Converts type to string.</td>
+<td>4</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="row-odd"><td>align</td>
+<td>Converts string to string.</td>
+<td>5</td>
+<td>2</td>
+<td>3</td>
+</tr>
+</tbody>
+</table>
+<p>We now describe the roles of the parameters for the attributes that take one
+or more parameters.</p>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">loc(name)</span></tt></dt>
+<dd>This attribute has a required parameter: the string describing the locale.
+Example: <tt class="docutils literal"><span class="pre">en_US</span></tt>. Note that the locale name is <strong>not</strong> quoted.</dd>
+<dt><tt class="docutils literal"><span class="pre">base(style</span> <span class="pre">=</span> <span class="pre">lower)</span></tt></dt>
+<dd>This attribute has an optional parameter. By default, various special
+characters (e.g. number bases and letters used for printing hexidecimal
+characters) are printed in lower case. If the argument <tt class="docutils literal"><span class="pre">upper</span></tt> is given,
+these characters are printed in upper case instead.</dd>
+<dt><tt class="docutils literal"><span class="pre">prec(n)</span></tt></dt>
+<dd>This attribute has a required parameter: the desired precision. Example:
+<tt class="docutils literal"><span class="pre">6</span></tt>.</dd>
+<dt><tt class="docutils literal"><span class="pre">data(base</span> <span class="pre">=</span> <span class="pre">bin)</span></tt></dt>
+<dd>This attribute has an optional parameter. By default, the data is printed in
+binary SI units. If the argument <tt class="docutils literal"><span class="pre">dec</span></tt> is given, decimal SI units are used
+instead.</dd>
+<dt><tt class="docutils literal"><span class="pre">money(cur</span> <span class="pre">=</span> <span class="pre">local)</span></tt></dt>
+<dd>This attribute has an optional parameter. By default, currency is printed
+using the local currency symbol (e.g. the symbol <tt class="docutils literal"><span class="pre">$</span></tt> is used instead of
+<tt class="docutils literal"><span class="pre">USD</span></tt>). If the argument <cite>intl</cite> is given, currency is printed in
+international units instead.</dd>
+<dt><tt class="docutils literal"><span class="pre">sign(style)</span></tt></dt>
+<dd>This attribute has a required parameter. If <tt class="docutils literal"><span class="pre">style</span></tt> is <tt class="docutils literal"><span class="pre">always</span></tt>, then the
+sign is always printed, even for nonnegative numbers. If <tt class="docutils literal"><span class="pre">style</span></tt> is
+<tt class="docutils literal"><span class="pre">space</span></tt>, the sign is printed for negative numbers, and a space is inserted
+before nonnegative numbers.</dd>
+<dt><tt class="docutils literal"><span class="pre">align(dir,</span> <span class="pre">width,</span> <span class="pre">fill</span> <span class="pre">=</span> <span class="pre">'</span> <span class="pre">')</span></tt></dt>
+<dd>This attribute has two required parameters, and an optional third parameter.
+The <tt class="docutils literal"><span class="pre">dir</span></tt> parameter, which must be either <tt class="docutils literal"><span class="pre">'L'</span></tt>, <tt class="docutils literal"><span class="pre">'C'</span></tt>, or <tt class="docutils literal"><span class="pre">'R'</span></tt>,
+controls the direction of alignment in the fixed-width field. The <tt class="docutils literal"><span class="pre">width</span></tt>
+parameter is an integer that controls the width of the field (e.g.  <tt class="docutils literal"><span class="pre">80</span></tt>).
+The <tt class="docutils literal"><span class="pre">fill</span></tt> parameter, which is set to <tt class="docutils literal"><span class="pre">'</span> <span class="pre">'</span></tt> by default, specifies the
+character used to fill any remaining space within the fixed-width field. Note
+that this parameter <strong>must</strong> be a character literal of length three. Escape
+sequences are currently unsupported.</dd>
+</dl>
 </div>
 <div class="section" id="escaping-characters">
-<h3>Escaping Characters<a class="headerlink" href="#escaping-characters" title="Permalink to this headline">¶</a></h3>
-<p>TODO: Revise after changing interface.</p>
-<p>To print the dollar sign character, escape the dollar sign like so: <tt class="docutils literal"><span class="pre">{$}</span></tt>. To
-escape a curly bracket, use another curly bracket of the same kind. For
-instance, <tt class="docutils literal"><span class="pre">{{</span></tt> prints <tt class="docutils literal"><span class="pre">{</span></tt>.</p>
+<h2>Escaping Characters<a class="headerlink" href="#escaping-characters" title="Permalink to this headline">¶</a></h2>
+<p>Regular characters in format strings need to be escaped in two situations:</p>
+<ol class="arabic simple">
+<li>Printing dollar signs.</li>
+<li>Printing <tt class="docutils literal"><span class="pre">{</span></tt> immediately after a plain <tt class="docutils literal"><span class="pre">$</span></tt> argument.</li>
+</ol>
+<p>In case (1), just double the dollar sign. For example, to print <tt class="docutils literal"><span class="pre">$</span></tt>, the
+format string should be <tt class="docutils literal"><span class="pre">&quot;$$&quot;</span></tt>. In case (2), double the <tt class="docutils literal"><span class="pre">{</span></tt> symbol. For
+example, the format string <tt class="docutils literal"><span class="pre">&quot;${{&quot;</span></tt> causes a <tt class="docutils literal"><span class="pre">{</span></tt> to be printed immediately
+after the argument.</p>
 </div>
+<div class="section" id="the-formatter-class">
+<h2>The Formatter Class<a class="headerlink" href="#the-formatter-class" title="Permalink to this headline">¶</a></h2>
+<p>TODO explain</p>
 </div>
 <div class="section" id="reference">
 <h2>Reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h2>
-<p>TODO: Revise after changing interface.</p>
+<p>TODO create the reference.</p>
 </div>
 </div>
 

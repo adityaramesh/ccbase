@@ -1,11 +1,14 @@
 .. _ccbase-format-module:
 .. default-domain:: cpp
 
+.. |string| replace::
+   :class:`std::string`
+
+.. |string_ref| replace::
+   :class:`boost::string_ref`
+
 The Format Module
 =================
-
-**Warning:** this documentation does not reflect the current state of the format
-module. Please ignore this documentation for now.
 
 To use this module, include ``ccbase/format.hpp``.
 
@@ -17,45 +20,202 @@ this module is built on top of IOStreams, the function ``std::ostream&
 operator<<(std::ostream&, T)`` must be defined for a given type *T* to be
 printable.
 
-Printing to Output Streams
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+Examples
+--------
 
 ::
 
         cc::println("Hello, world!");
-        // Prints "Hello, world!".
+        // Prints "Hello, world!" to stdout.
 
-        cc::println("File name: $, size: $, version: $.", "test.txt", 1024, 1.0);
-        // Prints "File name: test.txt, size: 1024, version: 1.0.".
+        cc::println("File name: ${quote}, size: ${data}, version: $.",
+                "test.txt", 1024, 1);
+        // Prints "File name: "test.txt", size: 1 KiB, version: 1." to stdout.
 
-        cc::println("Hello $, my name is $. Bye, $1.", "Gibble", "Gobble");
-        // Prints "Hello Gibble, my name is Gobble. Bye, Gibble.".
+        cc::writeln(log, "Ten-fold CV error: ${%, prec(2)}.", 0.12345);
+        // Write "Ten-fold CV error: 12.35%." to the log.
 
-In the third example, we used a number after the last ``$`` to refer to the
-first argument. We could in fact number each ``$``, but most of the time, this
-is uneccessary.
+        cc::println("${money, loc(en_US)} == ${money, loc(ja_JP)}.",
+                10000, 10210.15);
+        // Prints "$100.00 == ¥10,210." to stdout.
 
-The function :func:`errln` can be used to write to ``stderr`` instead of
-``stdout``, and :func:`writeln` can be used to write to an arbitrary
-:class:`ostream`. Each function that ends in ``ln`` also has a variant that does
-not end in ``ln``. Use the latter functions if you do not want newlines appended
-to the output.
+        cc::println("${money(intl), loc(en_US)} == ${money(intl), loc(ja_JP)}.",
+                10000, 10210.15);
+        // Prints "USD 100.00 == JPY 10,210." to stdout.
 
-Formatting Objects
-~~~~~~~~~~~~~~~~~~
+        cc::errln("${align(C, 50, '*'), upper}", "System rebooting now!");
+        // Prints "**************SYSTEM REBOOTING NOW!***************" to
+        // stderr.
 
-TODO
+        auto msg = cc::format("{Name: ${quote}, ID: ${hex, base}}",
+                "test", 256);
+        // Creates a string whose contents are "{Name: "test", ID: 0x100}".
+
+Syntax
+------
+
+Each function in this module takes a *format string* as an argument. This format
+string can either be a string literal, a |string| or a |string_ref|. The format
+string can contain zero or more *arguments;* each argument can contain zero or
+more *attributes;* and each *attribute* can itself consist of zero or more
+*attribute arguments.*
+
+Arguments are indicated by the ``$`` character. If an argument accepts
+attributes, then the attributes must be provided in a brace-enclosed
+comma-separated list that occurs immediately after the ``$``. For example, the
+format string ``"${hex, base}"`` contains a single argument, and this argument
+contains two attributes.
+
+Some attributes have optional or required arguments. Attribute arguments must be
+provided in a parenthesis-enclosed comma-separated list that occurs after the
+attribute name, similar to the C syntax for function invocation. For example,
+the format string ``${align(C, 50, '*')}`` has a single argument with a single
+attribute. This attribute contains three attribute arguments.
+
+Attributes
+----------
+
+Not all attributes can be used with all types. In general, an attribute performs
+exactly one of the following functions:
+
+1. Adds manipulators to the destination stream [*]_.
+2. Converts a numeric type to another numeric type.
+3. Converts a numeric type to a string [*]_.
+4. Converts any type to a string.
+5. Converts a string to another string.
+
+.. [*] The format state of the destination output stream is saved and restored
+   before and after the application of each argument that modifies the stream's
+   format state.
+
+.. [*] Strings in this context are taken to be character literals,
+   :class:`std::string`s, or :class:`boost::string_ref`s.
+
+With a few exceptions, the order in which an attribute is applied relative to
+other attributes is determined by the attribute's function. The priorities of
+attribute functions are given by the list above, with a priority of one being
+the highest.
+
+Attributes with functions (2) or (3) cannot be applied to non-arithmetic types.
+Additional restrictions can apply to certain attributes: these are given in the
+table below.
+
+============== ==========================================
+Attribute Name Description
+============== ==========================================
+loc            Changes locale.
+base           Adds manipulator :type:`std::showbase`.
+oct            Adds manipulator :type:`std::oct`.
+dec            Adds manipulator :type:`std::dec`.
+hex            Adds manipulator :type:`std::hex`.
+prec           Adds manipulator :type:`std::prec`.
+fixed          Adds manipulator :type:`std::fixed`.
+sci            Adds manipulator :type:`std::sci`.
+char           Prints integral type as :type:`char`.
+num            Promotes arithmetic type before printing.
+bool           Prints arithmetic type as :type:`bool`.
+data           Prints data size in human-readable format.
+money          Prints currency according to locale.
+sign           Controls sign for arithmetic types.
+bin            Prints arithmetic type as binary.
+%              Prints floating-point type as percentage.
+upper          Converts string to upper case.
+lower          Converts string to lower case.
+quote          Quotes the argument.
+align          Aligns the argument in fixed-width field.
+============== ==========================================
+
+The following table gives the function, priority, and minimum and maximum
+parameter counts for each attribute.
+
+==============  ==========================  ========  ==============  ==============
+Attribute Name  Function                    Priority  Min Parameters  Max Parameters
+==============  ==========================  ========  ==============  ==============
+loc             Adds manipulators.          1         1               1
+base            Adds manipulators.          1         0               1
+oct             Adds manipulators.          1         0               0
+dec             Adds manipulators.          1         0               0
+hex             Adds manipulators.          1         0               0
+prec            Adds manipulators.          1         1               1
+fixed           Adds manipulators.          1         0               0
+sci             Adds manipulators.          1         0               0
+char            Converts number to number.  1         0               0
+num             Converts number to number.  1         0               0
+bool            Converts number to string.  2         0               0
+data            Converts number to string.  2         0               1
+money           Converts number to string.  2         0               1
+sign            Converts number to string.  2         1               1
+bin             Converts number to string.  2         0               0
+%               Converts number to string.  2         0               0
+upper           Converts string to string.  3         0               0
+lower           Converts string to string.  3         0               0
+quote           Converts type to string.    4         0               0
+align           Converts string to string.  5         2               3
+==============  ==========================  ========  ==============  ==============
+
+We now describe the roles of the parameters for the attributes that take one
+or more parameters.
+
+``loc(name)``
+  This attribute has a required parameter: the string describing the locale.
+  Example: ``en_US``. Note that the locale name is **not** quoted.
+
+``base(style = lower)``
+  This attribute has an optional parameter. By default, various special
+  characters (e.g. number bases and letters used for printing hexidecimal
+  characters) are printed in lower case. If the argument ``upper`` is given,
+  these characters are printed in upper case instead.
+
+``prec(n)``
+  This attribute has a required parameter: the desired precision. Example:
+  ``6``.
+
+``data(base = bin)``
+  This attribute has an optional parameter. By default, the data is printed in
+  binary SI units. If the argument ``dec`` is given, decimal SI units are used
+  instead.
+
+``money(cur = local)``
+  This attribute has an optional parameter. By default, currency is printed
+  using the local currency symbol (e.g. the symbol ``$`` is used instead of
+  ``USD``). If the argument `intl` is given, currency is printed in
+  international units instead.
+
+``sign(style)``
+  This attribute has a required parameter. If ``style`` is ``always``, then the
+  sign is always printed, even for nonnegative numbers. If ``style`` is
+  ``space``, the sign is printed for negative numbers, and a space is inserted
+  before nonnegative numbers.
+
+``align(dir, width, fill = ' ')``
+  This attribute has two required parameters, and an optional third parameter.
+  The ``dir`` parameter, which must be either ``'L'``, ``'C'``, or ``'R'``,
+  controls the direction of alignment in the fixed-width field. The ``width``
+  parameter is an integer that controls the width of the field (e.g.  ``80``).
+  The ``fill`` parameter, which is set to ``' '`` by default, specifies the
+  character used to fill any remaining space within the fixed-width field. Note
+  that this parameter **must** be a character literal of length three. Escape
+  sequences are currently unsupported.
 
 Escaping Characters
-~~~~~~~~~~~~~~~~~~~
+-------------------
 
-TODO: Revise after changing interface.
+Regular characters in format strings need to be escaped in two situations:
 
-To print the dollar sign character, escape the dollar sign like so: ``{$}``. To
-escape a curly bracket, use another curly bracket of the same kind. For
-instance, ``{{`` prints ``{``.
+1. Printing dollar signs.
+2. Printing ``{`` immediately after a plain ``$`` argument.
+
+In case (1), just double the dollar sign. For example, to print ``$``, the
+format string should be ``"$$"``. In case (2), double the ``{`` symbol. For
+example, the format string ``"${{"`` causes a ``{`` to be printed immediately
+after the argument.
+
+The Formatter Class
+-------------------
+
+TODO explain
 
 Reference
 ---------
 
-TODO: Revise after changing interface.
+TODO create the reference.
