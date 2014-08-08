@@ -520,6 +520,11 @@ functions, as shown in the following example.</p>
 </div>
 <div class="section" id="reference">
 <h2>Reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h2>
+<p><strong>Note:</strong> libstdc++ still does not implement move constructors for standard
+streams. Since the <tt class="xref cpp cpp-class docutils literal"><span class="pre">cc::basic_formatter&lt;Char,</span> <span class="pre">Traits,</span> <span class="pre">Args&gt;</span></tt> class contains a standard stream as a
+member, it cannot be moved when compiled with GCC. Therefore, any function below
+that is documented to return <tt class="xref cpp cpp-class docutils literal"><span class="pre">cc::basic_formatter&lt;Char,</span> <span class="pre">Traits,</span> <span class="pre">Args&gt;</span></tt> actually returns <tt class="xref cpp cpp-type docutils literal"><span class="pre">void</span></tt>
+when compiled with GCC.</p>
 <dl class="class">
 <dt id="basic_formatter:Char.Traits.Args:">
 <em class="property">class </em><tt class="descname">basic_formatter&lt;Char, Traits, Args&gt;</tt><a class="headerlink" href="#basic_formatter:Char.Traits.Args:" title="Permalink to this definition">¶</a></dt>

@@ -65,6 +65,11 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="format.html">Format Module</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="format.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="format.html#examples">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="format.html#syntax">Syntax</a></li>
+<li class="toctree-l2"><a class="reference internal" href="format.html#attributes">Attributes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="format.html#escaping-characters">Escaping Characters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="format.html#using-the-formatter">Using the Formatter</a></li>
 <li class="toctree-l2"><a class="reference internal" href="format.html#reference">Reference</a></li>
 </ul>
 </li>
@@ -155,6 +160,11 @@ Then, configure the following environment variables:</p>
 Otherwise, please <a class="reference external" href="https://github.com/adityaramesh/ccbase/issues">file an issue</a> with the output of the unit tests and your
 platform details (your OS and compiler versions, along with any other relevant
 information).</p>
+</div>
+<div class="section" id="known-issues">
+<h3>Known Issues<a class="headerlink" href="#known-issues" title="Permalink to this headline">¶</a></h3>
+<p>GCC does not have any support for locales on OS X. If you need support for
+locales (e.g. for the format module), then you will need to compile with Clang.</p>
 </div>
 </div>
 <div class="section" id="library-structure">

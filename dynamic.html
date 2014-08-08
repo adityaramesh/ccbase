@@ -65,6 +65,11 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="format.html">Format Module</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="format.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="format.html#examples">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="format.html#syntax">Syntax</a></li>
+<li class="toctree-l2"><a class="reference internal" href="format.html#attributes">Attributes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="format.html#escaping-characters">Escaping Characters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="format.html#using-the-formatter">Using the Formatter</a></li>
 <li class="toctree-l2"><a class="reference internal" href="format.html#reference">Reference</a></li>
 </ul>
 </li>
@@ -148,9 +153,9 @@ currently works on OS X and Linux only.</p>
 <h2>Loading Dynamic Libraries<a class="headerlink" href="#loading-dynamic-libraries" title="Permalink to this headline">¶</a></h2>
 <p>Suppose that you have a library called <tt class="docutils literal"><span class="pre">test.dll</span></tt>, which defines two symbols
 of interest: <em>msg</em>, a <tt class="xref cpp cpp-type docutils literal"><span class="pre">std::string</span></tt> and <tt class="xref cpp cpp-func docutils literal"><span class="pre">test()</span></tt>, a function with the
-signature <tt class="docutils literal"><span class="pre">std::string(std::string,</span> <span class="pre">std::string)</span></tt>. Assuming that both symbols
-have C linkage, then you could load them as follows:</p>
-<div class="highlight-cpp"><div class="highlight"><pre><span class="k">using</span> <span class="n">sig</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">);</span>
+signature <tt class="docutils literal"><span class="pre">int(const</span> <span class="pre">std::string&amp;,</span> <span class="pre">const</span> <span class="pre">std::string&amp;)</span></tt>. Assuming that both
+symbols have C linkage, then you could load them as follows:</p>
+<div class="highlight-cpp"><div class="highlight"><pre><span class="k">using</span> <span class="n">sig</span> <span class="o">=</span> <span class="kt">int</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="p">,</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="p">);</span>
 <span class="k">auto</span> <span class="n">img</span>  <span class="o">=</span> <span class="n">cc</span><span class="o">::</span><span class="n">image</span><span class="p">{</span><span class="s">&quot;test.dll&quot;</span><span class="p">,</span> <span class="n">cc</span><span class="o">::</span><span class="n">binding_mode</span><span class="o">::</span><span class="n">lazy</span><span class="p">};</span>
 <span class="k">auto</span> <span class="n">test</span> <span class="o">=</span> <span class="n">cc</span><span class="o">::</span><span class="n">load</span><span class="o">&lt;</span><span class="n">signature</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;test&quot;</span><span class="p">,</span> <span class="n">img</span><span class="p">).</span><span class="n">get</span><span class="p">();</span>
 <span class="k">auto</span><span class="o">&amp;</span> <span class="n">msg</span> <span class="o">=</span> <span class="n">cc</span><span class="o">::</span><span class="n">load</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;msg&quot;</span><span class="p">,</span> <span class="n">img</span><span class="p">).</span><span class="n">get</span><span class="p">();</span>
