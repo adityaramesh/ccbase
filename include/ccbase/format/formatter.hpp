@@ -38,10 +38,10 @@ struct select_argument<TargetIndex, TargetIndex, Args...>
 {
 	using arg_list = boost::mpl::vector<Args...>;
 	using target   = typename boost::mpl::at_c<arg_list, TargetIndex>::type;
-	
-	template <class Arg>
+
+	template <class Arg, class... Args_>
 	static CC_ALWAYS_INLINE
-	target apply(Arg&& arg)
+	target apply(Arg&& arg, Args_&&...)
 	{ return std::forward<Arg>(arg); }
 };
 
@@ -366,34 +366,39 @@ private:
 		// to `cur_arg`.
 		auto index = uint8_t{cur_arg};
 
-		// Does the argument have an explicit index?
-		if (std::isdigit(m_fmt_str[cur_index])) {
-			index = 0;
+		/*
+		** Comment this out later if support for argument indices is
+		** required.
+		**
+		** // Does the argument have an explicit index?
+		** if (std::isdigit(m_fmt_str[cur_index])) {
+		** 	index = 0;
 
-			// Parse the index of the argument.
-			do {
-				auto tmp = index;
-				index = 10 * index + (m_fmt_str[cur_index] - '0');
-				if (index < tmp) {
-					// Overflow occurred.
-					throw std::runtime_error{"Argument index too large."};
-				}
-				++cur_index;
-			}
-			while (cur_index != m_fmt_str.length() &&
-				std::isdigit(m_fmt_str[cur_index]));
-			
-			if (index > Args) {
-				throw std::runtime_error{"Argument index too large."};
-			}
+		** 	// Parse the index of the argument.
+		** 	do {
+		** 		auto tmp = index;
+		** 		index = 10 * index + (m_fmt_str[cur_index] - '0');
+		** 		if (index < tmp) {
+		** 			// Overflow occurred.
+		** 			throw std::runtime_error{"Argument index too large."};
+		** 		}
+		** 		++cur_index;
+		** 	}
+		** 	while (cur_index != m_fmt_str.length() &&
+		** 		std::isdigit(m_fmt_str[cur_index]));
+		** 	
+		** 	if (index > Args) {
+		** 		throw std::runtime_error{"Argument index too large."};
+		** 	}
 
-			if (cur_index == m_fmt_str.length()) {
-				add_argument(cur_arg, index);
-				end_substring(dollar_index, cur_substr);
-				start_substring(cur_index, cur_substr);
-				return;
-			}
-		}
+		** 	if (cur_index == m_fmt_str.length()) {
+		** 		add_argument(cur_arg, index);
+		** 		end_substring(dollar_index, cur_substr);
+		** 		start_substring(cur_index, cur_substr);
+		** 		return;
+		** 	}
+		** }
+		*/
 
 		/*
 		** At this point, we can be sure that we have reached a valid
@@ -518,7 +523,8 @@ private:
 	bool is_attribute_argument_character(Char c)
 	const noexcept
 	{
-		return std::isalpha(c) || std::isdigit(c);
+		return std::isalpha(c) || std::isdigit(c) || c == '.' ||
+			c == '-' || c == '_';
 	}
 
 	void parse_attribute_argument(

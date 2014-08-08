@@ -101,8 +101,7 @@ enum class verbosity
 	high
 };
 
-static constexpr char help_message[] = R"(
-Options:
+static constexpr char help_message[] = R"(Options:
 -h        --help
 -l        --list-modules
 -v        --verbosity [low, medium, high]
@@ -145,32 +144,31 @@ int run_modules(const boost::string_ref prog, verbosity v)
 		if (v == verbosity::medium) {
 			for (const auto& res : m) {
 				if (!res.passed()) {
-					cc::println("Failure in module \"$\", "
-					"line $: \"$\".", m.name(), res.line(),
+					cc::println("Failure in module ${quote}, "
+					"line $: ${quote}.", m.name(), res.line(),
 					res.source());
 				}
 			}
 		}
 		else if (v == verbosity::high) {
 			for (const auto& res : m) {
-				cc::println("$ in module \"$\", line $: \"$\".",
-				res.passed() ? "Success" : "Failure", m.name(),
-				res.line(), res.source());
+				cc::println("$ in module ${quote}, line $: "
+				"${quote}.", res.passed() ? "Success" :
+				"Failure", m.name(), res.line(), res.source());
 			}
 		}
-		cc::println("Summary for module \"$\": $ of $ "
+		cc::println("Summary for module ${quote}: $ of $ "
 			"assertions passed.", m.name(), m.passed(),
 			m.total());
 	}
-	cc::println("Summary for suite \"$\": $ of $ assertions "
-		"passed.", suite, passed, total);
+	cc::println("Summary for suite ${quote}: $ of $ assertions passed.",
+		suite, passed, total);
 	return EXIT_SUCCESS;
 }
 
 int print_help()
 {
-	// XXX why is there +1 here?
-	print(help_message + 1);
+	print(help_message);
 	return EXIT_SUCCESS;
 }
 
@@ -180,18 +178,18 @@ int list_modules(
 )
 {
 	if (desc.length() > 0) {
-		println("Suite \"$\": $.", get_suite(prog), desc);
+		println("Suite ${quote}: $.", get_suite(prog), desc);
 	}
 	else {
-		println("Suite \"$\".", get_suite(prog));
+		println("Suite ${quote}.", get_suite(prog));
 	}
 
 	for (const auto& m : module_list{}) {
 		if (m.description().length() > 0) {
-			println("Module \"$\": $.", m.name(), m.description());
+			println("Module ${quote}: $.", m.name(), m.description());
 		}
 		else {
-			println("Module \"$\".", m.name(), m.description());
+			println("Module ${quote}.", m.name(), m.description());
 		}
 	}
 	return EXIT_SUCCESS;
@@ -214,7 +212,7 @@ int parse_flags(int argc, char** argv, const char* d = nullptr)
 		else if (arg1 == "-v" || arg1 == "--verbosity") {
 			if (argc < 3) {
 				auto s = cc::format("Error: expected verbosity "
-					"level after \"$\" flag.", arg1);
+					"level after ${quote} flag.", arg1);
 				return print_error(argc, argv, s);
 			}
 
@@ -230,12 +228,13 @@ int parse_flags(int argc, char** argv, const char* d = nullptr)
 			}
 			else {
 				auto s = cc::format("Error: invalid verbosity "
-					"level \"$\".", argv[2]);
+					"level ${quote}.", argv[2]);
 				return print_error(argc, argv, s);
 			}
 		}
 		else {
-			auto s = cc::format("Error: unrecognized flag \"$\".", arg1);
+			auto s = cc::format("Error: unrecognized flag "
+				"${quote}.", arg1);
 			return print_error(argc, argv, s);
 		}
 	}

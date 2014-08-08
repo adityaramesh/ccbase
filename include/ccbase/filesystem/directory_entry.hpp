@@ -38,14 +38,14 @@ enum class file_type : unsigned char
 std::ostream& operator<<(std::ostream& os, const file_type& t)
 {
 	switch (t) {
-	case file_type::block:         cc::write (os, "block device");     return os;
-	case file_type::character:     cc::write (os, "character device"); return os;
-	case file_type::directory:     cc::write (os, "directory");        return os;
-	case file_type::fifo:          cc::write (os, "fifo");             return os;
-	case file_type::symbolic_link: cc::write (os, "symbolic link");    return os;
-	case file_type::regular:       cc::write (os, "regular file");     return os;
-	case file_type::socket:        cc::write (os, "socket");           return os;
-	case file_type::unknown:       cc::write (os, "unknown");          return os;
+	case file_type::block_device:     cc::write (os, "block device");     return os;
+	case file_type::character_device: cc::write (os, "character device"); return os;
+	case file_type::directory:        cc::write (os, "directory");        return os;
+	case file_type::fifo:             cc::write (os, "fifo");             return os;
+	case file_type::symbolic_link:    cc::write (os, "symbolic link");    return os;
+	case file_type::regular:          cc::write (os, "regular file");     return os;
+	case file_type::socket:           cc::write (os, "socket");           return os;
+	case file_type::unknown:          cc::write (os, "unknown");          return os;
 	}
 }
 

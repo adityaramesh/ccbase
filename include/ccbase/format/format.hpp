@@ -17,57 +17,60 @@ template <class Char, class Traits = std::char_traits<Char>, class... Args>
 basic_formatter<Char, Traits, sizeof...(Args)>
 write(
 	std::basic_ostream<Char, Traits>& os,
-	const boost::basic_string_ref<Char, Traits>& fmt,
-	const Args&&... args
+	const boost::basic_string_ref<Char, Traits> fmt,
+	Args&&... args
 )
 {
-	auto fmt = basic_formatter<Char, Traits, sizeof...(Args)>{fmt};
-	apply(fmt, os, std::forward<Args>(args)...);
-	return fmt;
+	auto f = basic_formatter<Char, Traits, sizeof...(Args)>{fmt};
+	apply(f, os, std::forward<Args>(args)...);
+	return f;
 }
 
 template <class Char, class Traits = std::char_traits<Char>, class Arg>
-CC_ALWAYS_INLINE void
-write(std::basic_ostream<Char, Traits>& os, const Arg& arg)
+void write(std::basic_ostream<Char, Traits>& os, const Arg& arg)
 {
 	os << arg;
 }
 
 template <class Char, class Traits = std::char_traits<Char>, class... Args>
 basic_formatter<Char, Traits, sizeof...(Args)>
-writeln(std::basic_ostream<Char, Traits>& os, const Args&&... args)
+writeln(
+	std::basic_ostream<Char, Traits>& os,
+	const boost::basic_string_ref<Char, Traits> fmt,
+	Args&&... args
+)
 {
-	auto tmp = write(os, args...);
+	auto tmp = write(os, fmt, std::forward<Args>(args)...);
 	os << std::endl;
 	return tmp;
 }
 
 template <class... Args>
-basic_formatter<Char, Traits, sizeof...(Args)>
-print(const Args&&... args)
+basic_formatter<char, std::char_traits<char>, sizeof...(Args)>
+print(const boost::string_ref fmt, Args&&... args)
 {
-	return write(std::cout, std::forward<Args>(args)...);
+	return write(std::cout, fmt, std::forward<Args>(args)...);
 }
 
 template <class... Args>
-basic_formatter<Char, Traits, sizeof...(Args)>
-println(const Args&&... args)
+basic_formatter<char, std::char_traits<char>, sizeof...(Args)>
+println(const boost::string_ref fmt, Args&&... args)
 {
-	return writeln(std::cout, std::forward<Args>(args)...);
+	return writeln(std::cout, fmt, std::forward<Args>(args)...);
 }
 
 template <class... Args>
-basic_formatter<Char, Traits, sizeof...(Args)>
-err(const Args&&... args)
+basic_formatter<char, std::char_traits<char>, sizeof...(Args)>
+err(const boost::string_ref fmt, Args&&... args)
 {
-	return write(std::cerr, std::forward<Args>(args)...);
+	return write(std::cerr, fmt, std::forward<Args>(args)...);
 }
 
-template <class... Ts>
-basic_formatter<Char, Traits, sizeof...(Args)>
-errln(const Args&&... args)
+template <class... Args>
+basic_formatter<char, std::char_traits<char>, sizeof...(Args)>
+errln(const boost::string_ref fmt, Args&&... args)
 {
-	return writeln(std::cerr, std::forward<Args>(args)...);
+	return writeln(std::cerr, fmt, std::forward<Args>(args)...);
 }
 
 /*
@@ -77,8 +80,8 @@ errln(const Args&&... args)
 
 template <class Char, class Traits, class... Args>
 auto format(
-	const boost::basic_string_ref<Char, Traits>& fmt,
-	const Args&&... args
+	const boost::basic_string_ref<Char, Traits> fmt,
+	Args&&... args
 ) -> std::basic_string<Char, Traits>
 {
 	std::basic_ostringstream<Char, Traits> ss{}; 
@@ -88,9 +91,119 @@ auto format(
 
 template <class Char, class Traits, class... Args>
 auto formatln(
-	const boost::basic_string_ref<Char, Traits>& fmt,
-	const Args&&... args
+	const boost::basic_string_ref<Char, Traits> fmt,
+	Args&&... args
 ) -> std::basic_string<Char, Traits>
+{
+	std::basic_ostringstream<Char, Traits> ss{}; 
+	writeln(ss, fmt, std::forward<Args>(args)...);
+	return ss.str();
+}
+
+/*
+** These are the overloads for `std::basic_string`.
+*/
+
+template <class Char, class Traits = std::char_traits<Char>, class... Args>
+basic_formatter<Char, Traits, sizeof...(Args)>
+write(
+	std::basic_ostream<Char, Traits>& os,
+	const std::basic_string<Char, Traits> fmt,
+	Args&&... args
+)
+{
+	auto f = basic_formatter<Char, Traits, sizeof...(Args)>{fmt};
+	apply(f, os, std::forward<Args>(args)...);
+	return f;
+}
+
+template <class Char, class Traits = std::char_traits<Char>, class... Args>
+basic_formatter<Char, Traits, sizeof...(Args)>
+writeln(
+	std::basic_ostream<Char, Traits>& os,
+	const std::basic_string<Char, Traits> fmt,
+	Args&&... args
+)
+{
+	auto tmp = write(os, fmt, std::forward<Args>(args)...);
+	os << std::endl;
+	return tmp;
+}
+
+/*
+** These functions require the format string argument, because we would not know
+** the type of string to return otherwise.
+*/
+
+template <class Char, class Traits, class... Args>
+auto format(
+	const std::basic_string<Char, Traits> fmt,
+	Args&&... args
+) -> std::basic_string<Char, Traits>
+{
+	std::basic_ostringstream<Char, Traits> ss{}; 
+	write(ss, fmt, std::forward<Args>(args)...);
+	return ss.str();
+}
+
+template <class Char, class Traits, class... Args>
+auto formatln(
+	const std::basic_string<Char, Traits> fmt,
+	Args&&... args
+) -> std::basic_string<Char, Traits>
+{
+	std::basic_ostringstream<Char, Traits> ss{}; 
+	writeln(ss, fmt, std::forward<Args>(args)...);
+	return ss.str();
+}
+
+/*
+** These are the overloads for character literals.
+*/
+
+template <class Char, class Traits, class... Args>
+basic_formatter<Char, Traits, sizeof...(Args)>
+write(
+	std::basic_ostream<Char, Traits>& os,
+	const Char* fmt,
+	Args&&... args
+)
+{
+	auto f = basic_formatter<Char, Traits, sizeof...(Args)>{fmt};
+	apply(f, os, std::forward<Args>(args)...);
+	return f;
+}
+
+template <class Char, class Traits, class... Args>
+basic_formatter<Char, Traits, sizeof...(Args)>
+writeln(
+	std::basic_ostream<Char, Traits>& os,
+	const Char* fmt,
+	Args&&... args
+)
+{
+	auto tmp = write(os, fmt, std::forward<Args>(args)...);
+	os << std::endl;
+	return tmp;
+}
+
+/*
+** These functions require the format string argument, because we would not know
+** the type of string to return otherwise.
+*/
+
+template <class Char, class Traits = std::char_traits<Char>, class... Args>
+auto format(const Char* fmt, Args&&... args) ->
+std::basic_string<Char, Traits>
+{
+	std::basic_ostringstream<Char, Traits> ss{}; 
+	write(ss, fmt, std::forward<Args>(args)...);
+	return ss.str();
+}
+
+template <class Char, class Traits = std::char_traits<Char>, class... Args>
+auto formatln(const Char* fmt, Args&&... args) ->
+std::basic_string<Char, Traits>
 {
 	std::basic_ostringstream<Char, Traits> ss{}; 
 	writeln(ss, fmt, std::forward<Args>(args)...);

@@ -426,7 +426,7 @@ void apply_manipulator_attribute(
 		}
 		break;
 	case attribute_id::precision:
-		dst << std::setprecision(attr[1]);
+		dst << std::setprecision(attr[0]);
 		break;
 	case attribute_id::fixed:
 		dst << std::fixed;
