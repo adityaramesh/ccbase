@@ -13,6 +13,9 @@
 .. |basic_formatter| replace::
    :class:`cc::basic_formatter\<Char, Traits, Args>`
 
+.. |runtime_error| replace::
+   :class:`std::runtime_error`
+
 The Format Module
 =================
 
@@ -243,6 +246,8 @@ functions, as shown in the following example. ::
 Reference
 ---------
 
+.. namespace:: cc
+
 .. class:: basic_formatter<Char, Traits, Args>
 
    This class is associated with the following aliases:
@@ -252,8 +257,14 @@ Reference
    - :type:`u16formatter` (with ``Char = char16_t``, ``Traits = std::char_traits<char16_t>``)
    - :type:`u32formatter` (with ``Char = char32_t``, ``Traits = std::char_traits<char32_t>``)
 
-   .. function:: basic_formatter(const boost::string_ref<Char, Traits> fmt_str)
+   .. function:: basic_formatter(const boost::string_ref<Char, Traits>& fmt_str)
 
       Creates a |basic_formatter| object from the format string *fmt_str*.
 
-      :throws: :class:`std::runtime_error` if an error occurs while parsing *fmt_str*.
+      :throws: |runtime_error| if an error occurs while parsing *fmt_str*.
+
+.. function:: void apply(const basic_formatter& fmt, std::basic_ostream& dst, Args&& args)
+
+   Applies *fmt* to *args*, and writes the result to *dst*.
+
+   :throws: |runtime_error| if an error occurs while applying *fmt* to *args*.

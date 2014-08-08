@@ -276,9 +276,6 @@ that is currently in flight (i.e. from <tt class="xref cpp cpp-func docutils lit
 <dl class="function">
 <dt id="expected:T:::expected__expectedCR">
  <tt class="descname">expected</tt><big>(</big>const expected&amp; <em>rhs</em><big>)</big><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#expected:T:::expected__expectedCR" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
 <dt id="expected:T:::expected__expectedRR">
  <tt class="descname">expected</tt><big>(</big>expected&amp;&amp; <em>rhs</em><big>)</big><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#expected:T:::expected__expectedRR" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -286,37 +283,22 @@ that is currently in flight (i.e. from <tt class="xref cpp cpp-func docutils lit
 <dl class="function">
 <dt id="expected:T:::validC">
 bool <tt class="descname">valid</tt><big>(</big><big>)</big><tt class="descclassname"> const</tt><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#expected:T:::validC" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns whether this <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object is in a valid state.</p>
-</dd></dl>
-
-<dl class="function">
 <dt id="expected:T:::castto-b-operatorC">
  <tt class="descname">operator</tt> bool<big>(</big><big>)</big><tt class="descclassname"> const</tt><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#expected:T:::castto-b-operatorC" title="Permalink to this definition">¶</a></dt>
-<dd><p>Equivalent to <a class="reference internal" href="#expected:T:::validC" title="expected&lt;T&gt;::valid"><tt class="xref cpp cpp-func docutils literal"><span class="pre">valid()</span></tt></a>.</p>
+<dd><p>Returns whether this <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object is in a valid state.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="expected:T:::get">
 reference <tt class="descname">get</tt><big>(</big><big>)</big><a class="headerlink" href="#expected:T:::get" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
 <dt id="expected:T:::getC">
 const reference <tt class="descname">get</tt><big>(</big><big>)</big><tt class="descclassname"> const</tt><a class="headerlink" href="#expected:T:::getC" title="Permalink to this definition">¶</a></dt>
-<dd><p>If the <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object is in a valid state, returns a reference to the
-stored object. Otherwise, throws the stored exception.</p>
-</dd></dl>
-
-<dl class="function">
 <dt id="expected:T:::mul-operator">
 reference <tt class="descname">operator*</tt><big>(</big><big>)</big><a class="headerlink" href="#expected:T:::mul-operator" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
 <dt id="expected:T:::mul-operatorC">
 const reference <tt class="descname">operator*</tt><big>(</big><big>)</big><tt class="descclassname"> const</tt><a class="headerlink" href="#expected:T:::mul-operatorC" title="Permalink to this definition">¶</a></dt>
-<dd><p>Equivalent to <a class="reference internal" href="#expected:T:::get" title="expected&lt;T&gt;::get"><tt class="xref cpp cpp-func docutils literal"><span class="pre">get()</span></tt></a>. This function was included to better resemble
-the interface of <tt class="xref cpp cpp-class docutils literal"><span class="pre">boost::optional&lt;T&gt;</span></tt>.</p>
+<dd><p>If the <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object is in a valid state, returns a reference to the
+stored object. Otherwise, throws the stored exception.</p>
 </dd></dl>
 
 <dl class="function">
@@ -376,27 +358,18 @@ exception.</p>
 <dl class="function">
 <dt id="expected:void:::validC">
 bool <tt class="descname">valid</tt><big>(</big><big>)</big><tt class="descclassname"> const</tt><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#expected:void:::validC" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns whether this <a class="reference internal" href="#expected:void:" title="expected&lt;void&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;void&gt;</span></tt></a> object is in a valid state.</p>
-</dd></dl>
-
-<dl class="function">
 <dt id="expected:void:::castto-b-operatorC">
  <tt class="descname">operator</tt> bool<big>(</big><big>)</big><tt class="descclassname"> const</tt><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#expected:void:::castto-b-operatorC" title="Permalink to this definition">¶</a></dt>
-<dd><p>Equivalent to <a class="reference internal" href="#expected:void:::validC" title="expected&lt;void&gt;::valid"><tt class="xref cpp cpp-func docutils literal"><span class="pre">valid()</span></tt></a>.</p>
+<dd><p>Returns whether this <a class="reference internal" href="#expected:void:" title="expected&lt;void&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;void&gt;</span></tt></a> object is in a valid state.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="expected:void:::getC">
 void <tt class="descname">get</tt><big>(</big><big>)</big><tt class="descclassname"> const</tt><a class="headerlink" href="#expected:void:::getC" title="Permalink to this definition">¶</a></dt>
-<dd><p>If the <a class="reference internal" href="#expected:void:" title="expected&lt;void&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;void&gt;</span></tt></a> object is in a valid state, returns <tt class="xref cpp cpp-type docutils literal"><span class="pre">void</span></tt>.
-Otherwise, throws the stored exception.</p>
-</dd></dl>
-
-<dl class="function">
 <dt id="expected:void:::mul-operatorC">
 void <tt class="descname">operator*</tt><big>(</big><big>)</big><tt class="descclassname"> const</tt><a class="headerlink" href="#expected:void:::mul-operatorC" title="Permalink to this definition">¶</a></dt>
-<dd><p>Equivalent to <a class="reference internal" href="#expected:void:::getC" title="expected&lt;void&gt;::get"><tt class="xref cpp cpp-func docutils literal"><span class="pre">get()</span></tt></a>. This function was included to better resemble
-the interface of <tt class="xref cpp cpp-class docutils literal"><span class="pre">boost::optional&lt;T&gt;</span></tt>.</p>
+<dd><p>If the <a class="reference internal" href="#expected:void:" title="expected&lt;void&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;void&gt;</span></tt></a> object is in a valid state, returns <tt class="xref cpp cpp-type docutils literal"><span class="pre">void</span></tt>.
+Otherwise, throws the stored exception.</p>
 </dd></dl>
 
 </dd></dl>

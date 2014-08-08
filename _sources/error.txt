@@ -130,28 +130,20 @@ Reference
       Constructs an |expected| object in an invalid state from the given exception.
 
    .. function:: expected(const expected& rhs) noexcept
-
-   .. function:: expected(expected&& rhs) noexcept
+                 expected(expected&& rhs) noexcept
 
    .. function:: bool valid() const noexcept
+                 operator bool() const noexcept
 
       Returns whether this |expected| object is in a valid state.
 
-   .. function:: operator bool() const noexcept
-
-      Equivalent to :func:`valid`.
-
    .. function:: reference get()
-   .. function:: const reference get() const
-
+                 const reference get() const
+                 reference operator*()
+                 const reference operator*() const
+      
       If the |expected| object is in a valid state, returns a reference to the
       stored object. Otherwise, throws the stored exception.
-
-   .. function:: reference operator*()
-   .. function:: const reference operator*() const
-      
-      Equivalent to :func:`get`. This function was included to better resemble
-      the interface of |optional|.
 
    .. function:: T&& move()
 
@@ -197,22 +189,15 @@ Reference
    .. function:: expected(expected&& rhs) noexcept
 
    .. function:: bool valid() const noexcept
+                 operator bool() const noexcept
 
       Returns whether this |expected_void| object is in a valid state.
 
-   .. function:: operator bool() const noexcept
-
-      Equivalent to :func:`valid`.
-
    .. function:: void get() const
-
+                 void operator*() const
+      
       If the |expected_void| object is in a valid state, returns :type:`void`.
       Otherwise, throws the stored exception.
-
-   .. function:: void operator*() const
-      
-      Equivalent to :func:`get`. This function was included to better resemble
-      the interface of |optional|.
 
    .. void swap(expected& rhs) noexcept
 

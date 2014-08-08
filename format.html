@@ -528,8 +528,8 @@ functions, as shown in the following example.</p>
 <li><tt class="xref cpp cpp-type docutils literal"><span class="pre">u32formatter</span></tt> (with <tt class="docutils literal"><span class="pre">Char</span> <span class="pre">=</span> <span class="pre">char32_t</span></tt>, <tt class="docutils literal"><span class="pre">Traits</span> <span class="pre">=</span> <span class="pre">std::char_traits&lt;char32_t&gt;</span></tt>)</li>
 </ul>
 <dl class="function">
-<dt id="basic_formatter:Char.Traits.Args:::basic_formatter__boost::string_ref:Char.Traits:C">
- <tt class="descname">basic_formatter</tt><big>(</big>const boost::string_ref&lt;Char, Traits&gt; <em>fmt_str</em><big>)</big><a class="headerlink" href="#basic_formatter:Char.Traits.Args:::basic_formatter__boost::string_ref:Char.Traits:C" title="Permalink to this definition">¶</a></dt>
+<dt id="basic_formatter:Char.Traits.Args:::basic_formatter__boost::string_ref:Char.Traits:CR">
+ <tt class="descname">basic_formatter</tt><big>(</big>const boost::string_ref&lt;Char, Traits&gt;&amp; <em>fmt_str</em><big>)</big><a class="headerlink" href="#basic_formatter:Char.Traits.Args:::basic_formatter__boost::string_ref:Char.Traits:CR" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a <tt class="xref cpp cpp-class docutils literal"><span class="pre">cc::basic_formatter&lt;Char,</span> <span class="pre">Traits,</span> <span class="pre">Args&gt;</span></tt> object from the format string <em>fmt_str</em>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -541,6 +541,20 @@ functions, as shown in the following example.</p>
 </table>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="function">
+<dt id="apply__basic_formatterCR.std::basic_ostreamR.ArgsRR">
+void <tt class="descname">apply</tt><big>(</big>const basic_formatter&amp; <em>fmt</em>, std::basic_ostream&amp; <em>dst</em>, Args&amp;&amp; <em>args</em><big>)</big><a class="headerlink" href="#apply__basic_formatterCR.std::basic_ostreamR.ArgsRR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies <em>fmt</em> to <em>args</em>, and writes the result to <em>dst</em>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Throws:</th><td class="field-body"><tt class="xref cpp cpp-class docutils literal"><span class="pre">std::runtime_error</span></tt> if an error occurs while applying <em>fmt</em> to <em>args</em>.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
