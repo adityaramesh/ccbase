@@ -1,9 +1,0 @@
-g++-mp-4.8 -std=c++11 -Wall -Wextra -pedantic -Wno-missing-field-initializers -march=native -I include -isystem /opt/local/include -Ofast -fno-fast-math -flto -fwhole-program -o out/test/filesystem_test.run source/test/filesystem_test.cpp 
-source/test/filesystem_test.cpp: In function 'void module_2()':
-source/test/filesystem_test.cpp:99:19: warning: unused variable 'e' [-Wunused-variable]
-  for (const auto& e : cc::list_files("data/listing_2")) { ++i; }
-                   ^
-source/test/filesystem_test.cpp:103:19: warning: unused variable 'e' [-Wunused-variable]
-  for (const auto& e : cc::match_files("data/listing_2/abc*")) { ++i; }
-                   ^
-clang: warning: argument unused during compilation: '-I include'
