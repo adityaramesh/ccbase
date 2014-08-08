@@ -180,7 +180,7 @@ or more parameters.
 
 ``base(style = lower)``
   This attribute has an optional parameter. By default, various special
-  characters (e.g. number bases and letters used for printing hexidecimal
+  characters (e.g. number bases and letters used for printing hexadecimal
   characters) are printed in lower case. If the argument ``upper`` is given,
   these characters are printed in upper case instead.
 
