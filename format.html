@@ -69,7 +69,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#syntax">Syntax</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#attributes">Attributes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#escaping-characters">Escaping Characters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#the-formatter-class">The Formatter Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-the-formatter">Using the Formatter</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#reference">Reference</a></li>
 </ul>
 </li>
@@ -155,7 +155,7 @@ printable.</p>
 <span class="c1">// Prints &quot;File name: &quot;test.txt&quot;, size: 1 KiB, version: 1.&quot; to stdout.</span>
 
 <span class="n">cc</span><span class="o">::</span><span class="n">writeln</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="s">&quot;Ten-fold CV error: ${%, prec(2)}.&quot;</span><span class="p">,</span> <span class="mf">0.12345</span><span class="p">);</span>
-<span class="c1">// Write &quot;Ten-fold CV error: 12.35%.&quot; to the log.</span>
+<span class="c1">// Writes &quot;Ten-fold CV error: 12.35%.&quot; to the log stream.</span>
 
 <span class="n">cc</span><span class="o">::</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;${money, loc(en_US)} == ${money, loc(ja_JP)}.&quot;</span><span class="p">,</span>
         <span class="mi">10000</span><span class="p">,</span> <span class="mf">10210.15</span><span class="p">);</span>
@@ -180,7 +180,7 @@ printable.</p>
 <p>Each function in this module takes a <em>format string</em> as an argument. This format
 string can either be a string literal, a <tt class="xref cpp cpp-class docutils literal"><span class="pre">std::string</span></tt> or a <tt class="xref cpp cpp-class docutils literal"><span class="pre">boost::string_ref</span></tt>. The format
 string can contain zero or more <em>arguments;</em> each argument can contain zero or
-more <em>attributes;</em> and each <em>attribute</em> can itself consist of zero or more
+more <em>attributes;</em> and each <em>attribute</em> can itself contain of zero or more
 <em>attribute arguments.</em></p>
 <p>Arguments are indicated by the <tt class="docutils literal"><span class="pre">$</span></tt> character. If an argument accepts
 attributes, then the attributes must be provided in a brace-enclosed
@@ -216,7 +216,7 @@ format state.</td></tr>
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
 <tr><td class="label"><a class="fn-backref" href="#id2">[†]</a></td><td>Strings in this context are taken to be character literals,
-:class:<a href="#id5"><span class="problematic" id="id6">`</span></a>std::string`s, or :class:<a href="#id7"><span class="problematic" id="id8">`</span></a>boost::string_ref`s.</td></tr>
+<tt class="xref cpp cpp-class docutils literal"><span class="pre">std::string</span></tt> s, or <tt class="xref cpp cpp-class docutils literal"><span class="pre">boost::string_ref</span></tt> s.</td></tr>
 </tbody>
 </table>
 <p>With a few exceptions, the order in which an attribute is applied relative to
@@ -461,7 +461,7 @@ instead.</dd>
 <dt><tt class="docutils literal"><span class="pre">money(cur</span> <span class="pre">=</span> <span class="pre">local)</span></tt></dt>
 <dd>This attribute has an optional parameter. By default, currency is printed
 using the local currency symbol (e.g. the symbol <tt class="docutils literal"><span class="pre">$</span></tt> is used instead of
-<tt class="docutils literal"><span class="pre">USD</span></tt>). If the argument <cite>intl</cite> is given, currency is printed in
+<tt class="docutils literal"><span class="pre">USD</span></tt>). If the argument <tt class="docutils literal"><span class="pre">intl</span></tt> is given, currency is printed in
 international units instead.</dd>
 <dt><tt class="docutils literal"><span class="pre">sign(style)</span></tt></dt>
 <dd>This attribute has a required parameter. If <tt class="docutils literal"><span class="pre">style</span></tt> is <tt class="docutils literal"><span class="pre">always</span></tt>, then the
@@ -491,9 +491,29 @@ format string should be <tt class="docutils literal"><span class="pre">&quot;$$&
 example, the format string <tt class="docutils literal"><span class="pre">&quot;${{&quot;</span></tt> causes a <tt class="docutils literal"><span class="pre">{</span></tt> to be printed immediately
 after the argument.</p>
 </div>
-<div class="section" id="the-formatter-class">
-<h2>The Formatter Class<a class="headerlink" href="#the-formatter-class" title="Permalink to this headline">¶</a></h2>
-<p>TODO explain</p>
+<div class="section" id="using-the-formatter">
+<h2>Using the Formatter<a class="headerlink" href="#using-the-formatter" title="Permalink to this headline">¶</a></h2>
+<p>The <tt class="xref cpp cpp-class docutils literal"><span class="pre">formatter&lt;N&gt;</span></tt> class performs the actual work involving in parsing the format
+string and storing the arguments and attributes. Each time one of the formatting
+functions like <tt class="xref cpp cpp-func docutils literal"><span class="pre">cc::println()</span></tt> is called, a <tt class="xref cpp cpp-class docutils literal"><span class="pre">formatter&lt;N&gt;</span></tt> is created, used to
+format the arguments, and subsequently returned. In the event that the same
+format string is used several times, it is more efficient to reuse the
+<tt class="xref cpp cpp-class docutils literal"><span class="pre">formatter&lt;N&gt;</span></tt> object returned by the formatting function than to invoke the
+function repeatedly. Here is an example that shows how this is done:</p>
+<div class="highlight-cpp"><div class="highlight"><pre><span class="k">auto</span> <span class="n">fmt</span> <span class="o">=</span> <span class="n">cc</span><span class="o">::</span><span class="n">writeln</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="s">&quot;Ten-fold CV error: ${%, prec(2)}.&quot;</span><span class="p">,</span> <span class="mf">0.12345</span><span class="p">);</span>
+<span class="c1">// Writes &quot;Ten-fold CV error: 12.35%.&quot; to the log stream.</span>
+<span class="n">cc</span><span class="o">::</span><span class="n">apply</span><span class="p">(</span><span class="n">fmt</span><span class="p">,</span> <span class="n">log</span><span class="p">,</span> <span class="mf">0.10111</span><span class="p">);</span>
+<span class="c1">// Writes &quot;Ten-fold CV error: 10.11%.&quot; to the log stream.</span>
+</pre></div>
+</div>
+<p>The <tt class="xref cpp cpp-class docutils literal"><span class="pre">formatter&lt;N&gt;</span></tt> object can also be created independently of the formatting
+functions, as shown in the following example.</p>
+<div class="highlight-cpp"><div class="highlight"><pre><span class="k">auto</span> <span class="n">fmt</span> <span class="o">=</span> <span class="n">cc</span><span class="o">::</span><span class="n">formatter</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">{</span><span class="s">&quot;Ten-fold CV error: ${%, prec(2)}.&quot;</span><span class="p">};</span>
+<span class="c1">// The template parameter specifies the number of arguments.</span>
+<span class="n">cc</span><span class="o">::</span><span class="n">apply</span><span class="p">(</span><span class="n">fmt</span><span class="p">,</span> <span class="n">log</span><span class="p">,</span> <span class="mf">0.12345</span><span class="p">);</span>
+<span class="c1">// Writes &quot;Ten-fold CV error: 12.35%.&quot; to the log stream.</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="reference">
 <h2>Reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h2>

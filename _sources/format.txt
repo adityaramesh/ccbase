@@ -7,6 +7,9 @@
 .. |string_ref| replace::
    :class:`boost::string_ref`
 
+.. |formatter| replace::
+   :class:`formatter\<N>`
+
 The Format Module
 =================
 
@@ -33,7 +36,7 @@ Examples
         // Prints "File name: "test.txt", size: 1 KiB, version: 1." to stdout.
 
         cc::writeln(log, "Ten-fold CV error: ${%, prec(2)}.", 0.12345);
-        // Write "Ten-fold CV error: 12.35%." to the log.
+        // Writes "Ten-fold CV error: 12.35%." to the log stream.
 
         cc::println("${money, loc(en_US)} == ${money, loc(ja_JP)}.",
                 10000, 10210.15);
@@ -57,7 +60,7 @@ Syntax
 Each function in this module takes a *format string* as an argument. This format
 string can either be a string literal, a |string| or a |string_ref|. The format
 string can contain zero or more *arguments;* each argument can contain zero or
-more *attributes;* and each *attribute* can itself consist of zero or more
+more *attributes;* and each *attribute* can itself contain of zero or more
 *attribute arguments.*
 
 Arguments are indicated by the ``$`` character. If an argument accepts
@@ -89,7 +92,7 @@ exactly one of the following functions:
    format state.
 
 .. [*] Strings in this context are taken to be character literals,
-   :class:`std::string`s, or :class:`boost::string_ref`s.
+   :class:`std::string` s, or :class:`boost::string_ref` s.
 
 With a few exceptions, the order in which an attribute is applied relative to
 other attributes is determined by the attribute's function. The priorities of
@@ -178,7 +181,7 @@ or more parameters.
 ``money(cur = local)``
   This attribute has an optional parameter. By default, currency is printed
   using the local currency symbol (e.g. the symbol ``$`` is used instead of
-  ``USD``). If the argument `intl` is given, currency is printed in
+  ``USD``). If the argument ``intl`` is given, currency is printed in
   international units instead.
 
 ``sign(style)``
@@ -210,10 +213,29 @@ format string should be ``"$$"``. In case (2), double the ``{`` symbol. For
 example, the format string ``"${{"`` causes a ``{`` to be printed immediately
 after the argument.
 
-The Formatter Class
+Using the Formatter
 -------------------
 
-TODO explain
+The |formatter| class performs the actual work involving in parsing the format
+string and storing the arguments and attributes. Each time one of the formatting
+functions like :func:`cc::println` is called, a |formatter| is created, used to
+format the arguments, and subsequently returned. In the event that the same
+format string is used several times, it is more efficient to reuse the
+|formatter| object returned by the formatting function than to invoke the
+function repeatedly. Here is an example that shows how this is done: ::
+
+        auto fmt = cc::writeln(log, "Ten-fold CV error: ${%, prec(2)}.", 0.12345);
+        // Writes "Ten-fold CV error: 12.35%." to the log stream.
+        cc::apply(fmt, log, 0.10111);
+        // Writes "Ten-fold CV error: 10.11%." to the log stream.
+
+The |formatter| object can also be created independently of the formatting
+functions, as shown in the following example. ::
+
+        auto fmt = cc::formatter<1>{"Ten-fold CV error: ${%, prec(2)}."};
+        // The template parameter specifies the number of arguments.
+        cc::apply(fmt, log, 0.12345);
+        // Writes "Ten-fold CV error: 12.35%." to the log stream.
 
 Reference
 ---------
