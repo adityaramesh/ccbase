@@ -260,7 +260,7 @@ private:
 	std::array<argument_type, Args> m_args;
 	mutable buffer_type m_buf{};
 public:
-	explicit basic_formatter(const string_ref fmt_str) :
+	explicit basic_formatter(const string_ref& fmt_str) :
 	m_fmt_str{fmt_str}
 	{
 		auto cur_index   = size_t{};

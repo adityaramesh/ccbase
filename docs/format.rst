@@ -4,8 +4,23 @@
 .. |string| replace::
    :class:`std::string`
 
-.. |string_ref| replace:
+.. |basic_string| replace::
+   :class:`std::basic_string\<Char, Traits>`
+
+.. |string_ref| replace::
    :class:`boost::string_ref`
+
+.. |basic_string_ref| replace::
+   :class:`boost::basic_string_ref\<Char, Traits>`
+
+.. |formatter| replace::
+   :class:`cc::formatter\<Args>`
+
+.. |basic_formatter| replace::
+   :class:`cc::basic_formatter\<Char, Traits, Args>`
+
+.. |runtime_error| replace::
+   :class:`std::runtime_error`
 
 The Format Module
 =================
@@ -28,12 +43,15 @@ Examples
         cc::println("Hello, world!");
         // Prints "Hello, world!" to stdout.
 
+        cc::println("Employee name: $.", "Gibble McGobblefart");
+        // Prints "Employee name: Gibble McGobblefart" to stdout.
+
         cc::println("File name: ${quote}, size: ${data}, version: $.",
                 "test.txt", 1024, 1);
         // Prints "File name: "test.txt", size: 1 KiB, version: 1." to stdout.
 
         cc::writeln(log, "Ten-fold CV error: ${%, prec(2)}.", 0.12345);
-        // Write "Ten-fold CV error: 12.35%." to the log.
+        // Writes "Ten-fold CV error: 12.35%." to the log stream.
 
         cc::println("${money, loc(en_US)} == ${money, loc(ja_JP)}.",
                 10000, 10210.15);
@@ -57,7 +75,7 @@ Syntax
 Each function in this module takes a *format string* as an argument. This format
 string can either be a string literal, a |string| or a |string_ref|. The format
 string can contain zero or more *arguments;* each argument can contain zero or
-more *attributes;* and each *attribute* can itself consist of zero or more
+more *attributes;* and each *attribute* can itself contain of zero or more
 *attribute arguments.*
 
 Arguments are indicated by the ``$`` character. If an argument accepts
@@ -89,16 +107,16 @@ exactly one of the following functions:
    format state.
 
 .. [*] Strings in this context are taken to be character literals,
-   :class:`std::string`s, or :class:`boost::string_ref`s.
+   :class:`std::string` s, or :class:`boost::string_ref` s.
 
 With a few exceptions, the order in which an attribute is applied relative to
 other attributes is determined by the attribute's function. The priorities of
-attribute functions are given by the list above, with a priority of one being
-the highest.
+attribute functions are given by the list above, with the priority one being the
+highest.
 
 Attributes with functions (2) or (3) cannot be applied to non-arithmetic types.
-Additional restrictions can apply to certain attributes: these are given in the
-table below.
+Additional restrictions can apply to certain attributes: these are described in
+the table below.
 
 ============== ==========================================
 Attribute Name Description
@@ -162,7 +180,7 @@ or more parameters.
 
 ``base(style = lower)``
   This attribute has an optional parameter. By default, various special
-  characters (e.g. number bases and letters used for printing hexidecimal
+  characters (e.g. number bases and letters used for printing hexadecimal
   characters) are printed in lower case. If the argument ``upper`` is given,
   these characters are printed in upper case instead.
 
@@ -178,7 +196,7 @@ or more parameters.
 ``money(cur = local)``
   This attribute has an optional parameter. By default, currency is printed
   using the local currency symbol (e.g. the symbol ``$`` is used instead of
-  ``USD``). If the argument `intl` is given, currency is printed in
+  ``USD``). If the argument ``intl`` is given, currency is printed in
   international units instead.
 
 ``sign(style)``
@@ -210,12 +228,108 @@ format string should be ``"$$"``. In case (2), double the ``{`` symbol. For
 example, the format string ``"${{"`` causes a ``{`` to be printed immediately
 after the argument.
 
-The Formatter Class
+Using the Formatter
 -------------------
 
-TODO explain
+The |formatter| class performs the actual work involving in parsing the format
+string and storing the arguments and attributes. Each time one of the formatting
+functions like :func:`cc::println` is called, a |formatter| object is created,
+used to format the arguments, and subsequently returned. In the event that the
+same format string is used several times, it is more efficient to reuse the
+|formatter| object returned by the formatting function than to invoke the
+function repeatedly. Here is an example that shows how this is done: ::
+
+        auto fmt = cc::writeln(log, "Ten-fold CV error: ${%, prec(2)}.", 0.12345);
+        // Writes "Ten-fold CV error: 12.35%." to the log stream.
+        cc::apply(fmt, log, 0.10111);
+        // Writes "Ten-fold CV error: 10.11%." to the log stream.
+
+The |formatter| object can also be created independently of the formatting
+functions, as shown in the following example. ::
+
+        auto fmt = cc::formatter<1>{"Ten-fold CV error: ${%, prec(2)}."};
+        // The template parameter specifies the number of arguments.
+        cc::apply(fmt, log, 0.12345);
+        // Writes "Ten-fold CV error: 12.35%." to the log stream.
 
 Reference
 ---------
 
-TODO create the reference.
+.. namespace:: cc
+
+.. class:: basic_formatter<Char, Traits, Args>
+
+   This class is associated with the following aliases:
+
+   - :type:`formatter` (with ``Char = char``, ``Traits = std::char_traits<char>``)
+   - :type:`wformatter` (with ``Char = wchar_t``, ``Traits = std::char_traits<wchar_t>``)
+   - :type:`u16formatter` (with ``Char = char16_t``, ``Traits = std::char_traits<char16_t>``)
+   - :type:`u32formatter` (with ``Char = char32_t``, ``Traits = std::char_traits<char32_t>``)
+
+   .. function:: basic_formatter(const boost::string_ref<Char, Traits>& fmt_str)
+
+      Creates a |basic_formatter| object from the format string *fmt_str*.
+
+      :throws: |runtime_error| if an error occurs while parsing *fmt_str*.
+
+.. function:: void apply(const basic_formatter& fmt, std::basic_ostream& dst, Args&& args)
+
+   Applies *fmt* to the parameter pack *args*, and writes the result to *dst*.
+
+   :throws: |runtime_error| if an error occurs while applying *fmt* to *args*.
+
+.. function:: basic_formatter write(std::basic_ostream& os, const boost::basic_string_ref& fmt, Args&& args)
+              basic_formatter print(const boost::basic_string_ref& fmt, Args&& args)
+              basic_formatter err(const boost::basic_string_ref& fmt, Args&& args)
+
+    Interprets *fmt* as a format string, and applies it to the parameter pack
+    *args*. The result is written to the destination output stream, and the
+    |basic_formatter| object that is created in the process is returned.
+
+    - For :func:`write`, the destination output stream is *os*.
+    - For :func:`print`, the destination output stream is :type:`std::cout`.
+    - For :func:`err`, the destination output stream is :type:`std::cerr`.
+
+    :throws: |runtime_error| if an error occurs while parsing *fmt* or applying *fmt* to *args*.
+
+.. function:: basic_formatter writeln(std::basic_ostream& os, const boost::basic_string_ref& fmt, Args&& args)
+              basic_formatter println(const boost::basic_string_ref& fmt, Args&& args)
+              basic_formatter errln(const boost::basic_string_ref& fmt, Args&& args)
+
+    These functions are similar to their counterparts that do not end in ``ln``,
+    but these functions append newlines to their destination output streams
+    after performing the formatting operations.
+
+    :throws: |runtime_error| if an error occurs while parsing *fmt* or applying *fmt* to *args*.
+
+.. function:: void write(basic_ostream& os, Arg&& arg)
+              void writeln(basic_ostream& os, Arg&& arg)
+              void print(basic_ostream& os, Arg&& arg)
+              void println(basic_ostream& os, Arg&& arg)
+              void err(basic_ostream& os, Arg&& arg)
+              void errln(basic_ostream& os, Arg&& arg)
+
+    Whereas the functions mentioned previously accept format string parameters,
+    these do not. These functions are intended to be used when only a single
+    argument needs to be printed, in which case the use of a format string
+    containing a single ``$`` would be redundant.
+
+.. function:: std::basic_string format(const boost::basic_string_ref& fmt, Args&& args)
+              std::basic_string format(const std::basic_string& fmt, Args&& args)
+              std::basic_string format(const CharT* fmt, Args&& args)
+
+
+    Interprets *fmt* as a format string, and applies it to the parameter pack
+    *args*. The result is returned as a |basic_string|.
+
+    :throws: |runtime_error| if an error occurs while parsing *fmt* or applying *fmt* to *args*.
+
+.. function:: std::basic_string formatln(const boost::basic_string_ref& fmt, Args&& args)
+              std::basic_string formatln(const std::basic_string& fmt, Args&& args)
+              std::basic_string formatln(const CharT* fmt, Args&& args)
+
+    These functions are similar to their counterparts that do not end in ``ln``,
+    but these functions append newlines to the output strings after performing
+    the formatting operations.
+
+    :throws: |runtime_error| if an error occurs while parsing *fmt* or applying *fmt* to *args*.
