@@ -4,8 +4,14 @@
 .. |string| replace::
    :class:`std::string`
 
+.. |basic_string| replace::
+   :class:`std::basic_string\<Char, Traits>`
+
 .. |string_ref| replace::
    :class:`boost::string_ref`
+
+.. |basic_string_ref| replace::
+   :class:`boost::basic_string_ref\<Char, Traits>`
 
 .. |formatter| replace::
    :class:`cc::formatter\<Args>`
@@ -291,7 +297,7 @@ Reference
               basic_formatter errln(const boost::basic_string_ref& fmt, Args&& args)
 
     These functions are similar to their counterparts that do not end in ``ln``,
-    but these functions append newlines to thier destination output streams
+    but these functions append newlines to their destination output streams
     after performing the formatting operations.
 
     :throws: |runtime_error| if an error occurs while parsing *fmt* or applying *fmt* to *args*.
@@ -307,3 +313,23 @@ Reference
     these do not. These functions are intended to be used when only a single
     argument needs to be printed, in which case the use of a format string
     containing a single ``$`` would be redundant.
+
+.. function:: std::basic_string format(const boost::basic_string_ref& fmt, Args&& args)
+              std::basic_string format(const std::basic_string& fmt, Args&& args)
+              std::basic_string format(const CharT* fmt, Args&& args)
+
+
+    Interprets *fmt* as a format string, and applies it to the parameter pack
+    *args*. The result is returned as a |basic_string|.
+
+    :throws: |runtime_error| if an error occurs while parsing *fmt* or applying *fmt* to *args*.
+
+.. function:: std::basic_string formatln(const boost::basic_string_ref& fmt, Args&& args)
+              std::basic_string formatln(const std::basic_string& fmt, Args&& args)
+              std::basic_string formatln(const CharT* fmt, Args&& args)
+
+    These functions are similar to their counterparts that do not end in ``ln``,
+    but these functions append newlines to the output strings after performing
+    the formatting operations.
+
+    :throws: |runtime_error| if an error occurs while parsing *fmt* or applying *fmt* to *args*.

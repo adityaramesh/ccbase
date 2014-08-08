@@ -593,7 +593,7 @@ basic_formatter <tt class="descname">println</tt><big>(</big>const boost::basic_
 <dt id="errln__boost::basic_string_refCR.ArgsRR">
 basic_formatter <tt class="descname">errln</tt><big>(</big>const boost::basic_string_ref&amp; <em>fmt</em>, Args&amp;&amp; <em>args</em><big>)</big><a class="headerlink" href="#errln__boost::basic_string_refCR.ArgsRR" title="Permalink to this definition">¶</a></dt>
 <dd><p>These functions are similar to their counterparts that do not end in <tt class="docutils literal"><span class="pre">ln</span></tt>,
-but these functions append newlines to thier destination output streams
+but these functions append newlines to their destination output streams
 after performing the formatting operations.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -622,6 +622,45 @@ void <tt class="descname">errln</tt><big>(</big>basic_ostream&amp; <em>os</em>, 
 these do not. These functions are intended to be used when only a single
 argument needs to be printed, in which case the use of a format string
 containing a single <tt class="docutils literal"><span class="pre">$</span></tt> would be redundant.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="format__boost::basic_string_refCR.ArgsRR">
+std::basic_string <tt class="descname">format</tt><big>(</big>const boost::basic_string_ref&amp; <em>fmt</em>, Args&amp;&amp; <em>args</em><big>)</big><a class="headerlink" href="#format__boost::basic_string_refCR.ArgsRR" title="Permalink to this definition">¶</a></dt>
+<dt id="format__std::basic_stringCR.ArgsRR">
+std::basic_string <tt class="descname">format</tt><big>(</big>const std::basic_string&amp; <em>fmt</em>, Args&amp;&amp; <em>args</em><big>)</big><a class="headerlink" href="#format__std::basic_stringCR.ArgsRR" title="Permalink to this definition">¶</a></dt>
+<dt id="format__CharTCP.ArgsRR">
+std::basic_string <tt class="descname">format</tt><big>(</big>const CharT* <em>fmt</em>, Args&amp;&amp; <em>args</em><big>)</big><a class="headerlink" href="#format__CharTCP.ArgsRR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Interprets <em>fmt</em> as a format string, and applies it to the parameter pack
+<em>args</em>. The result is returned as a <tt class="xref cpp cpp-class docutils literal"><span class="pre">std::basic_string&lt;Char,</span> <span class="pre">Traits&gt;</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Throws:</th><td class="field-body"><tt class="xref cpp cpp-class docutils literal"><span class="pre">std::runtime_error</span></tt> if an error occurs while parsing <em>fmt</em> or applying <em>fmt</em> to <em>args</em>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="formatln__boost::basic_string_refCR.ArgsRR">
+std::basic_string <tt class="descname">formatln</tt><big>(</big>const boost::basic_string_ref&amp; <em>fmt</em>, Args&amp;&amp; <em>args</em><big>)</big><a class="headerlink" href="#formatln__boost::basic_string_refCR.ArgsRR" title="Permalink to this definition">¶</a></dt>
+<dt id="formatln__std::basic_stringCR.ArgsRR">
+std::basic_string <tt class="descname">formatln</tt><big>(</big>const std::basic_string&amp; <em>fmt</em>, Args&amp;&amp; <em>args</em><big>)</big><a class="headerlink" href="#formatln__std::basic_stringCR.ArgsRR" title="Permalink to this definition">¶</a></dt>
+<dt id="formatln__CharTCP.ArgsRR">
+std::basic_string <tt class="descname">formatln</tt><big>(</big>const CharT* <em>fmt</em>, Args&amp;&amp; <em>args</em><big>)</big><a class="headerlink" href="#formatln__CharTCP.ArgsRR" title="Permalink to this definition">¶</a></dt>
+<dd><p>These functions are similar to their counterparts that do not end in <tt class="docutils literal"><span class="pre">ln</span></tt>,
+but these functions append newlines to the output strings after performing
+the formatting operations.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Throws:</th><td class="field-body"><tt class="xref cpp cpp-class docutils literal"><span class="pre">std::runtime_error</span></tt> if an error occurs while parsing <em>fmt</em> or applying <em>fmt</em> to <em>args</em>.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
