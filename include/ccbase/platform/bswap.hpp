@@ -8,6 +8,7 @@
 #ifndef Z2C1D91E3_6CC1_415A_A95D_65604B557F77
 #define Z2C1D91E3_6CC1_415A_A95D_65604B557F77
 
+#include <algorithm>
 #include <cstdint>
 #include <type_traits>
 #include <ccbase/platform/attributes.hpp>
@@ -122,14 +123,18 @@ CC_ALWAYS_INLINE
 auto bswap(float x) noexcept ->
 std::enable_if<sizeof(float) == 4, float>::type
 {
-	return bswap(reinterpret_cast<uint32_t&>(x));
+	auto buf = uint32_t{};
+	std::copy_n((char*)&x, sizeof(float), (char*)&buf);
+	return bswap(buf);
 }
 
 CC_ALWAYS_INLINE
 auto bswap(double x) noexcept ->
 std::enable_if<sizeof(double) == 8, double>::type
 {
-	return bswap(reinterpret_cast<uint64_t&>(x));
+	auto buf = uint64_t{};
+	std::copy_n((char*)&x, sizeof(double), (char*)&buf);
+	return bswap(buf);
 }
 
 }

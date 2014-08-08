@@ -13,15 +13,16 @@
 
 module("test_retrieval", "Tests whether loading data works.")
 {
-	using signature = std::string(std::string, std::string);
+	using signature = int(const std::string&, const std::string&);
 	auto img = cc::image{"./out/libraries/test.lib", cc::binding_mode::lazy};
 	auto f = cc::load<signature>("test", img).get();
 	auto& s = cc::load<std::string>("msg", img).get();
 
-	require(f("foo", "bar") == "foobar");
+	require(f("1", "00") == 100);
 	require(s == "Original contents.");
 }
 
+/*
 module("test_mutation", "Tests whether module data is mutable.")
 {
 	auto img = cc::image{"./out/libraries/test.lib", cc::binding_mode::lazy};
@@ -47,5 +48,6 @@ module("test_info", "Tests whether symbol address lookup works.")
 	require(fi.name() == "test");
 	require(si.name() == "msg");
 }
+*/
 
 suite("Tests dynamic library loading.")

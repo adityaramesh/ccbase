@@ -10,30 +10,30 @@
 
 module("test argument parsing")
 {
-	auto fmt1 = cc::formatter<1>("$");
-	auto fmt2 = cc::formatter<2>("$ $");
-	auto fmt3 = cc::formatter<1>("${}");
-	auto fmt4 = cc::formatter<1>("${ }");
-	auto fmt5 = cc::formatter<2>("${}$");
-	auto fmt6 = cc::formatter<2>("${}${}");
-	auto fmt7 = cc::formatter<1>("$$${}");
-	auto fmt8 = cc::formatter<1>("${{");
-	auto fmt9 = cc::formatter<1>("$}");
-	auto fmt10 = cc::formatter<1>("$1");
-	auto fmt11 = cc::formatter<1>("$1{}");
-	auto fmt12 = cc::formatter<1>("$1{{");
-	auto fmt13 = cc::formatter<1>("$1}");
+	cc::formatter<1> fmt1{"$"};
+	cc::formatter<2> fmt2{"$ $"};
+	cc::formatter<1> fmt3{"${}"};
+	cc::formatter<1> fmt4{"${ }"};
+	cc::formatter<2> fmt5{"${}$"};
+	cc::formatter<2> fmt6{"${}${}"};
+	cc::formatter<1> fmt7{"$$${}"};
+	cc::formatter<1> fmt8{"${{"};
+	cc::formatter<1> fmt9{"$}"};
+	cc::formatter<1> fmt10{"$1"};
+	cc::formatter<1> fmt11{"$1{}"};
+	cc::formatter<1> fmt12{"$1{{"};
+	cc::formatter<1> fmt13{"$1}"};
 }
 
 module("test attribute parsing")
 {
-	auto fmt1 = cc::formatter<1>("${hex}");
-	auto fmt2 = cc::formatter<1>("${hex, base}");
-	auto fmt3 = cc::formatter<1>("${hex, base(upper)}");
-	auto fmt4 = cc::formatter<1>("${hex, base(upper), align(R,20,'}')}");
-	auto fmt5 = cc::formatter<1>("${hex,base}");
-	auto fmt6 = cc::formatter<1>("${hex,base(upper)}");
-	auto fmt7 = cc::formatter<1>("${hex,base(upper),align(R,20,'}')}");
+	cc::formatter<1> fmt1{"${hex}"};
+	cc::formatter<1> fmt2{"${hex, base}"};
+	cc::formatter<1> fmt3{"${hex, base(upper)}"};
+	cc::formatter<1> fmt4{"${hex, base(upper), align(R,20,'}')}"};
+	cc::formatter<1> fmt5{"${hex,base}"};
+	cc::formatter<1> fmt6{"${hex,base(upper)}"};
+	cc::formatter<1> fmt7{"${hex,base(upper),align(R,20,'}')}"};
 }
 
 module("test formatting")
@@ -45,17 +45,17 @@ module("test formatting")
 	** so we will just make sure that a complex attribute gets parsed
 	** correctly.
 	*/
-	auto fmt1 = cc::formatter<1>("${hex, base(upper), align(R, 20), quote}");
+	cc::formatter<1> fmt1{"${hex, base(upper), align(R, 20), quote}"};
 	apply(fmt1, os, 1);
 	require(os.str() == "               \"0X1\"");
 	os.str("");
 
-	auto fmt2 = cc::formatter<0>("$${{$${{");
+	cc::formatter<0> fmt2{"$${{$${{"};
 	apply(fmt2, os);
 	require(os.str() == "${{${{");
 	os.str("");
 
-	auto fmt3 = cc::formatter<1>("${{");
+	cc::formatter<1> fmt3{"${{"};
 	apply(fmt3, os, "");
 	require(os.str() == "{");
 	os.str("");

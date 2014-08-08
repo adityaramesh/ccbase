@@ -96,11 +96,17 @@ module("Test glob matching.")
 module("Test range functionality.")
 {
 	auto i = 0u;
-	for (const auto& e : cc::list_files("data/listing_2")) { ++i; }
+	for (const auto& e : cc::list_files("data/listing_2")) {
+		(void)e;
+		++i;
+	}
 	require(i == 8);
 
 	i = 0u;
-	for (const auto& e : cc::match_files("data/listing_2/abc*")) { ++i; }
+	for (const auto& e : cc::match_files("data/listing_2/abc*")) {
+		(void)e;
+		++i;
+	}
 	require(i == 4);
 }
 

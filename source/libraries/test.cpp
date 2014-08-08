@@ -8,6 +8,7 @@
 ** various unit tests.
 */
 
+#include <cstdlib>
 #include <string>
 #include <ccbase/dynamic.hpp>
 
@@ -15,7 +16,8 @@ extern "C" EXPORT_SYMBOL
 const std::string msg{"Original contents."};
 
 extern "C" EXPORT_SYMBOL
-std::string test(std::string a, std::string b)
+int test(const std::string& a, const std::string& b)
 {
-	return a + b;
+	auto tmp = a + b;
+	return std::atoi(tmp.c_str());
 }

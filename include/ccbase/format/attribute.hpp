@@ -406,7 +406,8 @@ void apply_manipulator_attribute(
 	switch (attr.description().id()) {
 	case attribute_id::locale:
 		using string = std::basic_string<Char, Traits>;
-		dst.imbue(std::locale(static_cast<string>(attr.locale_name())));
+		// TODO: Remove the `.c_str()` once libstdc++ supports C++11.
+		dst.imbue(std::locale(static_cast<string>(attr.locale_name()).c_str()));
 		break;
 	case attribute_id::octal:
 		dst << std::oct;
@@ -460,7 +461,7 @@ void apply_string_output_attribute(
 		if (attr.arguments() == 0) {
 			auto log = (unsigned long long)std::log2(t);
 			auto base = std::min((unsigned)(log - log % 10), 60u);
-			auto sig = (long double)t / (1 << base);
+			auto sig = (double)t / (1 << base);
 
 			switch (base) {
 			case 0u:  dst << sig << " B"; break;
@@ -475,7 +476,7 @@ void apply_string_output_attribute(
 		else {
 			auto log = (unsigned long long)std::log10(t);
 			auto base = std::min((unsigned)(log - log % 3), 18u);
-			auto sig = (long double)t / std::pow(10, base);
+			auto sig = (double)t / std::pow(10, base);
 
 			switch (base) {
 			case 0u:  dst << sig << " B"; break;
@@ -493,12 +494,12 @@ void apply_string_output_attribute(
 		auto flags = dst.flags();
 		if (attr.arguments() == 0) {
 			dst << std::showbase
-				<< std::put_money(static_cast<long double>(t));
+				<< std::put_money(static_cast<double>(t));
 		}
 		else {
 			// Use international currency strings.
 			dst << std::showbase
-				<< std::put_money(static_cast<long double>(t), true);
+				<< std::put_money(static_cast<double>(t), true);
 		}
 		dst.setf(flags);
 	}
@@ -519,7 +520,6 @@ void apply_string_output_attribute(
 		dst.setf(flags);
 	}
 	else if (id == attribute_id::binary) {
-		auto tmp = t;
 		if (dst.flags() & std::ios::showbase) {
 			if (dst.flags() & std::ios::uppercase) {
 				dst << "0B";
@@ -528,8 +528,27 @@ void apply_string_output_attribute(
 				dst << "0b";
 			}
 		}
+
+		static_assert(sizeof(float) == 4, "");
+		static_assert(sizeof(double) == 8, "");
+		auto buf = 0ull;
+
+		if (std::is_same<T, float>::value) {
+			auto tmp = uint32_t{};
+			std::copy_n((char*)&t, sizeof(float), (char*)&tmp);
+			buf = tmp;
+		}
+		else if (std::is_same<T, double>::value) {
+			auto tmp = uint64_t{};
+			std::copy_n((char*)&t, sizeof(double), (char*)&tmp);
+			buf = tmp;
+		}
+		else {
+			buf = t;
+		}
+
 		dst << std::bitset<8 * sizeof(T)>(
-			reinterpret_cast<unsigned long long&>(tmp));
+			reinterpret_cast<unsigned long long&>(buf));
 	}
 	else if (id == attribute_id::percent) {
 		/*

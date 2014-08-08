@@ -32,10 +32,10 @@ Loading Dynamic Libraries
 
 Suppose that you have a library called ``test.dll``, which defines two symbols
 of interest: *msg*, a :type:`std::string` and :func:`test`, a function with the
-signature ``std::string(std::string, std::string)``. Assuming that both symbols
-have C linkage, then you could load them as follows: ::
+signature ``int(const std::string&, const std::string&)``. Assuming that both
+symbols have C linkage, then you could load them as follows: ::
 
-	using sig = std::string(std::string, std::string);
+	using sig = int(const std::string&, const std::string&);
 	auto img  = cc::image{"test.dll", cc::binding_mode::lazy};
 	auto test = cc::load<signature>("test", img).get();
 	auto& msg = cc::load<std::string>("msg", img).get();

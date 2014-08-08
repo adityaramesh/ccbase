@@ -91,6 +91,11 @@ class function<ReturnType(Args...)>
 	std::function<signature> m_func;
 	void* m_addr;
 public:
+	/*
+	** FIXME: Casting a `void*` to a function pointer is technically
+	** illegal. However, I don't know how to work around this for
+	** `std::function` objects.
+	*/
 	explicit function(void* addr) noexcept :
 	m_func{reinterpret_cast<pointer>(addr)}, m_addr{addr} {}
 

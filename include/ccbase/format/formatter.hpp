@@ -240,7 +240,7 @@ class basic_formatter
 public:
 	using ostream           = std::basic_ostream<Char, Traits>;
 	using string_ref        = boost::basic_string_ref<Char, Traits>;
-	using argument_type     = argument<Char, Traits>;
+	using argument_type     = class argument<Char, Traits>;
 	using buffer_type       = std::basic_ostringstream<Char, Traits>;
 	using index_length_pair = std::tuple<size_t, size_t>;
 private:

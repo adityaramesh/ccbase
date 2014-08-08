@@ -255,6 +255,12 @@ functions, as shown in the following example. ::
 Reference
 ---------
 
+**Note:** libstdc++ still does not implement move constructors for standard
+streams. Since the |basic_formatter| class contains a standard stream as a
+member, it cannot be moved when compiled with GCC. Therefore, any function below
+that is documented to return |basic_formatter| actually returns :type:`void`
+when compiled with GCC.
+
 .. namespace:: cc
 
 .. class:: basic_formatter<Char, Traits, Args>

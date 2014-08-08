@@ -47,6 +47,7 @@ std::ostream& operator<<(std::ostream& os, const file_type& t)
 	case file_type::socket:           cc::write (os, "socket");           return os;
 	case file_type::unknown:          cc::write (os, "unknown");          return os;
 	}
+	return os;
 }
 
 class directory_iterator;
@@ -65,7 +66,7 @@ class directory_entry
 		const char* name,
 		const length_type len,
 		const file_type type
-	) noexcept : m_dir_it{dir_it}, m_name{name, len}, m_type{type} {}
+	) noexcept : m_dir_it(dir_it), m_name{name, len}, m_type{type} {}
 public:
 	// Defined in `directory_iterator.hpp` due to cyclic dependencies.
 	const boost::string_ref path() const noexcept;

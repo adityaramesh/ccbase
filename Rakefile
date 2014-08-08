@@ -9,16 +9,17 @@ if ENV.key?('PYTHON_BIN')
 end
 
 langflags  = "-std=c++11"
-wflags     = "-Wall -Wextra -pedantic -Wno-return-type-c-linkage"
+wflags     = "-Wall -Wextra -pedantic -Wno-missing-field-initializers"
 archflags  = "-march=native"
 incflags   = "-I include -isystem #{boost}"
 ldflags    = ""
 
 if cxx.include? "clang"
-	optflags  = "-Ofast -fno-fast-math -flto"
-	#optflags  = "-O1 -ggdb"
+	optflags     = "-Ofast -fno-fast-math -flto"
+	lib_optflags = "-Ofast -fno-fast-math -flto"
 elsif cxx.include? "g++"
-	optflags  = "-Ofast -fno-fast-math -flto -fwhole-program"
+	optflags      = "-Ofast -fno-fast-math -flto -fwhole-program"
+	lib_optflags  = "-Ofast -fno-fast-math -flto"
 end
 
 if RUBY_PLATFORM.include? "linux"
@@ -31,12 +32,13 @@ lib_ppflags   = "-DCCBASE_EXPORT_SYMBOLS"
 lib_confflags = ""
 
 if RUBY_PLATFORM.include? "linux"
-	lib_confflags = "-shared -fpic -fvisibility=hidden"
+	lib_confflags = "-shared -fpic -fvisibility=hidden -fvisibility-inlines-hidden"
 elsif RUBY_PLATFORM.include? "darwin"
-	lib_confflags = "-dynamiclib -fvisibility=hidden"
+	lib_confflags = "-dynamiclib -fvisibility=hidden -fvisibility-inlines-hidden"
 end
 
-lib_cxxflags = "#{cxxflags} #{lib_ppflags} #{lib_confflags}"
+lib_cxxopts  = "#{langflags} #{wflags} #{archflags} #{incflags} #{lib_optflags}"
+lib_cxxflags = "#{lib_cxxopts} #{lib_ppflags} #{lib_confflags}"
 
 dirs  = ["out/test", "out/libraries", "out/reference"]
 tests = FileList["source/test/*"].map{|f| f.sub("source", "out").ext("run")}
@@ -98,7 +100,7 @@ refs.each do |f|
 end
 
 task :clobber => dirs do
-	FileList["out/test/*.run"].each{ |f| File.delete(f) if File.exist?(f) }
-	FileList["out/libraries/*.lib"].each{ |f| File.delete(f) if File.exist?(f) }
-	FileList["out/reference/**/*.run"].each{ |f| File.delete(f) if File.exist?(f) }
+	FileList["out/test/*.run"].each{|f| File.delete(f)}
+	FileList["out/libraries/*"].each{|f| File.delete(f)}
+	FileList["out/reference/**/*.run"].each{|f| File.delete(f)}
 end

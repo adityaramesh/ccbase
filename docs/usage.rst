@@ -36,6 +36,12 @@ information).
 .. _issue: https://github.com/adityaramesh/ccbase/issues
 __ issue_
 
+Known Issues
+~~~~~~~~~~~~
+
+GCC does not have any support for locales on OS X. If you need support for
+locales (e.g. for the format module), then you will need to compile with Clang.
+
 Library Structure
 -----------------
 
