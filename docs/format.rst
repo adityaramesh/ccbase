@@ -97,15 +97,118 @@ attribute functions are given by the list above, with a priority of one being
 the highest.
 
 Attributes with functions (2) or (3) cannot be applied to non-arithmetic types.
-There are a few more restrictions that pertain to specific attributes: these are
-given in the table below.
+Additional restrictions can apply to certain attributes: these are given in the
+table below.
 
-TODO create the table
+============== ==========================================
+Attribute Name Description
+============== ==========================================
+loc            Changes locale.
+base           Adds manipulator :type:`std::showbase`.
+oct            Adds manipulator :type:`std::oct`.
+dec            Adds manipulator :type:`std::dec`.
+hex            Adds manipulator :type:`std::hex`.
+prec           Adds manipulator :type:`std::prec`.
+fixed          Adds manipulator :type:`std::fixed`.
+sci            Adds manipulator :type:`std::sci`.
+char           Prints integral type as :type:`char`.
+num            Promotes arithmetic type before printing.
+bool           Prints arithmetic type as :type:`bool`.
+data           Prints data size in human-readable format.
+money          Prints currency according to locale.
+sign           Controls sign for arithmetic types.
+bin            Prints arithmetic type as binary.
+%              Prints floating-point type as percentage.
+upper          Converts string to upper case.
+lower          Converts string to lower case.
+quote          Quotes the argument.
+align          Aligns the argument in fixed-width field.
+============== ==========================================
+
+The following table gives the function, priority, and minimum and maximum
+parameter counts for each attribute.
+
+==============  ==========================  ========  ==============  ==============
+Attribute Name  Function                    Priority  Min Parameters  Max Parameters
+==============  ==========================  ========  ==============  ==============
+loc             Adds manipulators.          1         1               1
+base            Adds manipulators.          1         0               1
+oct             Adds manipulators.          1         0               0
+dec             Adds manipulators.          1         0               0
+hex             Adds manipulators.          1         0               0
+prec            Adds manipulators.          1         1               1
+fixed           Adds manipulators.          1         0               0
+sci             Adds manipulators.          1         0               0
+char            Converts number to number.  1         0               0
+num             Converts number to number.  1         0               0
+bool            Converts number to string.  2         0               0
+data            Converts number to string.  2         0               1
+money           Converts number to string.  2         0               1
+sign            Converts number to string.  2         1               1
+bin             Converts number to string.  2         0               0
+%               Converts number to string.  2         0               0
+upper           Converts string to string.  3         0               0
+lower           Converts string to string.  3         0               0
+quote           Converts type to string.    4         0               0
+align           Converts string to string.  5         2               3
+==============  ==========================  ========  ==============  ==============
+
+We now describe the roles of the parameters for the attributes that take one
+or more parameters.
+
+``loc(name)``
+  This attribute has a required parameter: the string describing the locale.
+  Example: ``en_US``. Note that the locale name is **not** quoted.
+
+``base(style = lower)``
+  This attribute has an optional parameter. By default, various special
+  characters (e.g. number bases and letters used for printing hexidecimal
+  characters) are printed in lower case. If the argument ``upper`` is given,
+  these characters are printed in upper case instead.
+
+``prec(n)``
+  This attribute has a required parameter: the desired precision. Example:
+  ``6``.
+
+``data(base = bin)``
+  This attribute has an optional parameter. By default, the data is printed in
+  binary SI units. If the argument ``dec`` is given, decimal SI units are used
+  instead.
+
+``money(cur = local)``
+  This attribute has an optional parameter. By default, currency is printed
+  using the local currency symbol (e.g. the symbol ``$`` is used instead of
+  ``USD``). If the argument `intl` is given, currency is printed in
+  international units instead.
+
+``sign(style)``
+  This attribute has a required parameter. If ``style`` is ``always``, then the
+  sign is always printed, even for nonnegative numbers. If ``style`` is
+  ``space``, the sign is printed for negative numbers, and a space is inserted
+  before nonnegative numbers.
+
+``align(dir, width, fill = ' ')``
+  This attribute has two required parameters, and an optional third parameter.
+  The ``dir`` parameter, which must be either ``'L'``, ``'C'``, or ``'R'``,
+  controls the direction of alignment in the fixed-width field. The ``width``
+  parameter is an integer that controls the width of the field (e.g.  ``80``).
+  The ``fill`` parameter, which is set to ``' '`` by default, specifies the
+  character used to fill any remaining space within the fixed-width field. Note
+  that this parameter **must** be a character literal of length three. Escape
+  sequences are currently unsupported.
 
 Escaping Characters
 -------------------
 
-TODO explain when characters need to be escaped.
+Regular characters in format strings need to be escaped in two situations:
+
+1. Printing dollar signs.
+2. Printing ``{`` immediately after a plain ``$`` argument.
+
+In case (1), just double the dollar sign. For example, to print ``$``, the
+format string should be ``"$$"``. In case (2), double the ``{`` symbol. For
+example, the format string ``"${{"`` causes a ``{`` to be printed immediately
+after the argument.
 
 The Formatter Class
 -------------------
