@@ -11,7 +11,7 @@
    :class:`cc::formatter\<Args>`
 
 .. |basic_formatter| replace::
-   :class:`cc::formatter\<Char, Traits, Args>`
+   :class:`cc::basic_formatter\<Char, Traits, Args>`
 
 The Format Module
 =================
@@ -245,7 +245,7 @@ Reference
 
 .. class:: basic_formatter<Char, Traits, Args>
 
-   This class has the following aliases defined:
+   This class is associated with the following aliases:
 
    - :type:`formatter` (with ``Char = char``, ``Traits = std::char_traits<char>``)
    - :type:`wformatter` (with ``Char = wchar_t``, ``Traits = std::char_traits<wchar_t>``)
