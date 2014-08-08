@@ -8,7 +8,7 @@
    :class:`boost::string_ref`
 
 .. |formatter| replace::
-   :class:`formatter\<N>`
+   :class:`cc::formatter\<N>`
 
 The Format Module
 =================
@@ -218,9 +218,9 @@ Using the Formatter
 
 The |formatter| class performs the actual work involving in parsing the format
 string and storing the arguments and attributes. Each time one of the formatting
-functions like :func:`cc::println` is called, a |formatter| is created, used to
-format the arguments, and subsequently returned. In the event that the same
-format string is used several times, it is more efficient to reuse the
+functions like :func:`cc::println` is called, a |formatter| object is created,
+used to format the arguments, and subsequently returned. In the event that the
+same format string is used several times, it is more efficient to reuse the
 |formatter| object returned by the formatting function than to invoke the
 function repeatedly. Here is an example that shows how this is done: ::
 
@@ -240,4 +240,4 @@ functions, as shown in the following example. ::
 Reference
 ---------
 
-TODO create the reference.
+.. class:: basic_formatter<Char, Traits, Args>
