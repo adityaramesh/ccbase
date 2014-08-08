@@ -82,7 +82,7 @@ struct linux_dirent
 	uint64_t d_ino;
 	uint64_t d_off;
 	uint16_t d_reclen;
-	uint8_t  d_name[];
+	char     d_name;
 
 	/*
 	** Although there are more fields after `d_name`, it does not do any
@@ -263,10 +263,18 @@ private:
 		// The type of the file is stored in the last byte of the
 		// directory record.
 		auto type = static_cast<file_type>(*(char*)(m_buf_cur + ent->d_reclen - 1));
-		// Compute the length of the file name.
-		auto len = length_type{ent->d_reclen - 2 -
-			offsetof(detail::linux_dirent, d_name)};
-		return {*this, (char*)ent->d_name, len, type};
+		// Compute the maximum length of the file name.
+		auto max_len = length_type(ent->d_reclen - 2 -
+			offsetof(detail::linux_dirent, d_name));
+
+		// The actual length of the file name could be less than what is
+		// reported by the system call. So we have to find the null
+		// character manually.
+		auto start = &ent->d_name;
+		auto end = std::find(start, start + max_len, '\0');
+		assert(end != start + max_len);
+
+		return {*this, &ent->d_name, (uint16_t)(end - start), type};
 	#elif PLATFORM_KERNEL == PLATFORM_KERNEL_XNU
 		auto ent = (native_dirent*)m_buf_cur;
 		return {*this, ent->d_name, ent->d_namlen,

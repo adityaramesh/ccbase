@@ -16,19 +16,24 @@ module("Test directory iteration.")
 {
 	auto f = cc::directory_iterator{"data/listing_1"};
 	auto l = cc::directory_iterator{};
+	auto c = 0;
 
 	while (f != l) {
 		if (f->name() == "a") {
+			++c;
 			require(f->type() == cc::file_type::regular);
 		}
 		else if (f->name() == "b") {
+			++c;
 			require(f->type() == cc::file_type::symbolic_link);
 		}
 		else if (f->name() == "c") {
+			++c;
 			require(f->type() == cc::file_type::directory);
 		}
 		++f;
 	}
+	require(c == 3);
 }
 
 module("Test glob matching.")
