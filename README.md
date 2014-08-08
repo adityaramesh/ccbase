@@ -38,6 +38,8 @@ The entirety of the public API resides in the `cc` namespace.
 ## TODO
 
 - Use `CC_ASSERT` instead of assert.
+- Add support for standard library detection (e.g. libc++ vs libstdc++) to the
+platform module.
 - Document the utility module after sufficient usage.
 - `match_files` with recursive directory enumeration.
 - Tuple arithmetic.
