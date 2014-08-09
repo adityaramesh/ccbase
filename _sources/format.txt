@@ -44,7 +44,7 @@ Examples
         // Prints "Hello, world!" to stdout.
 
         cc::println("Employee name: $.", "Gibble McGobblefart");
-        // Prints "Employee name: Gibble McGobblefart" to stdout.
+        // Prints "Employee name: Gibble McGobblefart." to stdout.
 
         cc::println("File name: ${quote}, size: ${data}, version: $.",
                 "test.txt", 1024, 1);
