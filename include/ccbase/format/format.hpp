@@ -8,6 +8,7 @@
 #ifndef Z9DCE86DF_558B_497F_B6CC_4DCDFD6070FC
 #define Z9DCE86DF_558B_497F_B6CC_4DCDFD6070FC
 
+#include <iostream>
 #include <ccbase/platform/attributes.hpp>
 #include <ccbase/format/formatter.hpp>
 
