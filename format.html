@@ -153,7 +153,7 @@ printable.</p>
 <span class="n">cc</span><span class="o">::</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;Employee name: $.&quot;</span><span class="p">,</span> <span class="s">&quot;Gibble McGobblefart&quot;</span><span class="p">);</span>
 <span class="c1">// Prints &quot;Employee name: Gibble McGobblefart.&quot; to stdout.</span>
 
-<span class="n">cc</span><span class="o">::</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;$ $! $1{upper} $2{upper}&quot;</span><span class="p">,</span> <span class="s">&quot;Ding&quot;</span><span class="p">,</span> <span class="s">&quot;dong&quot;</span><span class="p">);</span>
+<span class="n">cc</span><span class="o">::</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;$ $! $1{upper} $2{upper}!&quot;</span><span class="p">,</span> <span class="s">&quot;Ding&quot;</span><span class="p">,</span> <span class="s">&quot;dong&quot;</span><span class="p">);</span>
 <span class="c1">// Prints &quot;Ding dong! DING DONG!&quot; to stdout.</span>
 
 <span class="n">cc</span><span class="o">::</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;File name: ${quote}, size: ${data}, version: $.&quot;</span><span class="p">,</span>
@@ -515,15 +515,14 @@ same format string is used several times, it is more efficient to reuse the
 function repeatedly. Here is an example that shows how this is done:</p>
 <div class="highlight-cpp"><div class="highlight"><pre><span class="k">auto</span> <span class="n">fmt</span> <span class="o">=</span> <span class="n">cc</span><span class="o">::</span><span class="n">writeln</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="s">&quot;Ten-fold CV error: ${%, prec(2)}.&quot;</span><span class="p">,</span> <span class="mf">0.12345</span><span class="p">);</span>
 <span class="c1">// Writes &quot;Ten-fold CV error: 12.35%.&quot; to the log stream.</span>
-<span class="n">cc</span><span class="o">::</span><span class="n">apply</span><span class="p">(</span><span class="n">fmt</span><span class="p">,</span> <span class="n">log</span><span class="p">,</span> <span class="mf">0.10111</span><span class="p">);</span>
+<span class="n">fmt</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="mf">0.10111</span><span class="p">);</span>
 <span class="c1">// Writes &quot;Ten-fold CV error: 10.11%.&quot; to the log stream.</span>
 </pre></div>
 </div>
 <p>The <tt class="xref cpp cpp-class docutils literal"><span class="pre">cc::formatter&lt;Args&gt;</span></tt> object can also be created independently of the formatting
 functions, as shown in the following example.</p>
-<div class="highlight-cpp"><div class="highlight"><pre><span class="k">auto</span> <span class="n">fmt</span> <span class="o">=</span> <span class="n">cc</span><span class="o">::</span><span class="n">formatter</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">{</span><span class="s">&quot;Ten-fold CV error: ${%, prec(2)}.&quot;</span><span class="p">};</span>
-<span class="c1">// The template parameter specifies the number of arguments.</span>
-<span class="n">cc</span><span class="o">::</span><span class="n">apply</span><span class="p">(</span><span class="n">fmt</span><span class="p">,</span> <span class="n">log</span><span class="p">,</span> <span class="mf">0.12345</span><span class="p">);</span>
+<div class="highlight-cpp"><div class="highlight"><pre><span class="k">auto</span> <span class="n">fmt</span> <span class="o">=</span> <span class="n">cc</span><span class="o">::</span><span class="n">formatter</span><span class="p">{</span><span class="s">&quot;Ten-fold CV error: ${%, prec(2)}.&quot;</span><span class="p">};</span>
+<span class="n">fmt</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="mf">0.12345</span><span class="p">);</span>
 <span class="c1">// Writes &quot;Ten-fold CV error: 12.35%.&quot; to the log stream.</span>
 </pre></div>
 </div>
@@ -531,13 +530,13 @@ functions, as shown in the following example.</p>
 <div class="section" id="reference">
 <h2>Reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h2>
 <p><strong>Note:</strong> libstdc++ still does not implement move constructors for standard
-streams. Since the <tt class="xref cpp cpp-class docutils literal"><span class="pre">cc::basic_formatter&lt;Char,</span> <span class="pre">Traits,</span> <span class="pre">Args&gt;</span></tt> class contains a standard stream as a
+streams. Since the <tt class="xref cpp cpp-class docutils literal"><span class="pre">cc::basic_formatter&lt;Char,</span> <span class="pre">Traits&gt;</span></tt> class contains a standard stream as a
 member, it cannot be moved when compiled with GCC. Therefore, any function below
-that is documented to return <tt class="xref cpp cpp-class docutils literal"><span class="pre">cc::basic_formatter&lt;Char,</span> <span class="pre">Traits,</span> <span class="pre">Args&gt;</span></tt> actually returns <tt class="xref cpp cpp-type docutils literal"><span class="pre">void</span></tt>
+that is documented to return <tt class="xref cpp cpp-class docutils literal"><span class="pre">cc::basic_formatter&lt;Char,</span> <span class="pre">Traits&gt;</span></tt> actually returns <tt class="xref cpp cpp-type docutils literal"><span class="pre">void</span></tt>
 when compiled with GCC.</p>
 <dl class="class">
-<dt id="basic_formatter:Char.Traits.Args:">
-<em class="property">class </em><tt class="descname">basic_formatter&lt;Char, Traits, Args&gt;</tt><a class="headerlink" href="#basic_formatter:Char.Traits.Args:" title="Permalink to this definition">¶</a></dt>
+<dt id="basic_formatter:Char.Traits:">
+<em class="property">class </em><tt class="descname">basic_formatter&lt;Char, Traits&gt;</tt><a class="headerlink" href="#basic_formatter:Char.Traits:" title="Permalink to this definition">¶</a></dt>
 <dd><p>This class is associated with the following aliases:</p>
 <ul class="simple">
 <li><tt class="xref cpp cpp-type docutils literal"><span class="pre">formatter</span></tt> (with <tt class="docutils literal"><span class="pre">Char</span> <span class="pre">=</span> <span class="pre">char</span></tt>, <tt class="docutils literal"><span class="pre">Traits</span> <span class="pre">=</span> <span class="pre">std::char_traits&lt;char&gt;</span></tt>)</li>
@@ -546,9 +545,9 @@ when compiled with GCC.</p>
 <li><tt class="xref cpp cpp-type docutils literal"><span class="pre">u32formatter</span></tt> (with <tt class="docutils literal"><span class="pre">Char</span> <span class="pre">=</span> <span class="pre">char32_t</span></tt>, <tt class="docutils literal"><span class="pre">Traits</span> <span class="pre">=</span> <span class="pre">std::char_traits&lt;char32_t&gt;</span></tt>)</li>
 </ul>
 <dl class="function">
-<dt id="basic_formatter:Char.Traits.Args:::basic_formatter__boost::string_ref:Char.Traits:CR">
- <tt class="descname">basic_formatter</tt><big>(</big>const boost::string_ref&lt;Char, Traits&gt;&amp; <em>fmt_str</em><big>)</big><a class="headerlink" href="#basic_formatter:Char.Traits.Args:::basic_formatter__boost::string_ref:Char.Traits:CR" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a <tt class="xref cpp cpp-class docutils literal"><span class="pre">cc::basic_formatter&lt;Char,</span> <span class="pre">Traits,</span> <span class="pre">Args&gt;</span></tt> object from the format string <em>fmt_str</em>.</p>
+<dt id="basic_formatter:Char.Traits:::basic_formatter__boost::string_ref:Char.Traits:CR">
+ <tt class="descname">basic_formatter</tt><big>(</big>const boost::string_ref&lt;Char, Traits&gt;&amp; <em>fmt_str</em><big>)</big><a class="headerlink" href="#basic_formatter:Char.Traits:::basic_formatter__boost::string_ref:Char.Traits:CR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a <tt class="xref cpp cpp-class docutils literal"><span class="pre">cc::basic_formatter&lt;Char,</span> <span class="pre">Traits&gt;</span></tt> object from the format string <em>fmt_str</em>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -559,12 +558,11 @@ when compiled with GCC.</p>
 </table>
 </dd></dl>
 
-</dd></dl>
-
 <dl class="function">
-<dt id="apply__basic_formatterCR.std::basic_ostreamR.ArgsRR">
-void <tt class="descname">apply</tt><big>(</big>const basic_formatter&amp; <em>fmt</em>, std::basic_ostream&amp; <em>dst</em>, Args&amp;&amp; <em>args</em><big>)</big><a class="headerlink" href="#apply__basic_formatterCR.std::basic_ostreamR.ArgsRR" title="Permalink to this definition">¶</a></dt>
-<dd><p>Applies <em>fmt</em> to the parameter pack <em>args</em>, and writes the result to <em>dst</em>.</p>
+<dt id="basic_formatter:Char.Traits:::call-operator__std::basic_ostreamR.ArgsRR">
+void <tt class="descname">operator()</tt><big>(</big>std::basic_ostream&amp; <em>dst</em>, Args&amp;&amp; <em>args</em><big>)</big><a class="headerlink" href="#basic_formatter:Char.Traits:::call-operator__std::basic_ostreamR.ArgsRR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies the <tt class="xref cpp cpp-class docutils literal"><span class="pre">cc::basic_formatter&lt;Char,</span> <span class="pre">Traits&gt;</span></tt> object to the parameter pack <em>args</em>, and
+writes the result to <em>dst</em>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -573,6 +571,8 @@ void <tt class="descname">apply</tt><big>(</big>const basic_formatter&amp; <em>f
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="function">
@@ -584,7 +584,7 @@ basic_formatter <tt class="descname">print</tt><big>(</big>const boost::basic_st
 basic_formatter <tt class="descname">err</tt><big>(</big>const boost::basic_string_ref&amp; <em>fmt</em>, Args&amp;&amp; <em>args</em><big>)</big><a class="headerlink" href="#err__boost::basic_string_refCR.ArgsRR" title="Permalink to this definition">¶</a></dt>
 <dd><p>Interprets <em>fmt</em> as a format string, and applies it to the parameter pack
 <em>args</em>. The result is written to the destination output stream, and the
-<tt class="xref cpp cpp-class docutils literal"><span class="pre">cc::basic_formatter&lt;Char,</span> <span class="pre">Traits,</span> <span class="pre">Args&gt;</span></tt> object that is created in the process is returned.</p>
+<tt class="xref cpp cpp-class docutils literal"><span class="pre">cc::basic_formatter&lt;Char,</span> <span class="pre">Traits&gt;</span></tt> object that is created in the process is returned.</p>
 <ul class="simple">
 <li>For <a class="reference internal" href="#write__std::basic_ostreamR.boost::basic_string_refCR.ArgsRR" title="write"><tt class="xref cpp cpp-func docutils literal"><span class="pre">write()</span></tt></a>, the destination output stream is <em>os</em>.</li>
 <li>For <a class="reference internal" href="#print__boost::basic_string_refCR.ArgsRR" title="print"><tt class="xref cpp cpp-func docutils literal"><span class="pre">print()</span></tt></a>, the destination output stream is <tt class="xref cpp cpp-type docutils literal"><span class="pre">std::cout</span></tt>.</li>
