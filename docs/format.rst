@@ -46,6 +46,9 @@ Examples
         cc::println("Employee name: $.", "Gibble McGobblefart");
         // Prints "Employee name: Gibble McGobblefart." to stdout.
 
+        cc::println("$ $! $1{upper} $2{upper}", "Ding", "dong");
+        // Prints "Ding dong! DING DONG!" to stdout.
+
         cc::println("File name: ${quote}, size: ${data}, version: $.",
                 "test.txt", 1024, 1);
         // Prints "File name: "test.txt", size: 1 KiB, version: 1." to stdout.
@@ -74,12 +77,12 @@ Syntax
 
 Each function in this module takes a *format string* as an argument. This format
 string can either be a string literal, a |string| or a |string_ref|. The format
-string can contain zero or more *arguments;* each argument can contain zero or
-more *attributes;* and each *attribute* can itself contain of zero or more
-*attribute arguments.*
+string can contain zero or more *format arguments;* each format argument can
+contain zero or more *attributes;* and each *attribute* can itself contain of
+zero or more *attribute arguments.*
 
-Arguments are indicated by the ``$`` character. If an argument accepts
-attributes, then the attributes must be provided in a brace-enclosed
+Format arguments are indicated by the ``$`` character. If a format argument
+accepts attributes, then the attributes must be provided in a brace-enclosed
 comma-separated list that occurs immediately after the ``$``. For example, the
 format string ``"${hex, base}"`` contains a single argument, and this argument
 contains two attributes.
@@ -87,8 +90,16 @@ contains two attributes.
 Some attributes have optional or required arguments. Attribute arguments must be
 provided in a parenthesis-enclosed comma-separated list that occurs after the
 attribute name, similar to the C syntax for function invocation. For example,
-the format string ``${align(C, 50, '*')}`` has a single argument with a single
-attribute. This attribute contains three attribute arguments.
+the format string ``${align(C, 50, '*')}`` has a single format argument with a
+single attribute. This attribute contains three attribute arguments.
+
+Each format argument is associated with a one-based index that refers to a
+user-supplied argument. This index can be provided explicitly immediately after
+the ``$`` symbol. If the index of the first format argument is not provided,
+then it is set to one. Otherwise, the default index of a format argument is one
+more than the largest index of any preceding format argument. For example, the
+format arguments in the format string ``$ $ $1 $`` have indices one, two, one,
+and three, from left to right.
 
 Attributes
 ----------
