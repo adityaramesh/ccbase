@@ -32,6 +32,24 @@ void write(
 	f(os, std::forward<Args>(args)...);
 }
 
+template <class Char, class Traits = std::char_traits<Char>>
+void write(
+	std::basic_ostream<Char, Traits>& os,
+	boost::basic_string_ref<Char, Traits>& fmt
+) noexcept
+{
+	print_format_substring(fmt, os);
+}
+
+template <class Char, class Traits = std::char_traits<Char>>
+void write(
+	std::basic_ostream<Char, Traits>& os,
+	const std::basic_string<Char, Traits> fmt
+) noexcept
+{
+	print_format_substring(boost::basic_string_ref<Char, Traits>{fmt}, os);
+}
+
 template <class Char, class Traits = std::char_traits<Char>, class Arg>
 void write(std::basic_ostream<Char, Traits>& os, Arg&& arg)
 noexcept
@@ -50,6 +68,26 @@ void writeln(
 	os << std::endl;
 }
 
+template <class Char, class Traits = std::char_traits<Char>>
+void writeln(
+	std::basic_ostream<Char, Traits>& os,
+	boost::basic_string_ref<Char, Traits>& fmt
+) noexcept
+{
+	print_format_substring(fmt, os);
+	os << "\n";
+}
+
+template <class Char, class Traits = std::char_traits<Char>>
+void writeln(
+	std::basic_ostream<Char, Traits>& os,
+	const std::basic_string<Char, Traits> fmt
+) noexcept
+{
+	print_format_substring(boost::basic_string_ref<Char, Traits>{fmt}, os);
+	os << "\n";
+}
+
 template <class Char, class Traits = std::char_traits<Char>, class Arg>
 void writeln(std::basic_ostream<Char, Traits>& os, Arg&& arg)
 noexcept
@@ -61,6 +99,21 @@ template <class... Args>
 void print(const boost::string_ref& fmt, Args&&... args)
 {
 	write(std::cout, fmt, std::forward<Args>(args)...);
+}
+
+void print(const boost::string_ref& fmt) noexcept
+{
+	print_format_substring(fmt, std::cout);
+}
+
+void print(const std::string fmt) noexcept
+{
+	print_format_substring(boost::string_ref{fmt}, std::cout);
+}
+
+void print(const char* fmt) noexcept
+{
+	print_format_substring(boost::string_ref{fmt}, std::cout);
 }
 
 template <class Arg>
@@ -75,6 +128,24 @@ void println(const boost::string_ref& fmt, Args&&... args)
 	writeln(std::cout, fmt, std::forward<Args>(args)...);
 }
 
+void println(const boost::string_ref& fmt) noexcept
+{
+	print_format_substring(fmt, std::cout);
+	std::cout << "\n";
+}
+
+void println(const std::string fmt) noexcept
+{
+	print_format_substring(boost::string_ref{fmt}, std::cout);
+	std::cout << "\n";
+}
+
+void println(const char* fmt) noexcept
+{
+	print_format_substring(boost::string_ref{fmt}, std::cout);
+	std::cout << "\n";
+}
+
 template <class Arg>
 void println(Arg&& arg) noexcept
 {
@@ -87,6 +158,21 @@ void err(const boost::string_ref& fmt, Args&&... args)
 	write(std::cerr, fmt, std::forward<Args>(args)...);
 }
 
+void err(const boost::string_ref& fmt) noexcept
+{
+	print_format_substring(fmt, std::cerr);
+}
+
+void err(const std::string fmt) noexcept
+{
+	print_format_substring(boost::string_ref{fmt}, std::cerr);
+}
+
+void err(const char* fmt) noexcept
+{
+	print_format_substring(boost::string_ref{fmt}, std::cerr);
+}
+
 template <class Arg>
 void err(Arg&& arg) noexcept
 {
@@ -97,6 +183,24 @@ template <class... Args>
 void errln(const boost::string_ref& fmt, Args&&... args)
 {
 	writeln(std::cerr, fmt, std::forward<Args>(args)...);
+}
+
+void errln(const boost::string_ref& fmt) noexcept
+{
+	print_format_substring(fmt, std::cerr);
+	std::cerr << "\n";
+}
+
+void errln(const std::string fmt) noexcept
+{
+	print_format_substring(boost::string_ref{fmt}, std::cerr);
+	std::cerr << "\n";
+}
+
+void errln(const char* fmt) noexcept
+{
+	print_format_substring(boost::string_ref{fmt}, std::cerr);
+	std::cerr << "\n";
 }
 
 template <class Arg>
@@ -249,6 +353,24 @@ write(
 	return f;
 }
 
+template <class Char, class Traits = std::char_traits<Char>>
+void write(
+	std::basic_ostream<Char, Traits>& os,
+	boost::basic_string_ref<Char, Traits>& fmt
+) noexcept
+{
+	print_format_substring(fmt, os);
+}
+
+template <class Char, class Traits = std::char_traits<Char>>
+void write(
+	std::basic_ostream<Char, Traits>& os,
+	const std::basic_string<Char, Traits> fmt
+) noexcept
+{
+	print_format_substring(boost::basic_string_ref<Char, Traits>{fmt}, os);
+}
+
 template <class Char, class Traits = std::char_traits<Char>, class Arg>
 void write(std::basic_ostream<Char, Traits>& os, Arg&& arg)
 noexcept
@@ -269,6 +391,26 @@ writeln(
 	return tmp;
 }
 
+template <class Char, class Traits = std::char_traits<Char>>
+void writeln(
+	std::basic_ostream<Char, Traits>& os,
+	boost::basic_string_ref<Char, Traits>& fmt
+) noexcept
+{
+	print_format_substring(fmt, os);
+	os << "\n";
+}
+
+template <class Char, class Traits = std::char_traits<Char>>
+void writeln(
+	std::basic_ostream<Char, Traits>& os,
+	const std::basic_string<Char, Traits> fmt
+) noexcept
+{
+	print_format_substring(boost::basic_string_ref<Char, Traits>{fmt}, os);
+	os << "\n";
+}
+
 template <class Char, class Traits = std::char_traits<Char>, class Arg>
 void writeln(std::basic_ostream<Char, Traits>& os, Arg&& arg)
 noexcept
@@ -281,6 +423,21 @@ basic_formatter<char, std::char_traits<char>>
 print(const boost::string_ref& fmt, Args&&... args)
 {
 	return write(std::cout, fmt, std::forward<Args>(args)...);
+}
+
+void print(const boost::string_ref& fmt) noexcept
+{
+	print_format_substring(fmt, std::cout);
+}
+
+void print(const std::string fmt) noexcept
+{
+	print_format_substring(boost::string_ref{fmt}, std::cout);
+}
+
+void print(const char* fmt) noexcept
+{
+	print_format_substring(boost::string_ref{fmt}, std::cout);
 }
 
 template <class Arg>
@@ -296,6 +453,24 @@ println(const boost::string_ref& fmt, Args&&... args)
 	return writeln(std::cout, fmt, std::forward<Args>(args)...);
 }
 
+void println(const boost::string_ref& fmt) noexcept
+{
+	print_format_substring(fmt, std::cout);
+	std::cout << "\n";
+}
+
+void println(const std::string fmt) noexcept
+{
+	print_format_substring(boost::string_ref{fmt}, std::cout);
+	std::cout << "\n";
+}
+
+void println(const char* fmt) noexcept
+{
+	print_format_substring(boost::string_ref{fmt}, std::cout);
+	std::cout << "\n";
+}
+
 template <class Arg>
 void println(Arg&& arg) noexcept
 {
@@ -309,6 +484,21 @@ err(const boost::string_ref& fmt, Args&&... args)
 	return write(std::cerr, fmt, std::forward<Args>(args)...);
 }
 
+void err(const boost::string_ref& fmt) noexcept
+{
+	print_format_substring(fmt, std::cerr);
+}
+
+void err(const std::string fmt) noexcept
+{
+	print_format_substring(boost::string_ref{fmt}, std::cerr);
+}
+
+void err(const char* fmt) noexcept
+{
+	print_format_substring(boost::string_ref{fmt}, std::cerr);
+}
+
 template <class Arg>
 void err(Arg&& arg) noexcept
 {
@@ -320,6 +510,24 @@ basic_formatter<char, std::char_traits<char>>
 errln(const boost::string_ref& fmt, Args&&... args)
 {
 	return writeln(std::cerr, fmt, std::forward<Args>(args)...);
+}
+
+void errln(const boost::string_ref& fmt) noexcept
+{
+	print_format_substring(fmt, std::cerr);
+	std::cerr << "\n";
+}
+
+void errln(const std::string fmt) noexcept
+{
+	print_format_substring(boost::string_ref{fmt}, std::cerr);
+	std::cerr << "\n";
+}
+
+void errln(const char* fmt) noexcept
+{
+	print_format_substring(boost::string_ref{fmt}, std::cerr);
+	std::cerr << "\n";
 }
 
 template <class Arg>
