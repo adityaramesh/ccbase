@@ -15,8 +15,8 @@
 #include <boost/mpl/at.hpp>
 #include <boost/mpl/int.hpp>
 #include <boost/mpl/vector.hpp>
-#include <ccbase/format/argument.hpp>
 #include <ccbase/platform/attributes.hpp>
+#include <ccbase/format/attribute_list.hpp>
 
 namespace cc {
 
@@ -119,7 +119,7 @@ struct formatter_helper<
 		Args&&... args
 	)
 	{
-		auto& arg = fmt.argument(ArgumentIndex);
+		auto& arg = fmt.attribute_list(ArgumentIndex);
 		auto restore = (bool)arg.count(attribute_function::adds_manipulators);
 		std::basic_ios<Char, Traits> state{nullptr};
 
@@ -238,11 +238,11 @@ template <class Char, class Traits, uint8_t Args>
 class basic_formatter
 {
 public:
-	using ostream           = std::basic_ostream<Char, Traits>;
-	using string_ref        = boost::basic_string_ref<Char, Traits>;
-	using argument_type     = class argument<Char, Traits>;
-	using buffer_type       = std::basic_ostringstream<Char, Traits>;
-	using index_length_pair = std::tuple<size_t, size_t>;
+	using ostream             = std::basic_ostream<Char, Traits>;
+	using string_ref          = boost::basic_string_ref<Char, Traits>;
+	using attribute_list_type = class attribute_list<Char, Traits>;
+	using buffer_type         = std::basic_ostringstream<Char, Traits>;
+	using index_length_pair   = std::tuple<size_t, size_t>;
 private:
 	string_ref m_fmt_str;
 
@@ -257,7 +257,7 @@ private:
 	**   substrings).
 	*/
 	std::array<index_length_pair, Args + 1> m_substrs;
-	std::array<argument_type, Args> m_args;
+	std::array<attribute_list_type, Args> m_args;
 	mutable buffer_type m_buf{};
 public:
 	explicit basic_formatter(const string_ref& fmt_str) :
@@ -330,7 +330,7 @@ public:
 	const index_length_pair& substring(uint8_t n)
 	const noexcept { return m_substrs[n]; }
 
-	const argument_type& argument(uint8_t n)
+	const attribute_list_type& attribute_list(uint8_t n)
 	const noexcept { return m_args[n]; }
 
 	buffer_type& buffer() const noexcept
@@ -611,7 +611,7 @@ private:
 		if (index > Args) {
 			throw std::runtime_error{"Argument index too large."};
 		}
-		m_args[cur_arg++] = argument_type{index};
+		m_args[cur_arg++] = attribute_list_type{index};
 	}
 
 	void add_attribute(const string_ref name, uint8_t cur_arg)
@@ -662,6 +662,22 @@ void apply(
 )
 {
 	print_format_substring(fmt.format_string(), dst);
+}
+
+/*
+** TODO write this
+*/
+
+template <class Char, class Traits, class... Args>
+void foo(
+	const basic_formatter<Char, Traits, sizeof...(Args)>& fmt,
+	std::basic_ostream<Char, Traits>& dst,
+	Args&&... args
+)
+{
+	//using helper = formatter_helper<false, 0, 0, sizeof...(Args)>;
+	//fmt.buffer().copyfmt(dst);
+	//helper::apply(fmt, dst, std::forward<Args>(args)...);
 }
 
 template <uint8_t Args>

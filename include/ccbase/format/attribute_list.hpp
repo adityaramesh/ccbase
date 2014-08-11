@@ -1,5 +1,5 @@
 /*
-** File Name: argument.hpp
+** File Name: attribute_list.hpp
 ** Author:    Aditya Ramesh
 ** Date:      08/04/2014
 ** Contact:   _@adityaramesh.com
@@ -16,93 +16,7 @@
 namespace cc {
 
 template <class Char, class Traits>
-class argument
-{
-	using attribute_type = attribute<Char, Traits>;
-	using string_ref = boost::basic_string_ref<Char, Traits>;
-	static constexpr auto max_attributes = 5;
-
-	std::array<attribute_type, max_attributes> m_attrs;
-	std::array<uint8_t, num_attribute_functions> m_attr_counts{};
-	uint8_t m_attr_count{};
-	uint8_t m_index{};
-public:
-	explicit argument() noexcept {}
-
-	explicit argument(uint8_t index)
-	noexcept : m_index{index} {}
-
-	argument(const argument& rhs) noexcept :
-	m_attr_count{rhs.m_attr_count},
-	m_index{rhs.m_index}
-	{
-		std::copy(rhs.m_attrs.data(), rhs.m_attrs.data() + m_attr_count,
-			m_attrs.data());
-		boost::copy(rhs.m_attrs, m_attrs.begin());
-	}
-
-	uint8_t index() const noexcept
-	{ return m_index; }
-
-	uint8_t attributes() const noexcept
-	{ return m_attr_count; }
-
-	argument& add_attribute(attribute_description t)
-	{
-		assert(m_attr_count != max_attributes);
-		m_attrs[m_attr_count] = attribute_type{t};
-		update_attribute_counts(m_attrs[m_attr_count].description().function());
-		++m_attr_count;
-		return *this;
-	}
-
-	argument& add_attribute(const string_ref str)
-	{
-		assert(m_attr_count != max_attributes);
-		::new (&m_attrs[m_attr_count]) attribute_type{str};
-		update_attribute_counts(m_attrs[m_attr_count].description().function());
-		++m_attr_count;
-		return *this;
-	}
-
-	uint8_t count(const attribute_function& f)
-	const noexcept
-	{
-		auto n = static_cast<uint8_t>(f);
-		assert(n < num_attribute_functions);
-		return m_attr_counts[n];
-	}
-
-	attribute_type& operator[](uint8_t n)
-	noexcept
-	{
-		assert(n < attributes());
-		return m_attrs[n];
-	}
-
-	const attribute_type& operator[](uint8_t n)
-	const noexcept
-	{
-		assert(n < attributes());
-		return m_attrs[n];
-	}
-private:
-	void update_attribute_counts(const attribute_function& f)
-	{
-		auto n = static_cast<uint8_t>(f);
-
-		if (
-			f == attribute_function::number_to_number ||
-			f == attribute_function::number_to_string
-		)
-		{
-			if (m_attr_counts[n] != 0) {
-				throw std::runtime_error{"Incompatible attributes."};
-			}
-		}
-		++m_attr_counts[n];
-	}
-};
+class attribute_list;
 
 template <
 	class T,
@@ -112,7 +26,7 @@ template <
 	class Function2
 >
 void apply_number_to_number_attribute(
-	const argument<Char, Traits>& arg,
+	const attribute_list<Char, Traits>& arg,
 	const T& t,
 	std::basic_ostream<Char, Traits>& dst,
 	std::basic_ostringstream<Char, Traits>& buf,
@@ -140,7 +54,7 @@ void apply_number_to_number_attribute(
 
 template <class Char, class Traits>
 void apply_manipulator_attributes(
-	const argument<Char, Traits>& arg,
+	const attribute_list<Char, Traits>& arg,
 	std::basic_ostream<Char, Traits>& os
 )
 {
@@ -153,7 +67,7 @@ void apply_manipulator_attributes(
 
 template <class T, class Char, class Traits>
 void apply_string_output_attributes(
-	const argument<Char, Traits>& arg,
+	const attribute_list<Char, Traits>& arg,
 	const T&,
 	std::basic_ostringstream<Char, Traits>& buf,
 	uint8_t priority
@@ -172,7 +86,7 @@ void apply_string_output_attributes(
 
 template <class T, class Char, class Traits>
 void apply_first_string_output_attribute(
-	const argument<Char, Traits>& arg,
+	const attribute_list<Char, Traits>& arg,
 	const T& t,
 	std::basic_ostream<Char, Traits>& os
 )
@@ -192,7 +106,7 @@ void apply_first_string_output_attribute(
 
 template <class T, class Char, class Traits>
 void apply_first_string_output_attribute(
-	const argument<Char, Traits>& arg,
+	const attribute_list<Char, Traits>& arg,
 	const T& t,
 	std::basic_ostream<Char, Traits>& os,
 	uint8_t priority
@@ -214,7 +128,7 @@ struct apply_argument_helper
 {
 	template <class Char, class Traits>
 	static void apply(
-		const argument<Char, Traits>& arg,
+		const attribute_list<Char, Traits>& arg,
 		const T& t,
 		std::basic_ostream<Char, Traits>& dst,
 		std::basic_ostringstream<Char, Traits>& buf
@@ -291,7 +205,7 @@ struct apply_argument_helper<T,
 {
 	template <class Char, class Traits>
 	static void apply(
-		const argument<Char, Traits>& arg,
+		const attribute_list<Char, Traits>& arg,
 		const T& t,
 		std::basic_ostream<Char, Traits>& dst,
 		std::basic_ostringstream<Char, Traits>& buf
@@ -317,7 +231,7 @@ struct apply_argument_helper<T,
 	*/
 	template <class Char, class Traits>
 	static void apply_impl(
-		const argument<Char, Traits>& arg,
+		const attribute_list<Char, Traits>& arg,
 		const T& t,
 		std::basic_ostream<Char, Traits>& dst,
 		std::basic_ostringstream<Char, Traits>& buf
@@ -393,7 +307,7 @@ struct apply_argument_helper<boost::basic_string_ref<Char, Traits>, void>
 
 	template <class Char_, class Traits_>
 	static void apply(
-		const argument<Char_, Traits_>& arg,
+		const attribute_list<Char_, Traits_>& arg,
 		const string_ref& t,
 		std::basic_ostream<Char_, Traits_>& dst,
 		std::basic_ostringstream<Char_, Traits_>& buf
@@ -460,9 +374,98 @@ struct apply_argument_helper<boost::basic_string_ref<Char, Traits>, void>
 	}
 };
 
+template <class Char, class Traits>
+class attribute_list
+{
+	using attribute_type = attribute<Char, Traits>;
+	using string_ref = boost::basic_string_ref<Char, Traits>;
+	static constexpr auto max_attributes = 5;
+
+	std::array<attribute_type, max_attributes> m_attrs;
+	std::array<uint8_t, num_attribute_functions> m_attr_counts{};
+	uint8_t m_attr_count{};
+	uint8_t m_index{};
+public:
+	explicit attribute_list() noexcept {}
+
+	explicit attribute_list(uint8_t index)
+	noexcept : m_index{index} {}
+
+	attribute_list(const attribute_list& rhs) noexcept :
+	m_attr_count{rhs.m_attr_count},
+	m_index{rhs.m_index}
+	{
+		std::copy(rhs.m_attrs.data(), rhs.m_attrs.data() + m_attr_count,
+			m_attrs.data());
+		boost::copy(rhs.m_attrs, m_attrs.begin());
+	}
+
+	uint8_t index() const noexcept
+	{ return m_index; }
+
+	uint8_t attributes() const noexcept
+	{ return m_attr_count; }
+
+	attribute_list& add_attribute(attribute_description t)
+	{
+		assert(m_attr_count != max_attributes);
+		m_attrs[m_attr_count] = attribute_type{t};
+		update_attribute_counts(m_attrs[m_attr_count].description().function());
+		++m_attr_count;
+		return *this;
+	}
+
+	attribute_list& add_attribute(const string_ref str)
+	{
+		assert(m_attr_count != max_attributes);
+		::new (&m_attrs[m_attr_count]) attribute_type{str};
+		update_attribute_counts(m_attrs[m_attr_count].description().function());
+		++m_attr_count;
+		return *this;
+	}
+
+	uint8_t count(const attribute_function& f)
+	const noexcept
+	{
+		auto n = static_cast<uint8_t>(f);
+		assert(n < num_attribute_functions);
+		return m_attr_counts[n];
+	}
+
+	attribute_type& operator[](uint8_t n)
+	noexcept
+	{
+		assert(n < attributes());
+		return m_attrs[n];
+	}
+
+	const attribute_type& operator[](uint8_t n)
+	const noexcept
+	{
+		assert(n < attributes());
+		return m_attrs[n];
+	}
+private:
+	void update_attribute_counts(const attribute_function& f)
+	{
+		auto n = static_cast<uint8_t>(f);
+
+		if (
+			f == attribute_function::number_to_number ||
+			f == attribute_function::number_to_string
+		)
+		{
+			if (m_attr_counts[n] != 0) {
+				throw std::runtime_error{"Incompatible attributes."};
+			}
+		}
+		++m_attr_counts[n];
+	}
+};
+
 template <class Char, class Traits, class T>
 void apply(
-	const argument<Char, Traits>& arg,
+	const attribute_list<Char, Traits>& arg,
 	const T& t,
 	std::basic_ostream<Char, Traits>& dst,
 	std::basic_ostringstream<Char, Traits>& buf
