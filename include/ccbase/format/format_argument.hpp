@@ -1,5 +1,5 @@
 /*
-** File Name: attribute_list.hpp
+** File Name: format_argument.hpp
 ** Author:    Aditya Ramesh
 ** Date:      08/04/2014
 ** Contact:   _@adityaramesh.com
@@ -16,7 +16,7 @@
 namespace cc {
 
 template <class Char, class Traits>
-class attribute_list;
+class basic_format_argument;
 
 template <
 	class T,
@@ -26,7 +26,7 @@ template <
 	class Function2
 >
 void apply_number_to_number_attribute(
-	const attribute_list<Char, Traits>& arg,
+	const basic_format_argument<Char, Traits>& arg,
 	const T& t,
 	std::basic_ostream<Char, Traits>& dst,
 	std::basic_ostringstream<Char, Traits>& buf,
@@ -54,7 +54,7 @@ void apply_number_to_number_attribute(
 
 template <class Char, class Traits>
 void apply_manipulator_attributes(
-	const attribute_list<Char, Traits>& arg,
+	const basic_format_argument<Char, Traits>& arg,
 	std::basic_ostream<Char, Traits>& os
 )
 {
@@ -67,7 +67,7 @@ void apply_manipulator_attributes(
 
 template <class T, class Char, class Traits>
 void apply_string_output_attributes(
-	const attribute_list<Char, Traits>& arg,
+	const basic_format_argument<Char, Traits>& arg,
 	const T&,
 	std::basic_ostringstream<Char, Traits>& buf,
 	uint8_t priority
@@ -86,7 +86,7 @@ void apply_string_output_attributes(
 
 template <class T, class Char, class Traits>
 void apply_first_string_output_attribute(
-	const attribute_list<Char, Traits>& arg,
+	const basic_format_argument<Char, Traits>& arg,
 	const T& t,
 	std::basic_ostream<Char, Traits>& os
 )
@@ -106,7 +106,7 @@ void apply_first_string_output_attribute(
 
 template <class T, class Char, class Traits>
 void apply_first_string_output_attribute(
-	const attribute_list<Char, Traits>& arg,
+	const basic_format_argument<Char, Traits>& arg,
 	const T& t,
 	std::basic_ostream<Char, Traits>& os,
 	uint8_t priority
@@ -128,7 +128,7 @@ struct apply_argument_helper
 {
 	template <class Char, class Traits>
 	static void apply(
-		const attribute_list<Char, Traits>& arg,
+		const basic_format_argument<Char, Traits>& arg,
 		const T& t,
 		std::basic_ostream<Char, Traits>& dst,
 		std::basic_ostringstream<Char, Traits>& buf
@@ -205,7 +205,7 @@ struct apply_argument_helper<T,
 {
 	template <class Char, class Traits>
 	static void apply(
-		const attribute_list<Char, Traits>& arg,
+		const basic_format_argument<Char, Traits>& arg,
 		const T& t,
 		std::basic_ostream<Char, Traits>& dst,
 		std::basic_ostringstream<Char, Traits>& buf
@@ -231,7 +231,7 @@ struct apply_argument_helper<T,
 	*/
 	template <class Char, class Traits>
 	static void apply_impl(
-		const attribute_list<Char, Traits>& arg,
+		const basic_format_argument<Char, Traits>& arg,
 		const T& t,
 		std::basic_ostream<Char, Traits>& dst,
 		std::basic_ostringstream<Char, Traits>& buf
@@ -307,7 +307,7 @@ struct apply_argument_helper<boost::basic_string_ref<Char, Traits>, void>
 
 	template <class Char_, class Traits_>
 	static void apply(
-		const attribute_list<Char_, Traits_>& arg,
+		const basic_format_argument<Char_, Traits_>& arg,
 		const string_ref& t,
 		std::basic_ostream<Char_, Traits_>& dst,
 		std::basic_ostringstream<Char_, Traits_>& buf
@@ -375,23 +375,23 @@ struct apply_argument_helper<boost::basic_string_ref<Char, Traits>, void>
 };
 
 template <class Char, class Traits>
-class attribute_list
+class basic_format_argument
 {
-	using attribute_type = attribute<Char, Traits>;
+	using attribute = basic_attribute<Char, Traits>;
 	using string_ref = boost::basic_string_ref<Char, Traits>;
 	static constexpr auto max_attributes = 5;
 
-	std::array<attribute_type, max_attributes> m_attrs;
+	std::array<attribute, max_attributes> m_attrs;
 	std::array<uint8_t, num_attribute_functions> m_attr_counts{};
 	uint8_t m_attr_count{};
 	uint8_t m_index{};
 public:
-	explicit attribute_list() noexcept {}
+	explicit basic_format_argument() noexcept {}
 
-	explicit attribute_list(uint8_t index)
+	explicit basic_format_argument(uint8_t index)
 	noexcept : m_index{index} {}
 
-	attribute_list(const attribute_list& rhs) noexcept :
+	basic_format_argument(const basic_format_argument& rhs) noexcept :
 	m_attr_count{rhs.m_attr_count},
 	m_index{rhs.m_index}
 	{
@@ -406,19 +406,19 @@ public:
 	uint8_t attributes() const noexcept
 	{ return m_attr_count; }
 
-	attribute_list& add_attribute(attribute_description t)
+	basic_format_argument& add_attribute(attribute_description t)
 	{
 		assert(m_attr_count != max_attributes);
-		m_attrs[m_attr_count] = attribute_type{t};
+		m_attrs[m_attr_count] = attribute{t};
 		update_attribute_counts(m_attrs[m_attr_count].description().function());
 		++m_attr_count;
 		return *this;
 	}
 
-	attribute_list& add_attribute(const string_ref str)
+	basic_format_argument& add_attribute(const string_ref str)
 	{
 		assert(m_attr_count != max_attributes);
-		::new (&m_attrs[m_attr_count]) attribute_type{str};
+		::new (&m_attrs[m_attr_count]) attribute{str};
 		update_attribute_counts(m_attrs[m_attr_count].description().function());
 		++m_attr_count;
 		return *this;
@@ -432,14 +432,14 @@ public:
 		return m_attr_counts[n];
 	}
 
-	attribute_type& operator[](uint8_t n)
+	attribute& operator[](uint8_t n)
 	noexcept
 	{
 		assert(n < attributes());
 		return m_attrs[n];
 	}
 
-	const attribute_type& operator[](uint8_t n)
+	const attribute& operator[](uint8_t n)
 	const noexcept
 	{
 		assert(n < attributes());
@@ -465,7 +465,7 @@ private:
 
 template <class Char, class Traits, class T>
 void apply(
-	const attribute_list<Char, Traits>& arg,
+	const basic_format_argument<Char, Traits>& arg,
 	const T& t,
 	std::basic_ostream<Char, Traits>& dst,
 	std::basic_ostringstream<Char, Traits>& buf

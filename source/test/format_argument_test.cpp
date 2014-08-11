@@ -1,37 +1,39 @@
 /*
-** File Name: argument_test.cpp
+** File Name: format_argument_test.cpp
 ** Author:    Aditya Ramesh
 ** Date:      08/06/2014
 ** Contact:   _@adityaramesh.com
 */
 
-#include <ccbase/format/attribute_list.hpp>
+#include <ccbase/format/format_argument.hpp>
 #include <ccbase/unit_test.hpp>
+
+using format_argument = cc::basic_format_argument<char, std::char_traits<char>>;
 
 module("test general formatting")
 {
 	std::ostringstream dst{};
 	std::ostringstream buf{};
 
-	auto arg1 = cc::attribute_list<char, std::char_traits<char>>{0};
+	auto arg1 = format_argument{0};
 	arg1.add_attribute("align");
 	arg1[0].add_argument("L");
 	arg1[0].add_argument("20");
 	arg1[0].add_argument("'>'");
 
-	auto arg2 = cc::attribute_list<char, std::char_traits<char>>{0};
+	auto arg2 = format_argument{0};
 	arg2.add_attribute("align");
 	arg2[0].add_argument("R");
 	arg2[0].add_argument("20");
 	arg2[0].add_argument("'>'");
 
-	auto arg3 = cc::attribute_list<char, std::char_traits<char>>{0};
+	auto arg3 = format_argument{0};
 	arg3.add_attribute("align");
 	arg3[0].add_argument("C");
 	arg3[0].add_argument("20");
 	arg3[0].add_argument("'>'");
 
-	auto arg4 = cc::attribute_list<char, std::char_traits<char>>{0};
+	auto arg4 = format_argument{0};
 	arg4.add_attribute("quote");
 
 	cc::apply(arg1, "test", dst, buf);
@@ -56,20 +58,20 @@ module("test number formatting")
 	std::ostringstream dst{};
 	std::ostringstream buf{};
 
-	auto arg1 = cc::attribute_list<char, std::char_traits<char>>{0};
+	auto arg1 = format_argument{0};
 	arg1.add_attribute("sign");
 	arg1[0].add_argument("always");
 
-	auto arg2 = cc::attribute_list<char, std::char_traits<char>>{0};
+	auto arg2 = format_argument{0};
 	arg2.add_attribute("sign");
 	arg2[0].add_argument("space");
 
-	auto arg3 = cc::attribute_list<char, std::char_traits<char>>{0};
+	auto arg3 = format_argument{0};
 	arg3.add_attribute("money");
 	arg3.add_attribute("loc");
 	arg3[1].add_argument("en_US");
 
-	auto arg4 = cc::attribute_list<char, std::char_traits<char>>{0};
+	auto arg4 = format_argument{0};
 	arg4.add_attribute("money");
 	arg4[0].add_argument("intl");
 	arg4.add_attribute("loc");
@@ -111,26 +113,26 @@ module("test integer formatting")
 	std::ostringstream dst{};
 	std::ostringstream buf{};
 
-	auto arg1 = cc::attribute_list<char, std::char_traits<char>>{0};
+	auto arg1 = format_argument{0};
 	arg1.add_attribute("bin");
 
-	auto arg2 = cc::attribute_list<char, std::char_traits<char>>{0};
+	auto arg2 = format_argument{0};
 	arg2.add_attribute("bool");
 
-	auto arg3 = cc::attribute_list<char, std::char_traits<char>>{0};
+	auto arg3 = format_argument{0};
 	arg3.add_attribute("char");
 
-	auto arg4 = cc::attribute_list<char, std::char_traits<char>>{0};
+	auto arg4 = format_argument{0};
 	arg4.add_attribute("num");
 
-	auto arg5 = cc::attribute_list<char, std::char_traits<char>>{0};
+	auto arg5 = format_argument{0};
 	arg5.add_attribute("bin");
 	arg5.add_attribute("base");
 
-	auto arg6 = cc::attribute_list<char, std::char_traits<char>>{0};
+	auto arg6 = format_argument{0};
 	arg6.add_attribute("data");
 
-	auto arg7 = cc::attribute_list<char, std::char_traits<char>>{0};
+	auto arg7 = format_argument{0};
 	arg7.add_attribute("data");
 	arg7[0].add_argument("dec");
 
@@ -182,7 +184,7 @@ module("test float formatting")
 	std::ostringstream dst{};
 	std::ostringstream buf{};
 
-	auto arg1 = cc::attribute_list<char, std::char_traits<char>>{0};
+	auto arg1 = format_argument{0};
 	arg1.add_attribute("%");
 
 	cc::apply(arg1, 0.5, dst, buf);
@@ -195,10 +197,10 @@ module("test string formatting")
 	std::ostringstream dst{};
 	std::ostringstream buf{};
 
-	auto arg1 = cc::attribute_list<char, std::char_traits<char>>{0};
+	auto arg1 = format_argument{0};
 	arg1.add_attribute("upper");
 
-	auto arg2 = cc::attribute_list<char, std::char_traits<char>>{0};
+	auto arg2 = format_argument{0};
 	arg2.add_attribute("lower");
 
 	cc::apply(arg1, "aAaA", dst, buf);

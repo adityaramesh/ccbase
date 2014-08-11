@@ -41,7 +41,7 @@ lib_cxxopts  = "#{langflags} #{wflags} #{archflags} #{incflags} #{lib_optflags}"
 lib_cxxflags = "#{lib_cxxopts} #{lib_ppflags} #{lib_confflags}"
 
 dirs  = ["out/test", "out/libraries", "out/reference"]
-tests = FileList["source/test/*"].map{|f| f.sub("source", "out").ext("run")}
+tests = ["out/test/formatter_test.run"]#FileList["source/test/*"].map{|f| f.sub("source", "out").ext("run")}
 libs  = FileList["source/libraries/*"].map{|f| f.sub("source", "out").ext("lib")}
 
 if RUBY_PLATFORM.include? "linux"

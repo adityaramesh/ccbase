@@ -271,7 +271,7 @@ Char parse_argument(
 }
 
 template <class Char, class Traits>
-class attribute
+class basic_attribute
 {
 public:
 	using string_ref = boost::basic_string_ref<Char, Traits>;
@@ -284,15 +284,15 @@ private:
 		string_ref m_locale_name;
 	};
 public:
-	explicit attribute() noexcept {}
+	explicit basic_attribute() noexcept {}
 
-	explicit attribute(attribute_description t) noexcept
+	explicit basic_attribute(attribute_description t) noexcept
 	: m_type{t} {}
 
-	explicit attribute(const boost::string_ref name)
+	explicit basic_attribute(const boost::string_ref name)
 	: m_type{attribute_description::from_name(name)} {}
 
-	attribute(const attribute& rhs) noexcept
+	basic_attribute(const basic_attribute& rhs) noexcept
 	: m_type{rhs.m_type}, m_arg_count{rhs.m_arg_count}
 	{
 		if (m_type.id() == attribute_id::locale) {
@@ -304,7 +304,7 @@ public:
 		}
 	}
 
-	attribute(attribute&& rhs) noexcept
+	basic_attribute(basic_attribute&& rhs) noexcept
 	: m_type{std::move(rhs.m_type)},
 	m_arg_count{std::move(rhs.m_arg_count)}
 	{
@@ -317,14 +317,14 @@ public:
 		}
 	}
 
-	~attribute() noexcept
+	~basic_attribute() noexcept
 	{
 		if (m_type.id() == attribute_id::locale) {
 			m_locale_name.~string_ref();
 		}
 	}
 
-	attribute& operator=(const attribute& rhs)
+	basic_attribute& operator=(const basic_attribute& rhs)
 	noexcept
 	{
 		m_type = rhs.m_type;
@@ -339,7 +339,7 @@ public:
 		return *this;
 	}
 
-	attribute& operator=(attribute&& rhs)
+	basic_attribute& operator=(basic_attribute&& rhs)
 	noexcept
 	{
 		m_type = std::move(rhs.m_type);
@@ -360,14 +360,14 @@ public:
 	uint8_t arguments()
 	const noexcept { return m_arg_count; }
 
-	attribute& type(attribute_description t)
+	basic_attribute& type(attribute_description t)
 	noexcept
 	{
 		m_type = t;
 		return *this;
 	}
 
-	attribute& add_argument(const boost::string_ref arg)
+	basic_attribute& add_argument(const boost::string_ref arg)
 	noexcept
 	{
 		assert(m_arg_count != max_arg_count);
@@ -399,7 +399,7 @@ public:
 
 template <class Char, class Traits>
 void apply_manipulator_attribute(
-	const attribute<Char, Traits>& attr,
+	const basic_attribute<Char, Traits>& attr,
 	std::basic_ostream<Char, Traits>& dst
 )
 {
@@ -436,6 +436,7 @@ void apply_manipulator_attribute(
 		dst << std::scientific;
 		break;
 	default:
+		std::cout << "A" << std::endl;
 		throw std::runtime_error{"Invalid attribute type."};
 	}
 }
@@ -445,14 +446,17 @@ typename std::enable_if<
 	std::is_arithmetic<T>::value, int
 >::type = 0>
 void apply_string_output_attribute(
-	const attribute<Char, Traits>& attr,
+	const basic_attribute<Char, Traits>& attr,
 	const T& t,
 	std::basic_ostream<Char, Traits>& dst
 )
 {
 	auto id = attr.description().id();
 
-	if (id == attribute_id::bool_) {
+	if (id == attribute_id::quote) {
+		dst << "\"" << t << "\"";
+	}
+	else if (id == attribute_id::bool_) {
 		auto flags = dst.flags();
 		dst << std::boolalpha << (bool)t;
 		dst.setf(flags);
@@ -566,6 +570,7 @@ void apply_string_output_attribute(
 		dst.flags(flags);
 	}
 	else {
+		std::cout << "B" << std::endl;
 		throw std::runtime_error{"Invalid attribute type."};
 	}
 }
@@ -575,7 +580,7 @@ typename std::enable_if<
 	!std::is_arithmetic<T>::value, int
 >::type = 0>
 void apply_string_output_attribute(
-	const attribute<Char, Traits>& attr,
+	const basic_attribute<Char, Traits>& attr,
 	const T& t,
 	std::basic_ostream<Char, Traits>& dst
 )
@@ -586,13 +591,14 @@ void apply_string_output_attribute(
 		dst << "\"" << t << "\"";
 	}
 	else {
+		std::cout << "C" << std::endl;
 		throw std::runtime_error{"Invalid attribute type."};
 	}
 }
 
 template <class Char1, class Traits1, class Char2, class Traits2>
 void apply_string_output_attribute(
-	const attribute<Char2, Traits2>& attr,
+	const basic_attribute<Char2, Traits2>& attr,
 	const boost::basic_string_ref<Char1, Traits1>& str,
 	std::basic_ostream<Char2, Traits2>& dst
 )
@@ -685,6 +691,7 @@ void apply_string_output_attribute(
 		dst.flags(flags);
 	}
 	else {
+		std::cout << "D" << std::endl;
 		throw std::runtime_error{"Invalid attribute type."};
 	}
 }

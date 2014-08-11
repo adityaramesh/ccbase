@@ -37,9 +37,20 @@ The entirety of the public API resides in the `cc` namespace.
 
 ## TODO
 
+- Add argument to `match_files` and `list_files` that filters all but a set of
+file types. To do this, make `file_type` a bitmask enum.
 - Use `CC_ASSERT` instead of assert.
 - Add support for standard library detection (e.g. libc++ vs libstdc++) to the
 platform module.
 - Document the utility module after sufficient usage.
 - `match_files` with recursive directory enumeration.
 - Tuple arithmetic.
+
+## Attribute TODO
+
+- Add support for positional argument in format module using shim interfaces.
+- Set a hard limit on the maximum number args, since the number of `$` is no
+longer equal to the number of args with positional arguments. Also remove
+related assertions.
+- Add tests for positional arguments in `formatter_test`.
+- Add documentation for positional arguments.

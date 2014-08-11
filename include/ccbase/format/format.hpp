@@ -28,7 +28,7 @@ void write(
 	Args&&... args
 )
 {
-	basic_formatter<Char, Traits, sizeof...(Args)> f{fmt};
+	basic_formatter<Char, Traits> f{fmt};
 	apply(f, os, std::forward<Args>(args)...);
 }
 
@@ -143,7 +143,7 @@ void write(
 	Args&&... args
 )
 {
-	basic_formatter<Char, Traits, sizeof...(Args)> f{fmt};
+	basic_formatter<Char, Traits> f{fmt};
 	apply(f, os, std::forward<Args>(args)...);
 }
 
@@ -196,7 +196,7 @@ void write(
 	Args&&... args
 )
 {
-	basic_formatter<Char, Traits, sizeof...(Args)> f{fmt};
+	basic_formatter<Char, Traits> f{fmt};
 	apply(f, os, std::forward<Args>(args)...);
 }
 
@@ -237,14 +237,14 @@ std::basic_string<Char, Traits>
 #else
 
 template <class Char, class Traits = std::char_traits<Char>, class... Args>
-basic_formatter<Char, Traits, sizeof...(Args)>
+basic_formatter<Char, Traits>
 write(
 	std::basic_ostream<Char, Traits>& os,
 	const boost::basic_string_ref<Char, Traits>& fmt,
 	Args&&... args
 )
 {
-	auto f = basic_formatter<Char, Traits, sizeof...(Args)>{fmt};
+	auto f = basic_formatter<Char, Traits>{fmt};
 	apply(f, os, std::forward<Args>(args)...);
 	return f;
 }
@@ -257,7 +257,7 @@ noexcept
 }
 
 template <class Char, class Traits = std::char_traits<Char>, class... Args>
-basic_formatter<Char, Traits, sizeof...(Args)>
+basic_formatter<Char, Traits>
 writeln(
 	std::basic_ostream<Char, Traits>& os,
 	const boost::basic_string_ref<Char, Traits>& fmt,
@@ -277,7 +277,7 @@ noexcept
 }
 
 template <class... Args>
-basic_formatter<char, std::char_traits<char>, sizeof...(Args)>
+basic_formatter<char, std::char_traits<char>>
 print(const boost::string_ref& fmt, Args&&... args)
 {
 	return write(std::cout, fmt, std::forward<Args>(args)...);
@@ -290,7 +290,7 @@ void print(Arg&& arg) noexcept
 }
 
 template <class... Args>
-basic_formatter<char, std::char_traits<char>, sizeof...(Args)>
+basic_formatter<char, std::char_traits<char>>
 println(const boost::string_ref& fmt, Args&&... args)
 {
 	return writeln(std::cout, fmt, std::forward<Args>(args)...);
@@ -303,7 +303,7 @@ void println(Arg&& arg) noexcept
 }
 
 template <class... Args>
-basic_formatter<char, std::char_traits<char>, sizeof...(Args)>
+basic_formatter<char, std::char_traits<char>>
 err(const boost::string_ref& fmt, Args&&... args)
 {
 	return write(std::cerr, fmt, std::forward<Args>(args)...);
@@ -316,7 +316,7 @@ void err(Arg&& arg) noexcept
 }
 
 template <class... Args>
-basic_formatter<char, std::char_traits<char>, sizeof...(Args)>
+basic_formatter<char, std::char_traits<char>>
 errln(const boost::string_ref& fmt, Args&&... args)
 {
 	return writeln(std::cerr, fmt, std::forward<Args>(args)...);
@@ -360,20 +360,20 @@ auto formatln(
 */
 
 template <class Char, class Traits = std::char_traits<Char>, class... Args>
-basic_formatter<Char, Traits, sizeof...(Args)>
+basic_formatter<Char, Traits>
 write(
 	std::basic_ostream<Char, Traits>& os,
 	const std::basic_string<Char, Traits>& fmt,
 	Args&&... args
 )
 {
-	auto f = basic_formatter<Char, Traits, sizeof...(Args)>{fmt};
+	auto f = basic_formatter<Char, Traits>{fmt};
 	apply(f, os, std::forward<Args>(args)...);
 	return f;
 }
 
 template <class Char, class Traits = std::char_traits<Char>, class... Args>
-basic_formatter<Char, Traits, sizeof...(Args)>
+basic_formatter<Char, Traits>
 writeln(
 	std::basic_ostream<Char, Traits>& os,
 	const std::basic_string<Char, Traits>& fmt,
@@ -417,20 +417,20 @@ auto formatln(
 */
 
 template <class Char, class Traits, class... Args>
-basic_formatter<Char, Traits, sizeof...(Args)>
+basic_formatter<Char, Traits>
 write(
 	std::basic_ostream<Char, Traits>& os,
 	const Char* fmt,
 	Args&&... args
 )
 {
-	auto f = basic_formatter<Char, Traits, sizeof...(Args)>{fmt};
+	auto f = basic_formatter<Char, Traits>{fmt};
 	apply(f, os, std::forward<Args>(args)...);
 	return f;
 }
 
 template <class Char, class Traits, class... Args>
-basic_formatter<Char, Traits, sizeof...(Args)>
+basic_formatter<Char, Traits>
 writeln(
 	std::basic_ostream<Char, Traits>& os,
 	const Char* fmt,
