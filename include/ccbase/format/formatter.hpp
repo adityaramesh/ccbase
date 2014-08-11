@@ -19,6 +19,89 @@
 namespace cc {
 
 template <class Char, class Traits>
+class basic_formatter;
+
+template <class Char, class Traits>
+void print_format_substring(
+	const boost::basic_string_ref<Char, Traits>& substr,
+	std::basic_ostream<Char, Traits>& os
+)
+{
+	auto cur_index = size_t{};
+
+	do {
+		// Do we need to escape a '$' or '{'?
+		if (cur_index != substr.length() - 1 && substr[cur_index] == '$') {
+			if (substr[cur_index + 1] == '$') {
+				os << '$';
+				cur_index += 2;
+			}
+			else if (substr[cur_index + 1] == '{') {
+				os << "${";
+				cur_index += 3;
+			}
+		}
+		else {
+			os << substr[cur_index];
+			++cur_index;
+		}
+	}
+	while (cur_index != substr.length());
+}
+
+template <class Char, class Traits, class... Args>
+void apply_impl(
+	const basic_formatter<Char, Traits>& fmt,
+	std::basic_ostream<Char, Traits>& dst,
+	Args&&... args
+)
+{
+	if (fmt.arguments() == 0) {
+		print_format_substring(fmt.format_string(), dst);
+		return;
+	}
+
+	auto arr = std::array<const argument_base*, sizeof...(Args)>{{&args...}};
+	fmt.buffer().copyfmt(dst);
+
+	for (auto i = 0; i != 2 * fmt.format_arguments() + 1; ++i) {
+		if (i % 2 == 0) {
+			auto& pair = fmt.substring(i / 2);
+			auto idx   = std::get<0>(pair);
+			auto len   = std::get<1>(pair);
+			if (len == 0) { continue; }
+
+			auto& fmt_str = fmt.format_string();
+			auto substr   = fmt_str.substr(idx, len);
+			print_format_substring(substr, dst);
+		}
+		else {
+			auto& arg = fmt.format_argument((i - 1) / 2);
+			auto restore = (bool)arg.count(attribute_function::adds_manipulators);
+			std::basic_ios<Char, Traits> state{nullptr};
+
+			if (restore) { state.copyfmt(dst); }
+			arr[arg.index()]->apply((i - 1) / 2);
+			if (restore) { dst.copyfmt(state); }
+		}
+	}
+}
+
+template <class Char, class Traits, class... Args>
+void apply(
+	const basic_formatter<Char, Traits>& fmt,
+	std::basic_ostream<Char, Traits>& dst,
+	Args&&... args
+)
+{
+	apply_impl(fmt, dst, 
+		(const argument_base&)make_argument_wrapper(
+			args, dst, fmt.buffer(), fmt.format_argument_pointer()
+		)...
+	);
+}
+
+template <class Char, class Traits>
 class basic_formatter
 {
 public:
@@ -135,6 +218,12 @@ public:
 
 	buffer_type& buffer() const noexcept
 	{ return m_buf; }
+
+	template <class... Args>
+	void operator()(std::basic_ostream<Char, Traits>& dst, Args&&... args)
+	{
+		apply(*this, dst, std::forward<Args>(args)...);
+	}
 private:
 	void parse_argument(
 		size_t& cur_index,
@@ -425,86 +514,6 @@ private:
 		list[list.attributes() - 1].add_argument(name);
 	}
 };
-
-template <class Char, class Traits>
-void print_format_substring(
-	const boost::basic_string_ref<Char, Traits>& substr,
-	std::basic_ostream<Char, Traits>& os
-)
-{
-	auto cur_index = size_t{};
-
-	do {
-		// Do we need to escape a '$' or '{'?
-		if (cur_index != substr.length() - 1 && substr[cur_index] == '$') {
-			if (substr[cur_index + 1] == '$') {
-				os << '$';
-				cur_index += 2;
-			}
-			else if (substr[cur_index + 1] == '{') {
-				os << "${";
-				cur_index += 3;
-			}
-		}
-		else {
-			os << substr[cur_index];
-			++cur_index;
-		}
-	}
-	while (cur_index != substr.length());
-}
-
-template <class Char, class Traits, class... Args>
-void apply_impl(
-	const basic_formatter<Char, Traits>& fmt,
-	std::basic_ostream<Char, Traits>& dst,
-	Args&&... args
-)
-{
-	if (fmt.arguments() == 0) {
-		print_format_substring(fmt.format_string(), dst);
-		return;
-	}
-
-	auto arr = std::array<const argument_base*, sizeof...(Args)>{{&args...}};
-	fmt.buffer().copyfmt(dst);
-
-	for (auto i = 0; i != 2 * fmt.format_arguments() + 1; ++i) {
-		if (i % 2 == 0) {
-			auto& pair = fmt.substring(i / 2);
-			auto idx   = std::get<0>(pair);
-			auto len   = std::get<1>(pair);
-			if (len == 0) { continue; }
-
-			auto& fmt_str = fmt.format_string();
-			auto substr   = fmt_str.substr(idx, len);
-			print_format_substring(substr, dst);
-		}
-		else {
-			auto& arg = fmt.format_argument((i - 1) / 2);
-			auto restore = (bool)arg.count(attribute_function::adds_manipulators);
-			std::basic_ios<Char, Traits> state{nullptr};
-
-			if (restore) { state.copyfmt(dst); }
-			arr[arg.index()]->apply((i - 1) / 2);
-			if (restore) { dst.copyfmt(state); }
-		}
-	}
-}
-
-template <class Char, class Traits, class... Args>
-void apply(
-	const basic_formatter<Char, Traits>& fmt,
-	std::basic_ostream<Char, Traits>& dst,
-	Args&&... args
-)
-{
-	apply_impl(fmt, dst, 
-		(const argument_base&)make_argument_wrapper(
-			args, dst, fmt.buffer(), fmt.format_argument_pointer()
-		)...
-	);
-}
 
 using formatter = basic_formatter<char, std::char_traits<char>>;
 

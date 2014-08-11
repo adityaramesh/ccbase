@@ -17,7 +17,7 @@
    :class:`cc::formatter\<Args>`
 
 .. |basic_formatter| replace::
-   :class:`cc::basic_formatter\<Char, Traits, Args>`
+   :class:`cc::basic_formatter\<Char, Traits>`
 
 .. |runtime_error| replace::
    :class:`std::runtime_error`
@@ -46,7 +46,7 @@ Examples
         cc::println("Employee name: $.", "Gibble McGobblefart");
         // Prints "Employee name: Gibble McGobblefart." to stdout.
 
-        cc::println("$ $! $1{upper} $2{upper}", "Ding", "dong");
+        cc::println("$ $! $1{upper} $2{upper}!", "Ding", "dong");
         // Prints "Ding dong! DING DONG!" to stdout.
 
         cc::println("File name: ${quote}, size: ${data}, version: $.",
@@ -252,15 +252,14 @@ function repeatedly. Here is an example that shows how this is done: ::
 
         auto fmt = cc::writeln(log, "Ten-fold CV error: ${%, prec(2)}.", 0.12345);
         // Writes "Ten-fold CV error: 12.35%." to the log stream.
-        cc::apply(fmt, log, 0.10111);
+        fmt(log, 0.10111);
         // Writes "Ten-fold CV error: 10.11%." to the log stream.
 
 The |formatter| object can also be created independently of the formatting
 functions, as shown in the following example. ::
 
-        auto fmt = cc::formatter<1>{"Ten-fold CV error: ${%, prec(2)}."};
-        // The template parameter specifies the number of arguments.
-        cc::apply(fmt, log, 0.12345);
+        auto fmt = cc::formatter{"Ten-fold CV error: ${%, prec(2)}."};
+        fmt(log, 0.12345);
         // Writes "Ten-fold CV error: 12.35%." to the log stream.
 
 Reference
@@ -274,7 +273,7 @@ when compiled with GCC.
 
 .. namespace:: cc
 
-.. class:: basic_formatter<Char, Traits, Args>
+.. class:: basic_formatter<Char, Traits>
 
    This class is associated with the following aliases:
 
@@ -289,11 +288,12 @@ when compiled with GCC.
 
       :throws: |runtime_error| if an error occurs while parsing *fmt_str*.
 
-.. function:: void apply(const basic_formatter& fmt, std::basic_ostream& dst, Args&& args)
+   .. function:: void operator()(std::basic_ostream& dst, Args&& args)
 
-   Applies *fmt* to the parameter pack *args*, and writes the result to *dst*.
+      Applies the |basic_formatter| object to the parameter pack *args*, and
+      writes the result to *dst*.
 
-   :throws: |runtime_error| if an error occurs while applying *fmt* to *args*.
+      :throws: |runtime_error| if an error occurs while applying *fmt* to *args*.
 
 .. function:: basic_formatter write(std::basic_ostream& os, const boost::basic_string_ref& fmt, Args&& args)
               basic_formatter print(const boost::basic_string_ref& fmt, Args&& args)

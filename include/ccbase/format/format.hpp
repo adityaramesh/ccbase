@@ -29,7 +29,7 @@ void write(
 )
 {
 	basic_formatter<Char, Traits> f{fmt};
-	apply(f, os, std::forward<Args>(args)...);
+	f(os, std::forward<Args>(args)...);
 }
 
 template <class Char, class Traits = std::char_traits<Char>, class Arg>
@@ -144,7 +144,7 @@ void write(
 )
 {
 	basic_formatter<Char, Traits> f{fmt};
-	apply(f, os, std::forward<Args>(args)...);
+	f(os, std::forward<Args>(args)...);
 }
 
 template <class Char, class Traits = std::char_traits<Char>, class... Args>
@@ -197,7 +197,7 @@ void write(
 )
 {
 	basic_formatter<Char, Traits> f{fmt};
-	apply(f, os, std::forward<Args>(args)...);
+	f(os, std::forward<Args>(args)...);
 }
 
 template <class Char, class Traits, class... Args>
@@ -245,7 +245,7 @@ write(
 )
 {
 	auto f = basic_formatter<Char, Traits>{fmt};
-	apply(f, os, std::forward<Args>(args)...);
+	f(os, std::forward<Args>(args)...);
 	return f;
 }
 
@@ -368,7 +368,7 @@ write(
 )
 {
 	auto f = basic_formatter<Char, Traits>{fmt};
-	apply(f, os, std::forward<Args>(args)...);
+	f(os, std::forward<Args>(args)...);
 	return f;
 }
 
@@ -425,7 +425,7 @@ write(
 )
 {
 	auto f = basic_formatter<Char, Traits>{fmt};
-	apply(f, os, std::forward<Args>(args)...);
+	f(os, std::forward<Args>(args)...);
 	return f;
 }
 

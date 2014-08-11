@@ -66,16 +66,16 @@ module("test number formatting")
 	arg2.add_attribute("sign");
 	arg2[0].add_argument("space");
 
-	auto arg3 = format_argument{0};
-	arg3.add_attribute("money");
-	arg3.add_attribute("loc");
-	arg3[1].add_argument("en_US");
+	//auto arg3 = format_argument{0};
+	//arg3.add_attribute("money");
+	//arg3.add_attribute("loc");
+	//arg3[1].add_argument("en_US");
 
-	auto arg4 = format_argument{0};
-	arg4.add_attribute("money");
-	arg4[0].add_argument("intl");
-	arg4.add_attribute("loc");
-	arg4[1].add_argument("en_US");
+	//auto arg4 = format_argument{0};
+	//arg4.add_attribute("money");
+	//arg4[0].add_argument("intl");
+	//arg4.add_attribute("loc");
+	//arg4[1].add_argument("en_US");
 
 	cc::apply(arg1, 1, dst, buf);
 	require(dst.str() == "+1");
@@ -93,13 +93,13 @@ module("test number formatting")
 	require(dst.str() == "-1");
 	dst.str("");
 
-	cc::apply(arg3, 100, dst, buf);
-	require(dst.str() == "$1.00");
-	dst.str("");
+	//cc::apply(arg3, 100, dst, buf);
+	//require(dst.str() == "$1.00");
+	//dst.str("");
 
-	cc::apply(arg4, 100, dst, buf);
-	require(dst.str() == "USD 1.00");
-	dst.str("");
+	//cc::apply(arg4, 100, dst, buf);
+	//require(dst.str() == "USD 1.00");
+	//dst.str("");
 }
 
 module("test integer formatting")
