@@ -35,7 +35,7 @@ public:
 		ostream& dst,
 		ostringstream& buf,
 		const format_argument* list
-	) noexcept : m_list{list}, m_dst{dst}, m_buf{buf}, m_arg{arg} {}
+	) noexcept : m_list{list}, m_dst(dst), m_buf(buf), m_arg(arg) {}
 
 	void apply(uint8_t list_idx) const override 
 	{

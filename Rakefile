@@ -1,6 +1,6 @@
 require 'rake/clean'
 
-cxx          = ENV['CXX']
+cxx          = "g++-mp-4.8" #ENV['CXX']
 boost        = ENV['BOOST_INCLUDE_PATH']
 sphinx_build = ""
 
@@ -41,7 +41,7 @@ lib_cxxopts  = "#{langflags} #{wflags} #{archflags} #{incflags} #{lib_optflags}"
 lib_cxxflags = "#{lib_cxxopts} #{lib_ppflags} #{lib_confflags}"
 
 dirs  = ["out/test", "out/libraries", "out/reference"]
-tests = ["out/test/formatter_test.run"]#FileList["source/test/*"].map{|f| f.sub("source", "out").ext("run")}
+tests = FileList["source/test/*"].map{|f| f.sub("source", "out").ext("run")}
 libs  = FileList["source/libraries/*"].map{|f| f.sub("source", "out").ext("lib")}
 
 if RUBY_PLATFORM.include? "linux"
