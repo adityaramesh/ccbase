@@ -240,7 +240,9 @@ private:
 		** At this point, `m_fmt_str[i] == '$'`.
 		*/
 		if (cur_index == m_fmt_str.length() - 1) {
-			add_format_argument(m_fmt_args, m_fmt_args);
+			// Set the index of the next argument if it is not
+			// specified.
+			add_format_argument(m_fmt_args, m_arg_count + 1);
 			end_substring(cur_index, cur_substr);
 			++cur_index;
 			start_substring(cur_index, cur_substr);
