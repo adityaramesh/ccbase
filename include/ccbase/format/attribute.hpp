@@ -462,7 +462,10 @@ void apply_string_output_attribute(
 		dst.setf(flags);
 	}
 	else if (id == attribute_id::data) {
-		if (attr.arguments() == 0) {
+		if (t == 0) {
+			dst << 0 << " B";
+		}
+		else if (attr.arguments() == 0) {
 			auto log = (unsigned long long)std::log2(t);
 			auto base = std::min((unsigned)(log - log % 10), 60u);
 			auto sig = (double)t / (1 << base);
