@@ -77,6 +77,10 @@ void apply_impl(
 		}
 		else {
 			auto& arg = fmt.format_argument((i - 1) / 2);
+			if (arg.index() >= sizeof...(Args)) {
+				throw std::runtime_error{"Argument index out of bounds."};
+			}
+
 			auto restore = (bool)arg.count(attribute_function::adds_manipulators);
 			std::basic_ios<Char, Traits> state{nullptr};
 

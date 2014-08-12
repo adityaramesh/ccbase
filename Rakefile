@@ -1,6 +1,6 @@
 require 'rake/clean'
 
-cxx          = ENV['CXX']
+cxx          = "g++" #ENV['CXX']
 boost        = ENV['BOOST_INCLUDE_PATH']
 sphinx_build = ""
 
