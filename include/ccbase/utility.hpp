@@ -9,7 +9,7 @@
 #define ZAE2F1C3F_A2C8_47F5_8DED_AC1232AEFFD3
 
 #include <ccbase/utility/accessors.hpp>
-#include <ccbase/utility/bitmask_enum.hpp>
+#include <ccbase/utility/enum_bitmask.hpp>
 #include <ccbase/utility/bytes.hpp>
 
 #endif
