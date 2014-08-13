@@ -1,6 +1,12 @@
 .. _ccbase-format-module:
 .. default-domain:: cpp
 
+.. |tuple| replace::
+   :class:`std::tuple`
+
+.. |optional| replace::
+   :class:`boost::optional<T>`
+
 .. |string| replace::
    :class:`std::string`
 
@@ -71,6 +77,29 @@ Examples
         auto msg = cc::format("{Name: ${quote}, ID: ${hex, base}}",
                 "test", 256);
         // Creates a string whose contents are "{Name: "test", ID: 0x100}".
+
+Special Printable Types
+-----------------------
+
+The :func:`operator<<` has been defined for two special types: |tuple| and
+|optional| [*]_. The effects of printing these types are shown by the following
+examples: ::
+
+	cc::println(std::make_tuple(1, 2, 3));
+        // Prints "(1, 2, 3)" to stdout.
+
+	cc::println(boost::make_optional(0));
+        // Prints "0" to stdout.
+
+	cc::println(boost::optional<int>{});
+        // Prints "none" to stdout.
+
+	cc::println(boost::none);
+        // Prints "none" to stdout.
+
+.. [*] The |optional| type is actually printable by default, but only because it
+   is implicitly convertible to :type:`bool`. So the output is generally not
+   going to be very useful.
 
 Syntax
 ------

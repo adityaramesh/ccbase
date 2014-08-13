@@ -136,11 +136,11 @@ struct apply_argument_helper
 	{
 		if (arg.count(attribute_function::number_to_number)) {
 			throw std::runtime_error{"Number to number attributes "
-				"are not applicable to strings."};
+				"are not applicable to general types."};
 		}
 		if (arg.count(attribute_function::number_to_string)) {
 			throw std::runtime_error{"Number to string attributes "
-				"are not applicable to strings."};
+				"are not applicable to general types."};
 		}
 
 		auto m = arg.count(attribute_function::adds_manipulators);

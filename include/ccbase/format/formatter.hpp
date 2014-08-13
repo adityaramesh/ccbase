@@ -13,6 +13,7 @@
 #include <utility>
 
 #include <ccbase/platform/attributes.hpp>
+#include <ccbase/format/printable_types.hpp>
 #include <ccbase/format/format_argument.hpp>
 #include <ccbase/format/argument_wrapper.hpp>
 
