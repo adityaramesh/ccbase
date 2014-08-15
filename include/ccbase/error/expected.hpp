@@ -45,34 +45,28 @@ DEFINE_ENUM_BITWISE_OPERATORS(expected_state)
 template <class T>
 struct expected_traits
 {
-	using storage         = T;
-	using value           = T;
-	using pointer         = T*;
-	using const_pointer   = const T*;
-	using reference       = T&;
-	using const_reference = const T&;
+	using storage    = T;
+	using value_type = T;
+	using pointer    = T*;
+	using reference  = T&;
 };
 
 template <class T>
 struct expected_traits<T&>
 {
-	using storage         = std::reference_wrapper<T>;
-	using value           = T;
-	using pointer         = T*;
-	using const_pointer   = const T*;
-	using reference       = T&;
-	using const_reference = const T&;
+	using storage    = std::reference_wrapper<T>;
+	using value_type = T;
+	using pointer    = T*;
+	using reference  = T&;
 };
 
 template <class T>
 struct expected_traits<const T&>
 {
-	using storage         = std::reference_wrapper<const T>;
-	using value           = T;
-	using pointer         = const T*;
-	using const_pointer   = const T*;
-	using reference       = const T&;
-	using const_reference = const T&;
+	using storage    = std::reference_wrapper<const T>;
+	using value_type = T;
+	using pointer    = const T*;
+	using reference  = const T&;
 };
 
 template <class T>
@@ -81,7 +75,7 @@ class expected final
 	static_assert(std::is_nothrow_destructible<T>::value, "");
 
 	using storage         = typename expected_traits<T>::storage;
-	using value           = typename expected_traits<T>::value;
+	using value_type      = typename expected_traits<T>::value;
 	using pointer         = typename expected_traits<T>::pointer;
 	using const_pointer   = typename expected_traits<T>::const_pointer;
 	using reference       = typename expected_traits<T>::reference;
@@ -113,7 +107,7 @@ public:
 		bool B = std::is_copy_constructible<storage>::value,
 		typename std::enable_if<B, int>::type = 0
 	>
-	expected(const value& rhs)
+	expected(const value_type& rhs)
 	noexcept(std::is_nothrow_copy_constructible<storage>::value)
 	: m_val(rhs), m_state{expected_state::valid} {}
 
@@ -125,7 +119,7 @@ public:
 			!std::is_reference<T>::value,
 		typename std::enable_if<B, int>::type = 0
 	>
-	expected(value&& rhs)
+	expected(value_type&& rhs)
 	noexcept(std::is_nothrow_move_constructible<storage>::value)
 	: m_val(rhs), m_state{expected_state::valid} {}
 
@@ -140,11 +134,11 @@ public:
 
 	expected(const std::exception_ptr& ptr)
 	noexcept : m_state{expected_state::invalid}
-	{ ::new (&m_ptr) std::exception_ptr{ptr}; }
+	{ ::new(&m_ptr) std::exception_ptr{ptr}; }
 
 	expected(std::exception_ptr&& ptr)
 	noexcept : m_state{expected_state::invalid}
-	{ ::new (&m_ptr) std::exception_ptr{std::move(ptr)}; }
+	{ ::new(&m_ptr) std::exception_ptr{std::move(ptr)}; }
 
 	template <class E,
 		typename std::enable_if<
@@ -162,7 +156,7 @@ public:
 					"detected during construction"};
 			}
 		#endif
-		::new (&m_ptr) std::exception_ptr{std::make_exception_ptr(e)};
+		::new(&m_ptr) std::exception_ptr{std::make_exception_ptr(e)};
 	}
 
 	template <
@@ -170,7 +164,7 @@ public:
 		typename std::enable_if<B, int>::type = 0
 	>
 	expected(const expected& rhs)
-	noexcept(std::is_noexcept_copy_constructible<storage>::value)
+	noexcept(std::is_nothrow_copy_constructible<storage>::value)
 	: m_state{rhs.m_state}
 	{
 		if (*this) {
@@ -191,7 +185,7 @@ public:
 		typename std::enable_if<B, int>::type = 0
 	>
 	expected(expected&& rhs)
-	noexcept(std::is_noexcept_move_constructible<storage>::value)
+	noexcept(std::is_nothrow_move_constructible<storage>::value)
 	: m_state{m_state}
 	{
 		if (*this) {
@@ -212,7 +206,7 @@ public:
 			std::is_nothrow_copy_constructible<storage>::value &&
 			std::is_nothrow_copy_assignable<storage>::value
 		)
-	#else
+	#endif
 	{
 		check_if_dismissed();
 
@@ -222,15 +216,13 @@ public:
 			}
 			else {
 				m_val.~storage();
-				::new(m_ptr) (&m_ptr)
-					std::exception_ptr{rhs.m_ptr};
+				::new(&m_ptr) std::exception_ptr{rhs.m_ptr};
 			}
 		}
 		else {
 			if (*rhs) {
 				m_ptr.~exception_ptr();
-				::new(m_val) (std::addressof(m_val))
-					storage{rhs.m_val};
+				::new(std::addressof(m_val)) storage{rhs.m_val};
 			}
 			else {
 				m_ptr = rhs.m_ptr;
@@ -251,7 +243,7 @@ public:
 			std::is_nothrow_move_constructibile<storage>::value &&
 			std::is_nothrow_move_assignable<storage>::value
 		)
-	#else
+	#endif
 	{
 		check_if_dismissed();
 
@@ -261,14 +253,14 @@ public:
 			}
 			else {
 				m_val.~storage();
-				::new(m_ptr) (&m_ptr)
+				::new(&m_ptr)
 					std::exception_ptr{std::move(rhs.m_ptr)};
 			}
 		}
 		else {
 			if (*rhs) {
 				m_ptr.~exception_ptr();
-				::new(m_val) (std::addressof(m_val))
+				::new(std::addressof(m_val))
 					storage{std::move(rhs.m_val)};
 			}
 			else {
@@ -307,7 +299,7 @@ private:
 	[[noreturn]] void rethrow_exception() const noexcept(false)
 	{
 		if (m_ptr == nullptr) {
-			throw std::bad_expected_type{"expected object is "
+			throw bad_expected_type{"expected object is "
 				"invalid, but the exception pointer has "
 				"been moved"};
 		}
@@ -317,7 +309,7 @@ public:
 	[[noreturn]] void raise() const noexcept(false)
 	{
 		if (*this) {
-			throw std::bad_expected_type{"attempt to throw "
+			throw bad_expected_type{"attempt to throw "
 				"exception from valid expected object"};
 		}
 		rethrow_exception();
@@ -327,7 +319,7 @@ public:
 	{
 		#ifndef CC_NO_DEBUG
 			m_state |= expected_state::dismissed;
-		#else
+		#endif
 	}
 
 	operator bool() const noexcept
@@ -342,40 +334,14 @@ public:
 		return m_val;
 	}
 
-	const_reference value() const&
+	const value_type& value() const&
 	{
 		if (!*this) rethrow_exception();
 		return m_val;
 	}
 
 	reference operator*() & { return value(); }
-	const_reference operator*() const& { return value(); }
-	reference operator*() & { return value(); }
-	const_reference operator*() const& { return value(); }
-
-	/*
-	** We don't need to check for constness here, because the return value
-	** has the correct constness.
-	*/
-	template <
-		bool B = !std::is_reference<T>::value,
-		typename std::enable_if<B, int>::type = 0
-	>
-	pointer operator->()
-	{
-		if (!*this) rethrow_exception();
-		return std::addressof(m_val);
-	}
-
-	template <
-		bool B = !std::is_reference<T>::value,
-		typename std::enable_if<B, int>::type = 0
-	>
-	const_pointer operator->() const
-	{
-		if (!*this) rethrow_exception();
-		return std::addressof(m_val);
-	}
+	const value_type& operator*() const& { return value(); }
 
 	/*
 	** Remarks:
@@ -384,21 +350,33 @@ public:
 	**   - Since this function returns a pointer to the value, we disallow
 	**   invocation on rvalue references.
 	*/
-	template <
-		bool B = std::is_reference<T>::value,
-		typename std::enable_if<B, int>::type = 0
-	>
-	pointer operator->() &
+	template <bool B = !std::is_reference<T>::value>
+	typename std::enable_if<B, pointer>::type
+	operator->() &
+	{
+		if (!*this) rethrow_exception();
+		return std::addressof(m_val);
+	}
+
+	template <bool B = !std::is_reference<T>::value>
+	typename std::enable_if<B, const value_type*>::type
+	operator->() const&
+	{
+		if (!*this) rethrow_exception();
+		return std::addressof(m_val);
+	}
+
+	template <bool B = std::is_reference<T>::value, class = void>
+	typename std::enable_if<B, pointer>::type
+	operator->() &
 	{
 		if (!*this) rethrow_exception();
 		return std::addressof(m_val.get());
 	}
 
-	template <
-		bool B = std::is_reference<T>::value,
-		typename std::enable_if<B, int>::type = 0
-	>
-	const_pointer operator->() const&
+	template <bool B = std::is_reference<T>::value, class = void>
+	typename std::enable_if<B, const value_type*>::type
+	operator->() const&
 	{
 		if (!*this) rethrow_exception();
 		return std::addressof(m_val.get());
@@ -420,7 +398,8 @@ public:
 			!std::is_const<
 				typename std::remove_reference<T>::type
 			>::value,
-		typename std::enable_if<B, int>::type = 0
+		typename std::enable_if<B, int>::type = 0,
+		class = void
 	>
 	T&& value() &&
 	{
@@ -428,8 +407,10 @@ public:
 		return std::move(m_val.get());
 	}
 
-	const std::exception_ptr& exception() const&
-	const noexcept
+	reference operator*() && { return value(); }
+
+	const std::exception_ptr& exception()
+	const& noexcept
 	{
 		if (*this) {
 			throw bad_expected_type{"attempt to get exception "
@@ -438,8 +419,8 @@ public:
 		return m_ptr;
 	}
 
-	std::exception_ptr exception() &&
-	noexcept
+	std::exception_ptr exception()
+	&& noexcept
 	{
 		if (*this) {
 			throw bad_expected_type{"attempt to move exception "
@@ -494,13 +475,13 @@ public:
 				*/
 				if (sizeof(storage) < sizeof(std::exception_ptr)) {
 					auto tmp = std::move(m_val);
-					::new (&m_ptr) std::exception_ptr{rhs.m_ptr};
-					::new (std::addressof(rhs.m_val)) storage(std::move(tmp));
+					::new(&m_ptr) std::exception_ptr{rhs.m_ptr};
+					::new(std::addressof(rhs.m_val)) storage(std::move(tmp));
 				}
 				else {
 					auto tmp = std::move(rhs.m_ptr);
-					::new (std::addressof(rhs.m_val)) storage(std::move(m_val));
-					::new (&m_ptr) std::exception_ptr{std::move(tmp)};
+					::new(std::addressof(rhs.m_val)) storage(std::move(m_val));
+					::new(&m_ptr) std::exception_ptr{std::move(tmp)};
 				}
 
 				/*
@@ -520,13 +501,13 @@ public:
 			if (*rhs) {
 				if (sizeof(storage) < sizeof(std::exception_ptr)) {
 					auto tmp = std::move(rhs.m_val);
-					::new (&rhs.m_ptr) std::exception_ptr{m_ptr};
-					::new (std::addressof(m_val)) storage(std::move(tmp));
+					::new(&rhs.m_ptr) std::exception_ptr{m_ptr};
+					::new(std::addressof(m_val)) storage(std::move(tmp));
 				}
 				else {
 					auto tmp = std::move(m_ptr);
-					::new (std::addressof(m_val)) storage(std::move(rhs.m_val));
-					::new (&rhs.m_ptr) std::exception_ptr{std::move(tmp)};
+					::new(std::addressof(m_val)) storage(std::move(rhs.m_val));
+					::new(&rhs.m_ptr) std::exception_ptr{std::move(tmp)};
 				}
 
 				#ifdef CC_NO_DEBUG
@@ -553,7 +534,7 @@ public:
 	void emplace(Args&&... args)
 	{
 		this->~expected();
-		::new (std::addressof(m_val)) storage{std::forward<Args>(args)...};
+		::new(std::addressof(m_val)) storage{std::forward<Args>(args)...};
 		m_state = expected_state::valid;
 	}
 
