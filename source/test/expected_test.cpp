@@ -64,7 +64,9 @@ module("test default construction")
 
 	{
 		cc::expected<void> e1{};
+		cc::expected<void> e2{cc::no_error};
 		e1.dismiss();
+		e2.dismiss();
 	}
 }
 

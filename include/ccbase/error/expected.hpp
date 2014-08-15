@@ -526,11 +526,20 @@ public:
 		rethrow_exception();
 	}
 
-	void dismiss() const noexcept
+	expected& dismiss() noexcept
 	{
 		#ifndef CC_NO_DEBUG
 			m_state |= expected_state::dismissed;
 		#endif
+		return *this;
+	}
+
+	const expected& dismiss() const noexcept
+	{
+		#ifndef CC_NO_DEBUG
+			m_state |= expected_state::dismissed;
+		#endif
+		return *this;
 	}
 
 	operator bool() const noexcept
@@ -751,7 +760,7 @@ public:
 	}
 
 	template <class... Args>
-	void emplace(Args&&... args)
+	expected& emplace(Args&&... args)
 	{
 		this->~expected();
 		::new((void*)std::addressof(m_val))
@@ -762,6 +771,7 @@ public:
 		#else
 			m_state = expected_state::valid | expected_state::dismissed;
 		#endif
+		return *this;
 	}
 
 	template <class E>
@@ -790,6 +800,9 @@ class expected<void> final
 public:
 	expected() noexcept :
 	m_state{expected_state::valid} {}
+
+	expected(const no_error_t&) noexcept :
+	expected{} {}
 
 	expected(const expected& rhs) noexcept :
 	m_state{rhs.m_state}
@@ -977,11 +990,20 @@ public:
 		rethrow_exception();
 	}
 
-	void dismiss() const noexcept
+	expected& dismiss() noexcept
 	{
 		#ifndef CC_NO_DEBUG
 			m_state |= expected_state::dismissed;
 		#endif
+		return *this;
+	}
+
+	const expected& dismiss() const noexcept
+	{
+		#ifndef CC_NO_DEBUG
+			m_state |= expected_state::dismissed;
+		#endif
+		return *this;
 	}
 
 	operator bool() const noexcept
