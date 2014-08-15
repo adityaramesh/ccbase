@@ -9,91 +9,400 @@
 #include <ccbase/error.hpp>
 #include <ccbase/unit_test.hpp>
 
-module("test_valid_constructors")
+struct copyable
 {
-	int a{1};
-	cc::expected<int> e1{a};
-	cc::expected<int> e2{std::move(a)};
-	require(e1.valid());
-	require(e2.valid());
+	copyable() {}
+	copyable(const copyable&)            = default;
+	copyable(copyable&&)                 = default;
+	copyable& operator=(const copyable&) = default;
+	copyable& operator=(copyable&&)      = default;
+};
 
-	int b{1};
-	cc::expected<int&> e3{b};
-	require(e3.valid());
-	require(e3.get() == 1);
+struct not_assignable
+{
+	not_assignable() {}
+	not_assignable(const not_assignable&)            = default;
+	not_assignable(not_assignable&&)                 = default;
+	not_assignable& operator=(const not_assignable&) = delete;
+	not_assignable& operator=(not_assignable&&)      = delete;
+};
 
-	e3.get() = 2;
-	require(e3.valid());
-	require(e3.get() == 2);
+struct not_copyable
+{
+	not_copyable() {}
+	not_copyable(const not_copyable&)            = delete;
+	not_copyable(not_copyable&&)                 = delete;
+	not_copyable& operator=(const not_copyable&) = delete;
+	not_copyable& operator=(not_copyable&&)      = delete;
+};
+
+module("test default construction")
+{
+	{
+		cc::expected<copyable> e1{};
+		cc::expected<const copyable> e2{};
+		cc::expected<copyable*> e3{};
+		cc::expected<const copyable*> e4{};
+
+		e1.dismiss();
+		e2.dismiss();
+		e3.dismiss();
+		e4.dismiss();
+	}
+
+	{
+		cc::expected<not_assignable> e1{};
+		cc::expected<const not_assignable> e2{};
+		cc::expected<not_assignable*> e3{};
+		cc::expected<const not_assignable*> e4{};
+
+		e1.dismiss();
+		e2.dismiss();
+		e3.dismiss();
+		e4.dismiss();
+	}
+
+	{
+		cc::expected<void> e1{};
+		e1.dismiss();
+	}
 }
 
-module("test_invalid_constructors")
+module("test copy construction from value")
 {
-	std::exception e;
-	std::exception_ptr ep{std::move(std::make_exception_ptr(e))};
+	{
+		copyable c{};
+		cc::expected<copyable> e1{c};
+		cc::expected<const copyable> e2{c};
+		cc::expected<copyable&> e3{c};
+		cc::expected<const copyable&> e4{c};
+		cc::expected<copyable*> e5{&c};
+		cc::expected<const copyable*> e6{&c};
 
-	cc::expected<int> e1{};
-	cc::expected<int> e2{e};
-	cc::expected<int> e3{ep};
+		e1.dismiss();
+		e2.dismiss();
+		e3.dismiss();
+		e4.dismiss();
+		e5.dismiss();
+		e6.dismiss();
+	}
 
-	require(!e1.valid());
-	require(!e2.valid());
-	require(!e3.valid());
+	{
+		not_assignable c{};
+		cc::expected<not_assignable> e1{c};
+		cc::expected<const not_assignable> e2{c};
+		cc::expected<not_assignable&> e3{c};
+		cc::expected<const not_assignable&> e4{c};
+		cc::expected<not_assignable*> e5{&c};
+		cc::expected<const not_assignable*> e6{&c};
+
+		e1.dismiss();
+		e2.dismiss();
+		e3.dismiss();
+		e4.dismiss();
+		e5.dismiss();
+		e6.dismiss();
+	}
+
+	{
+		not_copyable c{};
+		cc::expected<not_copyable&> e1{c};
+		cc::expected<const not_copyable&> e2{c};
+		cc::expected<not_copyable*> e3{&c};
+		cc::expected<const not_copyable*> e4{&c};
+
+		e1.dismiss();
+		e2.dismiss();
+		e3.dismiss();
+		e4.dismiss();
+	}
 }
 
-module("test_swap")
+module("test copy construction from valid expected")
 {
-	int a{1};
-	int b{2};
-	cc::expected<int> e1{a};
-	cc::expected<int> e2{b};
-	require(e1.valid());
-	require(e2.valid());
-	require(e1.get() == 1);
-	require(e2.get() == 2);
+	{
+		cc::expected<not_assignable> e1{};
+		auto e2 = e1;
+		e1.dismiss();
+		e2.dismiss();
+	}
+	{
+		cc::expected<const not_assignable> e1{};
+		auto e2 = e1;
+		e1.dismiss();
+		e2.dismiss();
+	}
+	{
+		cc::expected<not_assignable*> e1{};
+		auto e2 = e1;
+		e1.dismiss();
+		e2.dismiss();
+	}
+	{
+		cc::expected<const not_assignable*> e1{};
+		auto e2 = e1;
+		e1.dismiss();
+		e2.dismiss();
+	}
+	{
+		not_assignable x{};
+		cc::expected<not_assignable&> e1{x};
+		auto e2 = e1;
+		e1.dismiss();
+		e2.dismiss();
+	}
+	{
+		not_assignable x{};
+		cc::expected<const not_assignable&> e1{x};
+		auto e2 = e1;
+		e1.dismiss();
+		e2.dismiss();
+	}
 
-	e1.swap(e2);
-	require(e1.valid());
-	require(e2.valid());
-	require(e1.get() == 2);
-	require(e2.get() == 1);
+	{
+		cc::expected<void> e1{};
+		auto e2 = e1;
+		e1.dismiss();
+		e2.dismiss();
+	}
+}
 
-	cc::expected<int> e3{std::exception{}};
-	cc::expected<int> e4{a};
-	require(!e3.valid());
-	require(e4.valid());
-	require(e4.get() == 1);
+module("test move construction from valid expected")
+{
+	{
+		cc::expected<not_assignable> e1{};
+		auto e2 = std::move(e1);
+		e1.dismiss();
+		e2.dismiss();
+	}
+	{
+		cc::expected<const not_assignable> e1{};
+		auto e2 = std::move(e1);
+		e1.dismiss();
+		e2.dismiss();
+	}
+	{
+		cc::expected<not_assignable*> e1{};
+		auto e2 = std::move(e1);
+		e1.dismiss();
+		e2.dismiss();
+	}
+	{
+		cc::expected<const not_assignable*> e1{};
+		auto e2 = std::move(e1);
+		e1.dismiss();
+		e2.dismiss();
+	}
+	{
+		not_assignable x{};
+		cc::expected<not_assignable&> e1{x};
+		auto e2 = std::move(e1);
+		e1.dismiss();
+		e2.dismiss();
+	}
+	{
+		not_assignable x{};
+		cc::expected<const not_assignable&> e1{x};
+		auto e2 = std::move(e1);
+		e1.dismiss();
+		e2.dismiss();
+	}
 
-	e3.swap(e4);
-	require(e3.valid());
-	require(!e4.valid());
-	require(e3.get() == 1);
+	{
+		cc::expected<void> e1{};
+		auto e2 = std::move(e1);
+		e1.dismiss();
+		e2.dismiss();
+	}
+}
 
-	int c{1};
-	int d{2};
-	cc::expected<int&> e5{c};
-	cc::expected<int&> e6{d};
-	require(e5.valid());
-	require(e6.valid());
-	require(e5.get() == 1);
-	require(e6.get() == 2);
+module("test construction in invalid state")
+{
+	{
+		auto e = std::runtime_error{"error"};
+		auto ep = std::make_exception_ptr(e);
+		cc::expected<int> e1{e};
+		cc::expected<int> e2{ep};
+		cc::expected<int> e3{std::move(ep)};
 
-	e5.swap(e6);
-	require(e5.valid());
-	require(e6.valid());
-	require(e5.get() == 2);
-	require(e6.get() == 1);
+		e1.dismiss();
+		e2.dismiss();
+		e3.dismiss();
+	}
+}
 
-	cc::expected<int&> e7{std::exception{}};
-	cc::expected<int&> e8{c};
-	require(!e7.valid());
-	require(e8.valid());
-	require(e8.get() == 1);
+module("test copy assignment to valid expected")
+{
+	{
+		cc::expected<not_assignable> e1{};
+		cc::expected<not_assignable> e2{};
+		e1.dismiss();
+		e1 = e2;
 
-	e7.swap(e8);
-	require(!e8.valid());
-	require(e7.valid());
-	require(e7.get() == 1);
+		e1.dismiss();
+		e2.dismiss();
+	}
+	{
+		cc::expected<const not_assignable> e1{};
+		cc::expected<const not_assignable> e2{};
+		e1.dismiss();
+		e1 = e2;
+
+		e1.dismiss();
+		e2.dismiss();
+	}
+	{
+		cc::expected<not_assignable*> e1{};
+		cc::expected<not_assignable*> e2{};
+		e1.dismiss();
+		e1 = e2;
+
+		e1.dismiss();
+		e2.dismiss();
+	}
+	{
+		cc::expected<const not_assignable*> e1{};
+		cc::expected<const not_assignable*> e2{};
+		e1.dismiss();
+		e1 = e2;
+
+		e1.dismiss();
+		e2.dismiss();
+	}
+	{
+		not_assignable x{};
+		cc::expected<not_assignable&> e1{x};
+		cc::expected<not_assignable&> e2{x};
+		e1.dismiss();
+		e1 = e2;
+
+		e1.dismiss();
+		e2.dismiss();
+	}
+	{
+		not_assignable x{};
+		cc::expected<const not_assignable&> e1{x};
+		cc::expected<const not_assignable&> e2{x};
+		e1.dismiss();
+		e1 = e2;
+
+		e1.dismiss();
+		e2.dismiss();
+	}
+}
+
+module("test move assignment to valid expected")
+{
+	{
+		cc::expected<not_assignable> e1{};
+		cc::expected<not_assignable> e2{};
+		e1.dismiss();
+		e1 = std::move(e2);
+
+		e1.dismiss();
+		e2.dismiss();
+	}
+	{
+		cc::expected<const not_assignable> e1{};
+		cc::expected<const not_assignable> e2{};
+		e1.dismiss();
+		e1 = std::move(e2);
+
+		e1.dismiss();
+		e2.dismiss();
+	}
+	{
+		cc::expected<not_assignable*> e1{};
+		cc::expected<not_assignable*> e2{};
+		e1.dismiss();
+		e1 = std::move(e2);
+
+		e1.dismiss();
+		e2.dismiss();
+	}
+	{
+		cc::expected<const not_assignable*> e1{};
+		cc::expected<const not_assignable*> e2{};
+		e1.dismiss();
+		e1 = std::move(e2);
+
+		e1.dismiss();
+		e2.dismiss();
+	}
+	{
+		not_assignable x{};
+		cc::expected<not_assignable&> e1{x};
+		cc::expected<not_assignable&> e2{x};
+		e1.dismiss();
+		e1 = std::move(e2);
+
+		e1.dismiss();
+		e2.dismiss();
+	}
+	{
+		not_assignable x{};
+		cc::expected<const not_assignable&> e1{x};
+		cc::expected<const not_assignable&> e2{x};
+		e1.dismiss();
+		e1 = std::move(e2);
+
+		e1.dismiss();
+		e2.dismiss();
+	}
+}
+
+module("test assignment to reference")
+{
+	{
+		not_copyable x{};
+		cc::expected<not_copyable&> e1{x};
+		e1.dismiss();
+		e1 = x;
+	}
+	{
+		not_copyable x{};
+		cc::expected<const not_copyable&> e1{x};
+		e1.dismiss();
+		e1 = x;
+	}
+}
+
+module("test assignment to invalid state")
+{
+	{
+		auto e = std::runtime_error{"error"};
+		auto ep = std::make_exception_ptr(e);
+		cc::expected<int> e1{};
+		e1.dismiss();
+
+		e1 = ep;
+		e1.dismiss();
+		e1 = std::move(ep);
+		e1.dismiss();
+	}
+}
+
+module("test getters")
+{
+	{
+		cc::expected<int> e1{1};
+		e1.dismiss();
+		e1.value();
+		std::move(e1).value();
+	}
+	{
+		auto i = 0;
+		cc::expected<int&> e1{i};
+		e1.dismiss();
+		e1.value();
+		std::move(e1).value();
+	}
+	{
+		cc::expected<int> e1{std::runtime_error{"test"}};
+		e1.dismiss();
+		e1.exception();
+		std::move(e1).exception();
+	}
 }
 
 suite("Tests expected header.")
