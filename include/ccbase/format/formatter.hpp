@@ -61,6 +61,11 @@ void apply_impl(
 		print_format_substring(fmt.format_string(), dst);
 		return;
 	}
+	else if (sizeof...(Args) != fmt.arguments()) {
+		throw std::runtime_error{"Number of arguments given does not "
+			"match number of arguments referenced by format "
+			"string."};
+	}
 
 	auto arr = std::array<const argument_base*, sizeof...(Args)>{{&args...}};
 	fmt.buffer().copyfmt(dst);
