@@ -33,7 +33,7 @@ enum class expected_state : uint8_t
 {
 	invalid = 0x0,
 	valid   = 0x1,
-	#ifndef CC_NO_DEBUG
+	#ifndef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 		// Used to keep track of whether the state of the expected
 		// object was checked prior to destruction.
 		dismissed = 0x2,
@@ -98,7 +98,7 @@ class expected final
 	>::value, "");
 
 	// Disallow function types and `void`.
-	static_assert(std::is_object<T>::value || std::is_reference<T>::value, "");
+	static_assert(std::is_object<T>::value || std::is_lvalue_reference<T>::value, "");
 	// So that we can copy and move the `expected` object.
 	static_assert(std::is_copy_constructible<storage>::value, "");
 	// For exception safety.
@@ -127,22 +127,11 @@ public:
 	** `T`, rather than performing the copy-construction.
 	*/
 	template <
-		bool B = std::is_copy_constructible<storage>::value,
+		bool B = std::is_copy_constructible<storage>::value &&
+		        !std::is_reference<T>::value,
 		typename std::enable_if<B, int>::type = 0
 	>
 	expected(const_reference rhs)
-	noexcept(std::is_nothrow_copy_constructible<storage>::value)
-	: m_val(rhs), m_state{expected_state::valid} {}
-
-	/*
-	** We need to overload for non-const references for the case where
-	** `storage` is a reference wrapper.
-	*/
-	template <
-		bool B = std::is_copy_constructible<storage>::value,
-		typename std::enable_if<B, int>::type = 0
-	>
-	expected(non_const_reference rhs)
 	noexcept(std::is_nothrow_copy_constructible<storage>::value)
 	: m_val(rhs), m_state{expected_state::valid} {}
 
@@ -158,11 +147,24 @@ public:
 	noexcept(std::is_nothrow_move_constructible<storage>::value)
 	: m_val(rhs), m_state{expected_state::valid} {}
 
+	template <
+		bool B = std::is_reference<T>::value,
+		typename std::enable_if<B, int>::type = 0,
+		class = void
+	>
+	expected(reference rhs)
+	noexcept(std::is_nothrow_copy_constructible<storage>::value)
+	: m_val(rhs), m_state{expected_state::valid} {}
+
 	/*
 	** There is no need to use `enable_if` here, because this is a template
 	** function. We will let the compiler error out normally.
 	*/
-	template <class... Args>
+	template <
+		bool B = !std::is_reference<T>::value,
+		typename std::enable_if<B, int>::type = 0,
+		class... Args
+	>
 	expected(const in_place_t&, Args&&... args)
 	noexcept(std::is_nothrow_constructible<storage, Args...>::value) :
 	m_val{std::forward<Args>(args)...}, m_state{expected_state::valid} {}
@@ -209,7 +211,7 @@ public:
 			std::is_base_of<std::exception, E>::value, int
 		>::type = 0>
 	expected(const E& e)
-	#ifdef CC_NO_DEBUG
+	#ifdef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 		noexcept
 	#endif
 	: m_state{expected_state::invalid}
@@ -230,7 +232,7 @@ public:
 	*/
 
 	expected& operator=(const expected& rhs)
-	#ifdef CC_NO_DEBUG
+	#ifdef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 		noexcept(noexcept(assign_storage(rhs.m_val)))
 	#endif
 	{
@@ -244,7 +246,7 @@ public:
 				m_val.~storage();
 				::new(&m_ptr) std::exception_ptr{rhs.m_ptr};
 
-				#ifdef CC_NO_DEBUG
+				#ifdef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 					m_state &= ~expected_state::valid;
 				#endif
 			}
@@ -257,7 +259,7 @@ public:
 				::new((void*)std::addressof(m_val))
 					storage{rhs.m_val};
 
-				#ifdef CC_NO_DEBUG
+				#ifdef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 					m_state |= expected_state::valid;
 				#endif
 			}
@@ -266,7 +268,7 @@ public:
 			}
 		}
 
-		#ifndef CC_NO_DEBUG
+		#ifndef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 			m_state = rhs.m_state;
 		#endif
 		return *this;
@@ -278,7 +280,7 @@ public:
 	** a temporary object.
 	*/
 	expected& operator=(expected&& rhs)
-	#ifdef CC_NO_DEBUG
+	#ifdef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 		noexcept(noexcept(assign_storage(std::move(rhs.m_val))))
 	#endif
 	{
@@ -287,7 +289,7 @@ public:
 		if (*this) {
 			if (rhs) {
 				assign_storage(std::move(rhs.m_val));
-				#ifdef CC_NO_DEBUG
+				#ifdef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 					m_state &= ~expected_state::valid;
 				#endif
 			}
@@ -296,7 +298,7 @@ public:
 				::new(&m_ptr)
 					std::exception_ptr{std::move(rhs.m_ptr)};
 
-				#ifdef CC_NO_DEBUG
+				#ifdef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 					m_state &= ~expected_state::valid;
 				#endif
 			}
@@ -309,7 +311,7 @@ public:
 				::new((void*)std::addressof(m_val))
 					storage{std::move(rhs.m_val)};
 
-				#ifdef CC_NO_DEBUG
+				#ifdef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 					m_state |= expected_state::valid;
 				#endif
 			}
@@ -318,7 +320,7 @@ public:
 			}
 		}
 
-		#ifndef CC_NO_DEBUG
+		#ifndef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 			m_state = rhs.m_state;
 		#endif
 		return *this;
@@ -327,7 +329,7 @@ public:
 	template <bool B = !std::is_reference<T>::value>
 	typename std::enable_if<B, expected&>::type
 	operator=(const storage& rhs)
-	#ifdef CC_NO_DEBUG
+	#ifdef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 		noexcept(
 			std::is_nothrow_copy_constructible<storage>::value &&
 			std::is_nothrow_copy_assignable<storage>::value
@@ -347,7 +349,7 @@ public:
 				storage{rhs.m_val};
 		}
 
-		#ifdef CC_NO_DEBUG
+		#ifdef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 			m_state = expected_state::valid;
 		#else
 			m_state = expected_state::valid | expected_state::dismissed;
@@ -358,7 +360,7 @@ public:
 	template <bool B = !std::is_reference<T>::value>
 	typename std::enable_if<B, expected&>::type
 	operator=(storage&& rhs)
-	#ifdef CC_NO_DEBUG
+	#ifdef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 		noexcept(
 			std::is_nothrow_move_constructible<storage>::value &&
 			std::is_nothrow_move_assignable<storage>::value
@@ -378,7 +380,7 @@ public:
 				storage{std::move(rhs)};
 		}
 
-		#ifdef CC_NO_DEBUG
+		#ifdef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 			m_state = expected_state::valid;
 		#else
 			m_state = expected_state::valid | expected_state::dismissed;
@@ -389,7 +391,7 @@ public:
 	template <bool B = std::is_reference<T>::value, class = void>
 	typename std::enable_if<B, expected&>::type
 	operator=(reference rhs)
-	#ifdef CC_NO_DEBUG
+	#ifdef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 		noexcept
 	#endif
 	{
@@ -404,7 +406,7 @@ public:
 				storage{rhs};
 		}
 
-		#ifdef CC_NO_DEBUG
+		#ifdef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 			m_state = expected_state::valid;
 		#else
 			m_state = expected_state::valid | expected_state::dismissed;
@@ -413,7 +415,7 @@ public:
 	}
 
 	expected& operator=(const std::exception_ptr& ptr) 
-	#ifdef CC_NO_DEBUG
+	#ifdef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 		noexcept
 	#endif
 	{
@@ -421,7 +423,7 @@ public:
 		if (!*this) m_ptr.~exception_ptr();
 		::new(&m_ptr) std::exception_ptr{ptr};
 
-		#ifdef CC_NO_DEBUG
+		#ifdef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 			m_state = expected_state::invalid;
 		#else
 			m_state = expected_state::invalid | expected_state::dismissed;
@@ -430,7 +432,7 @@ public:
 	}
 
 	expected& operator=(std::exception_ptr&& ptr) 
-	#ifdef CC_NO_DEBUG
+	#ifdef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 		noexcept
 	#endif
 	{
@@ -438,7 +440,7 @@ public:
 		if (!*this) m_ptr.~exception_ptr();
 		::new(&m_ptr) std::exception_ptr{std::move(ptr)};
 
-		#ifdef CC_NO_DEBUG
+		#ifdef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 			m_state = expected_state::invalid;
 		#else
 			m_state = expected_state::invalid | expected_state::dismissed;
@@ -447,6 +449,9 @@ public:
 	}
 
 	~expected()
+	#ifdef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
+		noexcept
+	#endif
 	{
 		/*
 		** Make sure we release any resources before potentially
@@ -496,11 +501,11 @@ private:
 	}
 
 	void check_if_dismissed() const
-	#ifdef CC_NO_DEBUG
+	#ifdef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 		noexcept
 	#endif
 	{
-		#ifndef CC_NO_DEBUG
+		#ifndef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 			if (!(m_state & expected_state::dismissed)) {
 				throw std::logic_error{"unchecked expected object"};
 			}
@@ -528,7 +533,7 @@ public:
 
 	expected& dismiss() noexcept
 	{
-		#ifndef CC_NO_DEBUG
+		#ifndef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 			m_state |= expected_state::dismissed;
 		#endif
 		return *this;
@@ -536,7 +541,7 @@ public:
 
 	const expected& dismiss() const noexcept
 	{
-		#ifndef CC_NO_DEBUG
+		#ifndef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 			m_state |= expected_state::dismissed;
 		#endif
 		return *this;
@@ -629,8 +634,7 @@ public:
 
 	reference operator*() && { return value(); }
 
-	const std::exception_ptr& exception()
-	const& noexcept
+	const std::exception_ptr& exception() const&
 	{
 		if (*this) {
 			throw bad_expected_type{"attempt to get exception "
@@ -639,8 +643,7 @@ public:
 		return m_ptr;
 	}
 
-	std::exception_ptr exception()
-	&& noexcept
+	std::exception_ptr exception() &&
 	{
 		if (*this) {
 			throw bad_expected_type{"attempt to move exception "
@@ -714,7 +717,7 @@ public:
 					::new(&m_ptr) std::exception_ptr{std::move(tmp)};
 				}
 
-				#ifdef CC_NO_DEBUG
+				#ifdef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 					m_state &= ~expected_state::valid;
 					rhs.m_state |= expected_state::valid;
 				#endif
@@ -739,7 +742,7 @@ public:
 					::new(&rhs.m_ptr) std::exception_ptr{std::move(tmp)};
 				}
 
-				#ifdef CC_NO_DEBUG
+				#ifdef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 					m_state |= expected_state::valid;
 					rhs.m_state &= ~expected_state::valid;
 				#endif
@@ -754,7 +757,7 @@ public:
 		** exchanging states in two cases. Otherwise, we need to deal
 		** with the `dismissed` flag, so we should always swap states.
 		*/
-		#ifndef CC_NO_DEBUG
+		#ifndef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 			std::swap(m_state, rhs.m_state);
 		#endif
 	}
@@ -766,7 +769,7 @@ public:
 		::new((void*)std::addressof(m_val))
 			storage{std::forward<Args>(args)...};
 
-		#ifdef CC_NO_DEBUG
+		#ifdef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 			m_state = expected_state::valid;
 		#else
 			m_state = expected_state::valid | expected_state::dismissed;
@@ -833,12 +836,12 @@ public:
 			std::is_base_of<std::exception, E>::value, int
 		>::type = 0>
 	expected(const E& e)
-	#ifdef CC_NO_DEBUG
+	#ifdef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 		noexcept
 	#endif
 	: m_state{expected_state::invalid}
 	{
-		#ifndef CC_NO_DEBUG
+		#ifndef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 			if (typeid(e) != typeid(E)) {
 				throw std::logic_error{"exception slicing "
 					"detected during construction"};
@@ -848,7 +851,7 @@ public:
 	}
 
 	expected& operator=(const expected& rhs)
-	#ifdef CC_NO_DEBUG
+	#ifdef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 		noexcept
 	#endif
 	{
@@ -857,7 +860,7 @@ public:
 		if (*this) {
 			if (!rhs) {
 				::new(&m_ptr) std::exception_ptr{rhs.m_ptr};
-				#ifdef CC_NO_DEBUG
+				#ifdef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 					m_state &= ~expected_state::valid;
 				#endif
 			}
@@ -865,7 +868,7 @@ public:
 		else {
 			if (rhs) {
 				m_ptr.~exception_ptr();
-				#ifdef CC_NO_DEBUG
+				#ifdef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 					m_state |= expected_state::valid;
 				#endif
 			}
@@ -874,14 +877,14 @@ public:
 			}
 		}
 
-		#ifndef CC_NO_DEBUG
+		#ifndef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 			m_state = rhs.m_state;
 		#endif
 		return *this;
 	}
 
 	expected& operator=(expected&& rhs)
-	#ifdef CC_NO_DEBUG
+	#ifdef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 		noexcept
 	#endif
 	{
@@ -890,7 +893,7 @@ public:
 		if (*this) {
 			if (!rhs) {
 				::new(&m_ptr) std::exception_ptr{std::move(rhs.m_ptr)};
-				#ifdef CC_NO_DEBUG
+				#ifdef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 					m_state &= ~expected_state::valid;
 				#endif
 			}
@@ -898,7 +901,7 @@ public:
 		else {
 			if (rhs) {
 				m_ptr.~exception_ptr();
-				#ifdef CC_NO_DEBUG
+				#ifdef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 					m_state |= expected_state::valid;
 				#endif
 			}
@@ -907,14 +910,14 @@ public:
 			}
 		}
 
-		#ifndef CC_NO_DEBUG
+		#ifndef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 			m_state = rhs.m_state;
 		#endif
 		return *this;
 	}
 
 	expected& operator=(const std::exception_ptr& ptr) 
-	#ifdef CC_NO_DEBUG
+	#ifdef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 		noexcept
 	#endif
 	{
@@ -922,7 +925,7 @@ public:
 		if (!*this) m_ptr.~exception_ptr();
 		::new(&m_ptr) std::exception_ptr{ptr};
 
-		#ifdef CC_NO_DEBUG
+		#ifdef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 			m_state = expected_state::invalid;
 		#else
 			m_state = expected_state::invalid | expected_state::dismissed;
@@ -931,7 +934,7 @@ public:
 	}
 
 	expected& operator=(std::exception_ptr&& ptr) 
-	#ifdef CC_NO_DEBUG
+	#ifdef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 		noexcept
 	#endif
 	{
@@ -939,7 +942,7 @@ public:
 		if (!*this) m_ptr.~exception_ptr();
 		::new(&m_ptr) std::exception_ptr{std::move(ptr)};
 
-		#ifdef CC_NO_DEBUG
+		#ifdef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 			m_state = expected_state::invalid;
 		#else
 			m_state = expected_state::invalid | expected_state::dismissed;
@@ -960,11 +963,11 @@ public:
 	}
 private:
 	void check_if_dismissed() const
-	#ifdef CC_NO_DEBUG
+	#ifdef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 		noexcept
 	#endif
 	{
-		#ifndef CC_NO_DEBUG
+		#ifndef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 			if (!(m_state & expected_state::dismissed)) {
 				throw std::logic_error{"unchecked expected object"};
 			}
@@ -992,7 +995,7 @@ public:
 
 	expected& dismiss() noexcept
 	{
-		#ifndef CC_NO_DEBUG
+		#ifndef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 			m_state |= expected_state::dismissed;
 		#endif
 		return *this;
@@ -1000,7 +1003,7 @@ public:
 
 	const expected& dismiss() const noexcept
 	{
-		#ifndef CC_NO_DEBUG
+		#ifndef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 			m_state |= expected_state::dismissed;
 		#endif
 		return *this;
@@ -1012,8 +1015,7 @@ public:
 		return !!(m_state & expected_state::valid);
 	}
 
-	const std::exception_ptr& exception()
-	const& noexcept
+	const std::exception_ptr& exception() const&
 	{
 		if (*this) {
 			throw bad_expected_type{"attempt to get exception "
@@ -1022,8 +1024,7 @@ public:
 		return m_ptr;
 	}
 
-	std::exception_ptr exception()
-	&& noexcept
+	std::exception_ptr exception() &&
 	{
 		if (*this) {
 			throw bad_expected_type{"attempt to move exception "
@@ -1053,7 +1054,7 @@ public:
 			::new(&m_ptr) std::exception_ptr{rhs.m_ptr};
 			rhs.m_ptr.~exception_ptr();
 
-			#ifdef CC_NO_DEBUG
+			#ifdef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 				m_state &= ~expected_state::valid;
 				rhs.m_state |= expected_state::valid;
 			#endif
@@ -1063,7 +1064,7 @@ public:
 				::new(&rhs.m_ptr) std::exception_ptr{m_ptr};
 				m_ptr.~exception_ptr();
 
-				#ifdef CC_NO_DEBUG
+				#ifdef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 					m_state |= expected_state::valid;
 					rhs.m_state &= ~expected_state::valid;
 				#endif
@@ -1078,7 +1079,7 @@ public:
 		** exchanging states in two cases. Otherwise, we need to deal
 		** with the `dismissed` flag, so we should always swap states.
 		*/
-		#ifndef CC_NO_DEBUG
+		#ifndef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 			std::swap(m_state, rhs.m_state);
 		#endif
 	}

@@ -1,6 +1,15 @@
 .. _ccbase-error-module:
 .. default-domain:: cpp
 
+.. |exception| replace::
+   :class:`std::exception`
+
+.. |exception_ptr| replace::
+   :class:`std::exception_ptr`
+
+.. |bad_expected_type| replace::
+   :class:`bad_expected_type`
+
 .. |expected| replace::
    :class:`expected\<T>`
 
@@ -22,7 +31,7 @@ The |expected| class is a polymorphic type that is either in a *valid* or an
 *invalid* state. If an instance is in an invalid state, then it stores an
 exception; if it is in a valid state, then it stores an instance of *T*. This
 allows us to return arbitrarily-rich error codes from a given function, without
-forcing the programmer to respond to the exception immediately.
+forcing the programmer to respond to any errors immediately.
 
 Here's an example where the |expected| class is used to provide an error-checked
 wrapper over a low-level POSIX function: ::
@@ -72,26 +81,55 @@ function does not really return anything. Consider the following example: ::
         safe_close(int fd)
         {
         	auto r = ::close(fd);
-        	if (r == 0) { return true; }
+        	if (r == 0) { return cc::no_error; }
         	if (errno != EINTR) { return current_system_error(); }
         
         	for (;;) {
         		r = ::close(fd);
-        		if (errno == EBADF) { return true; }
+        		if (errno == EBADF) { return cc::no_error; }
         		if (errno != EINTR) { current_system_error(); }
         	}
         }
 
 This module's implementation of |expected| is based on the one Andrei
-Alexandrescu discusses in his talk at C++ Next 2012 called "Systematic Error
-Handling" [#]_. The implementation in CCBase is extended in the following ways:
+Alexandrescu discusses in his talk at C++ Next 2012, called "Systematic Error
+Handling" [#]_. Further improvements were made based on the implementation found
+in `MNMLSTC Core`__, which is based on the standard proposal. CCBase's
+implementation differs in the following ways:
 
-- Several useful member functions and overloaded operators have been added.
-- It works for ``void`` and reference types [#]_.
-- If ``NEO_NO_DEBUG`` is not defined, an assertion is performed to ensure that the state of the |expected| object is read at least once prior to destruction.
+- It works for reference types.
+
+- One can move the |exception_ptr| from an |expected| object without rethrowing the referred exception. Doing this with current implementations of |expected| will cause the program to crash because of a double-free. [#]_
+
+- If ``CC_DONT_EXPECTED_ENFORCE_DISMISSAL`` is not defined, the destructor of |expected| will throw if the state of the object is not read at least once prior to destruction. Otherwise, no code is generated to perform this bookkeeping.
+
+- If the expected type *T* is copy assignable or move assignable, then implementation will use these operations instead of redundantly destroying and copy or move constructing the expected object, when possible. This can potentially accelerate copy- or move-assignment of |expected|, when specialized to types with non-trivial destructors.
 
 .. [#] http://channel9.msdn.com/Shows/Going+Deep/C-and-Beyond-2012-Andrei-Alexandrescu-Systematic-Error-Handling-in-C 
+.. _MNMLSTC: http://mnmlstc.github.io/core/optional.html#expected-type
 .. [#] http://anto-nonco.blogspot.com/2013/03/extending-expected-to-deal-with.html
+.. [#] `Exception Pointers and Double-Free`_
+
+__ MNMLSTC_
+
+Requirements
+------------
+
+For a specialization of |expected| to a type *T* to be valid, *T* must satisfy
+the following requirements:
+
+- Its decayed type must not be |exception_ptr|. [1]_
+- Its decayed type must not be derived from |exception|. [1]_
+- It must be either an object or an lvalue reference. [2]_
+- It must be copy constructible. [2]_ [3]_
+- It must be nothrow destructible. [4]_
+
+.. [1] This would ambiguate calls to certain member functions.
+.. [2] This would make the definition of |expected| ill-formed.
+.. [3] Note that copy constructibility implies move constructibility.
+.. [4] This would violate exception safety.
+
+These requirements are verified via static assertions within the class body.
 
 Reference
 ---------
@@ -100,112 +138,191 @@ Reference
 
 .. class:: expected<T>
 
-   Note that this class has a distinct specialization for :type:`void`, with
-   slightly different semantics.
+   An |expected| object is either in a *valid* or an *invalid* state. If
+   ``CC_EXPECTED_DONT_ENFORCE_DISMISSAL`` is not defined, then the |expected|
+   object is also associated with a binary *dismissal* state. The |expected|
+   object is put into the dismissed state when a member function is invoked that
+   reveals whether the object is in a valid or invalid state.
+   
+   The |expected| object can also be put into the dismissed state manually using
+   the :func:`dismiss` member function. If the |expected| object is not in the
+   dismissed state when its destructor is called, then an exception is thrown.
+   This feature is intended to help enforce that all potential errors produced
+   by functions returning |expected| are checked.
 
-   .. function:: expected(const T& rhs) noexcept
+   Note that this class has distinct specializations for references and
+   :type:`void`. The specialization to references has slightly different
+   semantics, and the :type:`void` specialization lacks the member functions
+   that have only to do with the expected type.
 
-      Constructs an |expected| object in a valid state by copying the given
-      object.
+   .. function:: expected()
 
-   .. function:: expected(T&& rhs) noexcept
+      :noexcept: If *T* is nothrow default constructible.
 
-      Constructs an |expected| object in a valid state by moving the given
-      object.
+      Disabled if *T* is not default constructible. Default-constructs an
+      |expected| object in a valid state.
 
-   .. function:: expected() noexcept
+   .. function:: expected(const T& rhs)
 
-      Constructs an |expected| object in an invalid state from the exception
-      that is currently in flight (i.e. from :func:`std::current_exception()`).
+      :noexcept: If *T* is nothrow copy constructible.
 
-   .. function:: expected(std::exception_ptr p) noexcept
+      Constructs an |expected| object in a valid state by copying *rhs*.
 
-      Constructs an |expected| object in an invalid state from the given
-      :type:`std::exception_ptr` object.
+   .. function:: expected(T&& rhs)
 
-   .. function:: expected(const Exception& e) noexcept
+      :noexcept: If *T* is nothrow move constructible.
 
-      :requires: *Exception* to be derived from ``std::exception``.
+      Constructs an |expected| object in a valid state by moving *rhs*.
 
-      Constructs an |expected| object in an invalid state from the given exception.
+   .. function:: expected(Args)
 
-   .. function:: expected(const expected& rhs) noexcept
-                 expected(expected&& rhs) noexcept
+      :noexcept: If *T* is nothrow constructible from *Args*.
 
-   .. function:: bool valid() const noexcept
-                 operator bool() const noexcept
+      Constructs an |expected| object in a valid state by initializing the
+      expected type in-place using *Args*.
 
-      Returns whether this |expected| object is in a valid state.
+   .. function:: expected(const expected& rhs)
 
-   .. function:: reference get()
-                 const reference get() const
-                 reference operator*()
-                 const reference operator*() const
-      
-      If the |expected| object is in a valid state, returns a reference to the
-      stored object. Otherwise, throws the stored exception.
+      Constructs an |expected| object in the same state as *rhs*, and copies
+      either the value stored by *rhs* or its |exception_ptr|.
 
-   .. function:: T&& move()
+      :noexcept: If *T* is nothrow copy constructible.
 
-      This function is not defined if *T* is a ``const`` reference. If the
-      |expected| object is in a valid state, returns an rvalue reference to the
-      stored object. Otherwise, throws the stored exception.
+   .. expected(expected&& rhs)
 
-   .. void swap(expected& rhs) noexcept
+      Constructs an |expected| object in the same state as *rhs*, and moves
+      either the value stored by *rhs* or its |exception_ptr|.
 
-      Swaps the contents of this |expected| object with those of another.
+      :noexcept: If *T* is nothrow move constructible.
 
-   .. bool has_exception<Exception>()
+   .. function:: expected(const std::exception_ptr& ptr) noexcept
 
-      Checks whether this |expected| object is invalid, and contains an
-      exception of type *Exception*. Caution: this function is slow, because it
-      involves throwing and catching the stored exception in order to detect its
-      type. Avoid using this function in performance-critical contexts.
+      Constructs an |expected| object in an invalid state by copying *ptr*.
 
-.. class:: expected<void>
+   .. function:: expected(exception_ptr&& ptr) noexcept
 
-   This is the specialization of |expected| for :type:`void`.
+      Constructs an |expected| object in an invalid state by moving *ptr*.
 
-   .. function:: expected() noexcept
-
-      Constructs an |expected_void| object in an invalid state from the
-      exception that is currently in flight (i.e. from
-      :func:`std::current_exception()`).
-
-   .. function:: expected(std::exception_ptr p) noexcept
-
-      Constructs an |expected_void| object in an invalid state from the given
-      :type:`std::exception_ptr` object.
-
-   .. function:: expected(const Exception& e) noexcept
+   .. function:: expected(const Exception& e)
 
       :requires: *Exception* to be derived from ``std::exception``.
+      :noexcept: If ``CC_NO_DEBUG`` is defined.
 
-      Constructs an |expected_void| object in an invalid state from the given
-      exception.
+      Constructs an |expected| object in an invalid state from *e*.  If
+      ``CC_NO_DEBUG`` is not defined, then this function throws if ``typeid(e)
+      != typeid(Exception)``. If this happens, then slicing has occurred.
 
-   .. function:: expected(const expected& rhs) noexcept
+   .. function:: expected& operator=(const expected& rhs)
 
-   .. function:: expected(expected&& rhs) noexcept
+      :noexcept: If *T* is copy assignable, then the function is noexcept if *T* is nothrow copy assignable. Otherwise, the function is noexcept if *T* is nothrow copy constructible. In addition, ``CC_EXPECTED_DONT_ENFORCE_DISMISSAL`` must be defined.
 
-   .. function:: bool valid() const noexcept
-                 operator bool() const noexcept
+      Assigns this |expected| object to the same state as *rhs*, by copying
+      either the value stored by *rhs* or its |exception_ptr|. If
+      ``CC_EXPECTED_DONT_ENFORCE_DISMISSAL`` is not defined, then an exception
+      is thrown if the object's state was not read prior to assignment.
 
-      Returns whether this |expected_void| object is in a valid state.
+   .. function:: expected& operator=(expected&& rhs)
 
-   .. function:: void get() const
-                 void operator*() const
-      
-      If the |expected_void| object is in a valid state, returns :type:`void`.
-      Otherwise, throws the stored exception.
+      :noexcept: If *T* is move assignable, then the function is noexcept if *T* is nothrow move assignable. Otherwise, the function is noexcept if *T* is nothrow move constructible. In addition, ``CC_EXPECTED_DONT_ENFORCE_DISMISSAL`` must be defined.
 
-   .. void swap(expected& rhs) noexcept
+      Assigns this |expected| object to the same state as *rhs*, by moving
+      either the value stored by *rhs* or its |exception_ptr|. If
+      ``CC_EXPECTED_DONT_ENFORCE_DISMISSAL`` is not defined, then an exception
+      is thrown if the object's state was not read prior to assignment.
 
-      Swaps the contents of this |expected_void| object with those of another.
+   .. function:: expected& operator=(const T& rhs)
 
-   .. bool has_exception<Exception>()
+      :noexcept: If *T* is copy assignable, then the function is noexcept if *T* is nothrow copy assignable. Otherwise, the function is noexcept if *T* is nothrow copy constructible. In addition, ``CC_EXPECTED_DONT_ENFORCE_DISMISSAL`` must be defined.
 
-      Checks whether this |expected_void| object is invalid, and contains an
-      exception of type *Exception*. Caution: this function is slow, because it
-      involves throwing and catching the stored exception in order to detect its
-      type. Avoid using this function in performance-critical contexts.
+      Assigns this |expected| object to a valid state, and copies the value
+      stored by *rhs*. If ``CC_EXPECTED_DONT_ENFORCE_DISMISSAL`` is not defined,
+      then an exception is thrown if the object's state was not read prior to
+      assignment.
+
+   .. function:: expected& operator=(T&& rhs)
+
+      :noexcept: If *T* is move assignable, then the function is noexcept if *T* is nothrow move assignable. Otherwise, the function is noexcept if *T* is nothrow move constructible. In addition, ``CC_EXPECTED_DONT_ENFORCE_DISMISSAL`` must be defined.
+
+      Assigns this |expected| object to a valid state, and moves the value
+      stored by *rhs*. If ``CC_EXPECTED_DONT_ENFORCE_DISMISSAL`` is not defined,
+      then an exception is thrown if the object's state was not read prior to
+      assignment.
+
+    .. function:: expected& operator=(const std::exception_ptr& ptr)
+
+      :noexcept: If ``CC_EXPECTED_DONT_ENFORCE_DISMISSAL`` is defined.
+
+       Assigns this |expected| object to an invalid state by copying *ptr*. If
+      ``CC_EXPECTED_DONT_ENFORCE_DISMISSAL`` is not defined, then an exception
+      is thrown if the object's state was not read prior to assignment.
+
+    .. function:: expected& operator=(std::exception_ptr&& ptr)
+
+      :noexcept: If ``CC_EXPECTED_DONT_ENFORCE_DISMISSAL`` is defined.
+
+       Assigns this |expected| object to an invalid state by copying *ptr*. If
+      ``CC_EXPECTED_DONT_ENFORCE_DISMISSAL`` is not defined, then an exception
+      is thrown if the object's state was not read prior to assignment.
+
+    .. function:: ~expected()
+
+       :noexcept: If ``CC_EXPECTED_DONT_ENFORCE_DISMISSAL`` is defined.
+
+       Destroys this |expected| object by calling either the destructor of the
+       expected type, or the destructor of the |exception_ptr|. If
+       ``CC_DONT_EXPECTED_ENFORCE_DISMISSAL`` is not defined, an exception is
+       thrown after destroying the managed object if the |expected| object is
+       not in the dismissed state.
+
+    .. function:: void raise() const
+
+       :noexcept: ``false``
+       :attributes: ``[[noreturn]]``
+
+       If the |expected| object is invalid, throws the exception referred to by
+       the managed |exception_ptr|. Otherwise, throws |bad_expected_type|. If
+       ``CC_DONT_EXPECTED_ENFORCE_DISMISSAL`` is not defined, this function also
+       puts the |expected| object in the dismissed state.
+
+    .. function:: expected& dismiss() noexcept
+                  const expected& dismiss() const noexcept
+
+       If ``CC_EXPECTED_DONT_ENFORCE_DISMISSAL`` is defined, puts the |expected|
+       object in the dismissed state. Otherwise, this function is a no-op.
+
+    .. function:: operator bool() const noexcept
+
+       Returns whether this |expected| object is valid. If
+       ``CC_EXPECTED_DONT_ENFORCE_DISMISSAL`` is defined, puts the |expected|
+       object in the dismissed state.
+
+    .. function:: T& value()
+                  const T& value() const
+                  T& operator*()
+                  const T& operator*() const
+
+        These function are overloaded for lvalues. If this |expected| object is
+        valid, returns a reference to the managed value. Otherwise, throws
+        |bad_expected_type|. If ``CC_EXPECTED_DONT_ENFORCE_DISMISSAL`` is
+        defined, puts the |expected| object in the dismissed state.
+
+    .. function:: T* operator->()
+                  const T* operator->() const
+
+        These functions are overloaded for lvalues. If this |expected| object is
+        valid, returns a pointer to the managed value. Otherwise, throws
+        |bad_expected_type|. If ``CC_EXPECTED_DONT_ENFORCE_DISMISSAL`` is
+        defined, puts the |expected| object in the dismissed state.
+
+    .. function:: const std::exception_ptr& exception() const
+                  std::exception_ptr&& exception()
+
+       This first function is overloaded for lvalues, while the second is
+       overloaded for rvalues. If this |expected| object is valid, returns an
+       reference to the managed |exception_ptr|. Otherwise, throws
+       |bad_expected_value|.
+
+Exception Pointers and Double-Free 
+----------------------------------
+
+TODO write this section.
