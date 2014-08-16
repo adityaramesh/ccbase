@@ -327,14 +327,14 @@ public:
 	}
 
 	template <bool B = !std::is_reference<T>::value>
-	typename std::enable_if<B, expected&>::type
-	operator=(const storage& rhs)
+	auto operator=(const storage& rhs)
 	#ifdef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 		noexcept(
 			std::is_nothrow_copy_constructible<storage>::value &&
 			std::is_nothrow_copy_assignable<storage>::value
 		)
 	#endif
+	-> typename std::enable_if<B, expected&>::type
 	{
 		check_if_dismissed();
 
@@ -358,14 +358,14 @@ public:
 	}
 
 	template <bool B = !std::is_reference<T>::value>
-	typename std::enable_if<B, expected&>::type
-	operator=(storage&& rhs)
+	auto operator=(storage&& rhs)
 	#ifdef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 		noexcept(
 			std::is_nothrow_move_constructible<storage>::value &&
 			std::is_nothrow_move_assignable<storage>::value
 		)
 	#endif
+	-> typename std::enable_if<B, expected&>::type
 	{
 		check_if_dismissed();
 
@@ -389,11 +389,11 @@ public:
 	}
 
 	template <bool B = std::is_reference<T>::value, class = void>
-	typename std::enable_if<B, expected&>::type
-	operator=(reference rhs)
+	auto operator=(reference rhs)
 	#ifdef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 		noexcept
 	#endif
+	-> typename std::enable_if<B, expected&>::type
 	{
 		check_if_dismissed();
 
@@ -467,34 +467,34 @@ public:
 	}
 private:
 	template <bool B = std::is_copy_assignable<storage>::value>
-	typename std::enable_if<B>::type
-	assign_storage(const storage& rhs)
+	auto assign_storage(const storage& rhs)
 	noexcept(std::is_nothrow_copy_assignable<storage>::value)
+	-> typename std::enable_if<B>::type
 	{
 		m_val = rhs;
 	}
 
 	template <bool B = !std::is_copy_assignable<storage>::value, class = void>
-	typename std::enable_if<B>::type
-	assign_storage(const storage& rhs)
+	auto assign_storage(const storage& rhs)
 	noexcept(std::is_nothrow_copy_constructible<storage>::value)
+	-> typename std::enable_if<B>::type
 	{
 		m_val.~storage();
 		::new((void*)std::addressof(m_val)) storage{rhs};
 	}
 
 	template <bool B = std::is_move_assignable<storage>::value>
-	typename std::enable_if<B>::type
-	assign_storage(storage&& rhs)
+	auto assign_storage(storage&& rhs)
 	noexcept(std::is_nothrow_move_assignable<storage>::value)
+	-> typename std::enable_if<B>::type
 	{
 		m_val = std::move(rhs);
 	}
 
 	template <bool B = !std::is_move_assignable<storage>::value, class = void>
-	typename std::enable_if<B>::type
-	assign_storage(storage&& rhs)
+	auto assign_storage(storage&& rhs)
 	noexcept(std::is_nothrow_move_constructible<storage>::value)
+	-> typename std::enable_if<B>::type
 	{
 		m_val.~storage();
 		::new((void*)std::addressof(m_val)) storage{std::move(rhs)};
@@ -576,32 +576,32 @@ public:
 	**   invocation on rvalue references.
 	*/
 	template <bool B = !std::is_reference<T>::value>
-	typename std::enable_if<B, pointer>::type
-	operator->() &
+	auto operator->() &
+	-> typename std::enable_if<B, pointer>::type
 	{
 		if (!*this) rethrow_exception();
 		return std::addressof(m_val);
 	}
 
 	template <bool B = !std::is_reference<T>::value>
-	typename std::enable_if<B, const value_type*>::type
-	operator->() const&
+	auto operator->() const&
+	-> typename std::enable_if<B, const value_type*>::type
 	{
 		if (!*this) rethrow_exception();
 		return std::addressof(m_val);
 	}
 
 	template <bool B = std::is_reference<T>::value, class = void>
-	typename std::enable_if<B, pointer>::type
-	operator->() &
+	auto operator->() &
+	-> typename std::enable_if<B, pointer>::type
 	{
 		if (!*this) rethrow_exception();
 		return std::addressof(m_val.get());
 	}
 
 	template <bool B = std::is_reference<T>::value, class = void>
-	typename std::enable_if<B, const value_type*>::type
-	operator->() const&
+	auto operator->() const&
+	-> typename std::enable_if<B, const value_type*>::type
 	{
 		if (!*this) rethrow_exception();
 		return std::addressof(m_val.get());
@@ -609,10 +609,10 @@ public:
 
 	template <
 		bool B = !std::is_reference<T>::value &&
-		         !std::is_const<T>::value,
-		typename std::enable_if<B, int>::type = 0
+		         !std::is_const<T>::value
 	>
-	T&& value() &&
+	auto value() &&
+	-> typename std::enable_if<B, T&&>::type
 	{
 		if (!*this) rethrow_exception();
 		return std::move(m_val);
@@ -623,10 +623,10 @@ public:
 			!std::is_const<
 				typename std::remove_reference<T>::type
 			>::value,
-		typename std::enable_if<B, int>::type = 0,
 		class = void
 	>
-	value_type&& value() &&
+	auto value() &&
+	-> typename std::enable_if<B, value_type&&>::type
 	{
 		if (!*this) rethrow_exception();
 		return std::move(m_val.get());
@@ -672,10 +672,6 @@ public:
 	** found through ADL may use something other than move construction.
 	** FIXME when C++ gets `is_swappable` traits.
 	*/
-	template <
-		bool B = std::is_move_constructible<storage>::value,
-		typename std::enable_if<B, int>::type = 0
-	>
 	void swap(expected& rhs)
 	noexcept(std::is_nothrow_move_constructible<storage>::value)
 	{
@@ -762,8 +758,15 @@ public:
 		#endif
 	}
 
-	template <class... Args>
+	template <
+		class... Args,
+		bool B = !std::is_reference<T>::value,
+		typename std::enable_if<B, int>::type = 0
+	>
 	expected& emplace(Args&&... args)
+	#ifdef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
+		noexcept(std::is_nothrow_constructible<T, Args...>::value)
+	#endif
 	{
 		this->~expected();
 		::new((void*)std::addressof(m_val))
@@ -951,6 +954,9 @@ public:
 	}
 
 	~expected()
+	#ifdef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
+		noexcept
+	#endif
 	{
 		/*
 		** Make sure we release any resources before potentially
@@ -1099,6 +1105,41 @@ public:
 					"contain exception of specified type"}
 			);
 		}
+	}
+};
+
+template <class T>
+void swap(expected<T>& lhs, expected<T>& rhs)
+noexcept(noexcept(lhs.swap(rhs)))
+{ lhs.swap(rhs); }
+
+}
+
+namespace std {
+
+template <class T>
+struct hash<::cc::expected<T>>
+{
+	using result_type = typename hash<T>::result_type;
+	using argument_type = ::cc::expected<T>;
+
+	result_type operator()(const argument_type& t)
+	const noexcept
+	{
+		return t ? hash<T>{}(*t) : result_type{};
+	}
+};
+
+template <class T>
+struct hash<::cc::expected<T&>>
+{
+	using result_type = typename hash<T>::result_type;
+	using argument_type = ::cc::expected<T>;
+
+	result_type operator()(const argument_type& t)
+	const noexcept
+	{
+		return t ? hash<T>{}(*t) : result_type{};
 	}
 };
 
