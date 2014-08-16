@@ -65,6 +65,7 @@
 <li class="toctree-l1"><a class="reference internal" href="format.html">Format Module</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="format.html#overview">Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="format.html#examples">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="format.html#special-printable-types">Special Printable Types</a></li>
 <li class="toctree-l2"><a class="reference internal" href="format.html#syntax">Syntax</a></li>
 <li class="toctree-l2"><a class="reference internal" href="format.html#attributes">Attributes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="format.html#escaping-characters">Escaping Characters</a></li>
@@ -93,6 +94,8 @@
 <li class="toctree-l1"><a class="reference internal" href="error.html">Error Module</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="error.html#overview">Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="error.html#reference">Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="error.html#functions">Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="error.html#specializations">Specializations</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="unit_test.html">Unit Test Module</a><ul>
@@ -140,6 +143,7 @@
  | <a href="#D"><strong>D</strong></a>
  | <a href="#E"><strong>E</strong></a>
  | <a href="#F"><strong>F</strong></a>
+ | <a href="#H"><strong>H</strong></a>
  | <a href="#I"><strong>I</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
@@ -155,6 +159,10 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
+  <dt><a href="error.html#bad_expected_type">bad_expected_type (C++ class)</a>
+  </dt>
+
+      
   <dt><a href="format.html#basic_formatter:Char.Traits:">basic_formatter&lt;Char, Traits&gt; (C++ class)</a>
   </dt>
 
@@ -163,7 +171,7 @@
   </dt>
 
       
-  <dt><a href="format.html#basic_formatter:Char.Traits:::call-operator__std::basic_ostreamR.ArgsRR">basic_formatter&lt;Char, Traits&gt;::operator() (C++ function)</a>
+  <dt><a href="format.html#basic_formatter:Char.Traits:::call-operator__std::basic_ostreamR.X">basic_formatter&lt;Char, Traits&gt;::operator() (C++ function)</a>
   </dt>
 
       
@@ -235,11 +243,63 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="format.html#err__boost::basic_string_refCR.ArgsRR">err (C++ function)</a>, <a href="format.html#err__basic_ostreamR.ArgRR">[1]</a>
+  <dt><a href="format.html#err__boost::basic_string_refCR.X">err (C++ function)</a>, <a href="format.html#err__basic_ostreamR.ArgRR">[1]</a>
   </dt>
 
       
-  <dt><a href="format.html#errln__boost::basic_string_refCR.ArgsRR">errln (C++ function)</a>, <a href="format.html#errln__basic_ostreamR.ArgRR">[1]</a>
+  <dt><a href="format.html#errln__boost::basic_string_refCR.X">errln (C++ function)</a>, <a href="format.html#errln__basic_ostreamR.ArgRR">[1]</a>
+  </dt>
+
+      
+  <dt><a href="error.html#expected:TR:">expected&lt;T&amp;&gt; (C++ class)</a>
+  </dt>
+
+      
+  <dt><a href="error.html#expected:TR:::dismiss">expected&lt;T&amp;&gt;::dismiss (C++ function)</a>, <a href="error.html#expected:TR:::dismissC">[1]</a>
+  </dt>
+
+      
+  <dt><a href="error.html#expected:TR:::exceptionC">expected&lt;T&amp;&gt;::exception (C++ function)</a>, <a href="error.html#expected:TR:::exception">[1]</a>
+  </dt>
+
+      
+  <dt><a href="error.html#expected:TR:::expectC">expected&lt;T&amp;&gt;::expect (C++ function)</a>
+  </dt>
+
+      
+  <dt><a href="error.html#expected:TR:::expected">expected&lt;T&amp;&gt;::expected (C++ function)</a>, <a href="error.html#expected:TR:::expected__TR">[1]</a>, <a href="error.html#expected:TR:::expected__expectedCR">[2]</a>, <a href="error.html#expected:TR:::expected__expectedRR">[3]</a>, <a href="error.html#expected:TR:::expected__std::exception_ptrCR">[4]</a>, <a href="error.html#expected:TR:::expected__exception_ptrRR">[5]</a>, <a href="error.html#expected:TR:::expected__ExceptionCR">[6]</a>
+  </dt>
+
+      
+  <dt><a href="error.html#expected:TR:::castto-b-operatorC">expected&lt;T&amp;&gt;::operator bool (C++ function)</a>
+  </dt>
+
+      
+  <dt><a href="error.html#expected:TR:::mul-operator">expected&lt;T&amp;&gt;::operator* (C++ function)</a>, <a href="error.html#expected:TR:::mul-operator">[1]</a>, <a href="error.html#expected:TR:::mul-operatorC">[2]</a>
+  </dt>
+
+      
+  <dt><a href="error.html#expected:TR:::pointer-operator">expected&lt;T&amp;&gt;::operator-&gt; (C++ function)</a>, <a href="error.html#expected:TR:::pointer-operatorC">[1]</a>
+  </dt>
+
+      
+  <dt><a href="error.html#expected:TR:::assign-operator__expectedCR">expected&lt;T&amp;&gt;::operator= (C++ function)</a>, <a href="error.html#expected:TR:::assign-operator__expectedRR">[1]</a>, <a href="error.html#expected:TR:::assign-operator__TR">[2]</a>, <a href="error.html#expected:TR:::assign-operator__std::exception_ptrCR">[3]</a>, <a href="error.html#expected:TR:::assign-operator__std::exception_ptrRR">[4]</a>
+  </dt>
+
+      
+  <dt><a href="error.html#expected:TR:::raiseC">expected&lt;T&amp;&gt;::raise (C++ function)</a>
+  </dt>
+
+      
+  <dt><a href="error.html#expected:TR:::swap__expectedR">expected&lt;T&amp;&gt;::swap (C++ function)</a>
+  </dt>
+
+      
+  <dt><a href="error.html#expected:TR:::value">expected&lt;T&amp;&gt;::value (C++ function)</a>, <a href="error.html#expected:TR:::value">[1]</a>, <a href="error.html#expected:TR:::valueC">[2]</a>
+  </dt>
+
+      
+  <dt><a href="error.html#expected:TR:::~expected">expected&lt;T&amp;&gt;::~expected (C++ function)</a>
   </dt>
 
       
@@ -247,15 +307,25 @@
   </dt>
 
       
-  <dt><a href="error.html#expected:T:::expected__TCR">expected&lt;T&gt;::expected (C++ function)</a>, <a href="error.html#expected:T:::expected__TRR">[1]</a>, <a href="error.html#expected:T:::expected">[2]</a>, <a href="error.html#expected:T:::expected__std::exception_ptr">[3]</a>, <a href="error.html#expected:T:::expected__ExceptionCR">[4]</a>, <a href="error.html#expected:T:::expected__expectedCR">[5]</a>, <a href="error.html#expected:T:::expected__expectedRR">[6]</a>
+  <dt><a href="error.html#expected:T:::dismiss">expected&lt;T&gt;::dismiss (C++ function)</a>, <a href="error.html#expected:T:::dismissC">[1]</a>
   </dt>
 
       
-  <dt><a href="error.html#expected:T:::get">expected&lt;T&gt;::get (C++ function)</a>, <a href="error.html#expected:T:::getC">[1]</a>
+  <dt><a href="error.html#expected:T:::emplace__X">expected&lt;T&gt;::emplace (C++ function)</a>
   </dt>
 
       
-  <dt><a href="error.html#expected:T:::move">expected&lt;T&gt;::move (C++ function)</a>
+  <dt><a href="error.html#expected:T:::exceptionC">expected&lt;T&gt;::exception (C++ function)</a>, <a href="error.html#expected:T:::exception">[1]</a>
+  </dt>
+
+      
+  <dt><a href="error.html#expected:T:::expectC">expected&lt;T&gt;::expect (C++ function)</a>
+  </dt>
+
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="error.html#expected:T:::expected">expected&lt;T&gt;::expected (C++ function)</a>, <a href="error.html#expected:T:::expected__TCR">[1]</a>, <a href="error.html#expected:T:::expected__TRR">[2]</a>, <a href="error.html#expected:T:::expected__X.X">[3]</a>, <a href="error.html#expected:T:::expected__expectedCR">[4]</a>, <a href="error.html#expected:T:::expected__expectedRR">[5]</a>, <a href="error.html#expected:T:::expected__std::exception_ptrCR">[6]</a>, <a href="error.html#expected:T:::expected__exception_ptrRR">[7]</a>, <a href="error.html#expected:T:::expected__ExceptionCR">[8]</a>
   </dt>
 
       
@@ -263,13 +333,35 @@
   </dt>
 
       
-  <dt><a href="error.html#expected:T:::mul-operator">expected&lt;T&gt;::operator* (C++ function)</a>, <a href="error.html#expected:T:::mul-operatorC">[1]</a>
+  <dt><a href="error.html#expected:T:::mul-operator">expected&lt;T&gt;::operator* (C++ function)</a>, <a href="error.html#expected:T:::mul-operator">[1]</a>, <a href="error.html#expected:T:::mul-operatorC">[2]</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="error.html#expected:T:::validC">expected&lt;T&gt;::valid (C++ function)</a>
+  <dt><a href="error.html#expected:T:::pointer-operator">expected&lt;T&gt;::operator-&gt; (C++ function)</a>, <a href="error.html#expected:T:::pointer-operatorC">[1]</a>
+  </dt>
+
+      
+  <dt><a href="error.html#expected:T:::assign-operator__expectedCR">expected&lt;T&gt;::operator= (C++ function)</a>, <a href="error.html#expected:T:::assign-operator__expectedRR">[1]</a>, <a href="error.html#expected:T:::assign-operator__TCR">[2]</a>, <a href="error.html#expected:T:::assign-operator__TRR">[3]</a>, <a href="error.html#expected:T:::assign-operator__std::exception_ptrCR">[4]</a>, <a href="error.html#expected:T:::assign-operator__std::exception_ptrRR">[5]</a>
+  </dt>
+
+      
+  <dt><a href="error.html#expected:T:::raiseC">expected&lt;T&gt;::raise (C++ function)</a>
+  </dt>
+
+      
+  <dt><a href="error.html#expected:T:::swap__expectedR">expected&lt;T&gt;::swap (C++ function)</a>
+  </dt>
+
+      
+  <dt><a href="error.html#expected:T:::value">expected&lt;T&gt;::value (C++ function)</a>, <a href="error.html#expected:T:::value">[1]</a>, <a href="error.html#expected:T:::valueC">[2]</a>
+  </dt>
+
+      
+  <dt><a href="error.html#expected:T:::value_type">expected&lt;T&gt;::value_type (C++ type)</a>
+  </dt>
+
+      
+  <dt><a href="error.html#expected:T:::~expected">expected&lt;T&gt;::~expected (C++ function)</a>
   </dt>
 
       
@@ -277,11 +369,19 @@
   </dt>
 
       
-  <dt><a href="error.html#expected:void:::expected">expected&lt;void&gt;::expected (C++ function)</a>, <a href="error.html#expected:void:::expected__std::exception_ptr">[1]</a>, <a href="error.html#expected:void:::expected__ExceptionCR">[2]</a>, <a href="error.html#expected:void:::expected__expectedCR">[3]</a>, <a href="error.html#expected:void:::expected__expectedRR">[4]</a>
+  <dt><a href="error.html#expected:void:::dismiss">expected&lt;void&gt;::dismiss (C++ function)</a>, <a href="error.html#expected:void:::dismissC">[1]</a>
   </dt>
 
       
-  <dt><a href="error.html#expected:void:::getC">expected&lt;void&gt;::get (C++ function)</a>
+  <dt><a href="error.html#expected:void:::exceptionC">expected&lt;void&gt;::exception (C++ function)</a>, <a href="error.html#expected:void:::exception">[1]</a>
+  </dt>
+
+      
+  <dt><a href="error.html#expected:void:::expectC">expected&lt;void&gt;::expect (C++ function)</a>
+  </dt>
+
+      
+  <dt><a href="error.html#expected:void:::expected">expected&lt;void&gt;::expected (C++ function)</a>, <a href="error.html#expected:void:::expected__std::exception_ptrCR">[1]</a>, <a href="error.html#expected:void:::expected__exception_ptrRR">[2]</a>, <a href="error.html#expected:void:::expected__ExceptionCR">[3]</a>
   </dt>
 
       
@@ -289,11 +389,19 @@
   </dt>
 
       
-  <dt><a href="error.html#expected:void:::mul-operatorC">expected&lt;void&gt;::operator* (C++ function)</a>
+  <dt><a href="error.html#expected:void:::assign-operator__expectedCR">expected&lt;void&gt;::operator= (C++ function)</a>, <a href="error.html#expected:void:::assign-operator__expectedRR">[1]</a>, <a href="error.html#expected:void:::assign-operator__std::exception_ptrCR">[2]</a>, <a href="error.html#expected:void:::assign-operator__std::exception_ptrRR">[3]</a>
   </dt>
 
       
-  <dt><a href="error.html#expected:void:::validC">expected&lt;void&gt;::valid (C++ function)</a>
+  <dt><a href="error.html#expected:void:::raiseC">expected&lt;void&gt;::raise (C++ function)</a>
+  </dt>
+
+      
+  <dt><a href="error.html#expected:void:::swap__expectedR">expected&lt;void&gt;::swap (C++ function)</a>
+  </dt>
+
+      
+  <dt><a href="error.html#expected:void:::~expected">expected&lt;void&gt;::~expected (C++ function)</a>
   </dt>
 
   </dl></td>
@@ -341,11 +449,11 @@
   </dt>
 
       
-  <dt><a href="format.html#format__boost::basic_string_refCR.ArgsRR">format (C++ function)</a>, <a href="format.html#format__std::basic_stringCR.ArgsRR">[1]</a>, <a href="format.html#format__CharTCP.ArgsRR">[2]</a>
+  <dt><a href="format.html#format__boost::basic_string_refCR.X">format (C++ function)</a>, <a href="format.html#format__std::basic_stringCR.X">[1]</a>, <a href="format.html#format__CharTCP.X">[2]</a>
   </dt>
 
       
-  <dt><a href="format.html#formatln__boost::basic_string_refCR.ArgsRR">formatln (C++ function)</a>, <a href="format.html#formatln__std::basic_stringCR.ArgsRR">[1]</a>, <a href="format.html#formatln__CharTCP.ArgsRR">[2]</a>
+  <dt><a href="format.html#formatln__boost::basic_string_refCR.X">formatln (C++ function)</a>, <a href="format.html#formatln__std::basic_stringCR.X">[1]</a>, <a href="format.html#formatln__CharTCP.X">[2]</a>
   </dt>
 
       
@@ -354,6 +462,26 @@
 
       
   <dt><a href="dynamic.html#function:Signature:::call-operator__ArgsRRC">function&lt;Signature&gt;::operator() (C++ function)</a>
+  </dt>
+
+  </dl></td>
+</tr></table>
+
+<h2 id="H">H</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="error.html#hash:expected:T::">hash&lt;expected&lt;T&gt;&gt; (C++ class)</a>
+  </dt>
+
+      
+  <dt><a href="error.html#hash:expected:T::::call-operator__expectedCRC">hash&lt;expected&lt;T&gt;&gt;::operator() (C++ function)</a>
+  </dt>
+
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="error.html#hash:expected:T::::result_type">hash&lt;expected&lt;T&gt;&gt;::result_type (C++ type)</a>
   </dt>
 
   </dl></td>
@@ -382,6 +510,10 @@
 
       
   <dt><a href="dynamic.html#image::~image">image::~image (C++ function)</a>
+  </dt>
+
+      
+  <dt><a href="error.html#in_place_t">in_place_t (C++ class)</a>
   </dt>
 
   </dl></td>
@@ -431,13 +563,13 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="format.html#print__boost::basic_string_refCR.ArgsRR">print (C++ function)</a>, <a href="format.html#print__basic_ostreamR.ArgRR">[1]</a>
+  <dt><a href="format.html#print__boost::basic_string_refCR.X">print (C++ function)</a>, <a href="format.html#print__basic_ostreamR.ArgRR">[1]</a>
   </dt>
 
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="format.html#println__boost::basic_string_refCR.ArgsRR">println (C++ function)</a>, <a href="format.html#println__basic_ostreamR.ArgRR">[1]</a>
+  <dt><a href="format.html#println__boost::basic_string_refCR.X">println (C++ function)</a>, <a href="format.html#println__basic_ostreamR.ArgRR">[1]</a>
   </dt>
 
   </dl></td>
@@ -456,6 +588,10 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="error.html#swap__expectedR.expectedR">swap (C++ function)</a>
+  </dt>
+
       
   <dt><a href="dynamic.html#symbol_info">symbol_info (C++ class)</a>
   </dt>
@@ -481,13 +617,13 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="format.html#write__std::basic_ostreamR.boost::basic_string_refCR.ArgsRR">write (C++ function)</a>, <a href="format.html#write__basic_ostreamR.ArgRR">[1]</a>
+  <dt><a href="format.html#write__std::basic_ostreamR.boost::basic_string_refCR.X">write (C++ function)</a>, <a href="format.html#write__basic_ostreamR.ArgRR">[1]</a>
   </dt>
 
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="format.html#writeln__std::basic_ostreamR.boost::basic_string_refCR.ArgsRR">writeln (C++ function)</a>, <a href="format.html#writeln__basic_ostreamR.ArgRR">[1]</a>
+  <dt><a href="format.html#writeln__std::basic_ostreamR.boost::basic_string_refCR.X">writeln (C++ function)</a>, <a href="format.html#writeln__basic_ostreamR.ArgRR">[1]</a>
   </dt>
 
   </dl></td>

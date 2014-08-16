@@ -66,6 +66,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="">Format Module</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#special-printable-types">Special Printable Types</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#syntax">Syntax</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#attributes">Attributes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#escaping-characters">Escaping Characters</a></li>
@@ -93,7 +94,9 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="error.html">Error Module</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="error.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="error.html#requirements">Requirements</a></li>
 <li class="toctree-l2"><a class="reference internal" href="error.html#reference">Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="error.html#exception-pointers-and-double-free">Exception Pointers and Double-Free</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="unit_test.html">Unit Test Module</a><ul>
@@ -181,6 +184,33 @@ printable.</p>
 </pre></div>
 </div>
 </div>
+<div class="section" id="special-printable-types">
+<h2>Special Printable Types<a class="headerlink" href="#special-printable-types" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="filesystem.html#lshift-operator__osR.directory_entryCR" title="operator&lt;&lt;"><tt class="xref cpp cpp-func docutils literal"><span class="pre">operator&lt;&lt;()</span></tt></a> has been defined for two special types: <tt class="xref cpp cpp-class docutils literal"><span class="pre">std::tuple</span></tt> and
+<tt class="xref cpp cpp-class docutils literal"><span class="pre">boost::optional</span></tt> <a class="footnote-reference" href="#id2" id="id1">[*]</a>. The effects of printing these types are shown by the following
+examples:</p>
+<div class="highlight-cpp"><div class="highlight"><pre><span class="n">cc</span><span class="o">::</span><span class="n">println</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">make_tuple</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">));</span>
+<span class="c1">// Prints &quot;(1, 2, 3)&quot; to stdout.</span>
+
+<span class="n">cc</span><span class="o">::</span><span class="n">println</span><span class="p">(</span><span class="n">boost</span><span class="o">::</span><span class="n">make_optional</span><span class="p">(</span><span class="mi">0</span><span class="p">));</span>
+<span class="c1">// Prints &quot;0&quot; to stdout.</span>
+
+<span class="n">cc</span><span class="o">::</span><span class="n">println</span><span class="p">(</span><span class="n">boost</span><span class="o">::</span><span class="n">optional</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">{});</span>
+<span class="c1">// Prints &quot;none&quot; to stdout.</span>
+
+<span class="n">cc</span><span class="o">::</span><span class="n">println</span><span class="p">(</span><span class="n">boost</span><span class="o">::</span><span class="n">none</span><span class="p">);</span>
+<span class="c1">// Prints &quot;none&quot; to stdout.</span>
+</pre></div>
+</div>
+<table class="docutils footnote" frame="void" id="id2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[*]</a></td><td>The <tt class="xref cpp cpp-class docutils literal"><span class="pre">boost::optional</span></tt> type is actually printable by default, but only because it
+is implicitly convertible to <tt class="xref cpp cpp-type docutils literal"><span class="pre">bool</span></tt>. So the output is generally not
+going to be very useful.</td></tr>
+</tbody>
+</table>
+</div>
 <div class="section" id="syntax">
 <h2>Syntax<a class="headerlink" href="#syntax" title="Permalink to this headline">¶</a></h2>
 <p>Each function in this module takes a <em>format string</em> as an argument. This format
@@ -211,24 +241,24 @@ and three, from left to right.</p>
 <p>Not all attributes can be used with all types. In general, an attribute performs
 exactly one of the following functions:</p>
 <ol class="arabic simple">
-<li>Adds manipulators to the destination stream <a class="footnote-reference" href="#id3" id="id1">[*]</a>.</li>
+<li>Adds manipulators to the destination stream <a class="footnote-reference" href="#id5" id="id3">[†]</a>.</li>
 <li>Converts a numeric type to another numeric type.</li>
-<li>Converts a numeric type to a string <a class="footnote-reference" href="#id4" id="id2">[†]</a>.</li>
+<li>Converts a numeric type to a string <a class="footnote-reference" href="#id6" id="id4">[‡]</a>.</li>
 <li>Converts any type to a string.</li>
 <li>Converts a string to another string.</li>
 </ol>
-<table class="docutils footnote" frame="void" id="id3" rules="none">
+<table class="docutils footnote" frame="void" id="id5" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id1">[*]</a></td><td>The format state of the destination output stream is saved and restored
+<tr><td class="label"><a class="fn-backref" href="#id3">[†]</a></td><td>The format state of the destination output stream is saved and restored
 before and after the application of each argument that modifies the stream&#8217;s
 format state.</td></tr>
 </tbody>
 </table>
-<table class="docutils footnote" frame="void" id="id4" rules="none">
+<table class="docutils footnote" frame="void" id="id6" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id2">[†]</a></td><td>Strings in this context are taken to be character literals,
+<tr><td class="label"><a class="fn-backref" href="#id4">[‡]</a></td><td>Strings in this context are taken to be character literals,
 <tt class="xref cpp cpp-class docutils literal"><span class="pre">std::string</span></tt> s, or <tt class="xref cpp cpp-class docutils literal"><span class="pre">boost::string_ref</span></tt> s.</td></tr>
 </tbody>
 </table>
@@ -559,15 +589,15 @@ when compiled with GCC.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="basic_formatter:Char.Traits:::call-operator__std::basic_ostreamR.ArgsRR">
-void <tt class="descname">operator()</tt><big>(</big>std::basic_ostream&amp; <em>dst</em>, Args&amp;&amp; <em>args</em><big>)</big><a class="headerlink" href="#basic_formatter:Char.Traits:::call-operator__std::basic_ostreamR.ArgsRR" title="Permalink to this definition">¶</a></dt>
-<dd><p>Applies the <tt class="xref cpp cpp-class docutils literal"><span class="pre">cc::basic_formatter&lt;Char,</span> <span class="pre">Traits&gt;</span></tt> object to the parameter pack <em>args</em>, and
+<dt id="basic_formatter:Char.Traits:::call-operator__std::basic_ostreamR.X">
+void <tt class="descname">operator()</tt><big>(</big>std::basic_ostream&amp; <em>dst</em>, <em>Args</em><big>)</big><a class="headerlink" href="#basic_formatter:Char.Traits:::call-operator__std::basic_ostreamR.X" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies the <tt class="xref cpp cpp-class docutils literal"><span class="pre">cc::basic_formatter&lt;Char,</span> <span class="pre">Traits&gt;</span></tt> object to the parameter pack <em>Args</em>, and
 writes the result to <em>dst</em>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Throws:</th><td class="field-body"><tt class="xref cpp cpp-class docutils literal"><span class="pre">std::runtime_error</span></tt> if an error occurs while applying <em>fmt</em> to <em>args</em>.</td>
+<tr class="field-odd field"><th class="field-name">Throws:</th><td class="field-body"><tt class="xref cpp cpp-class docutils literal"><span class="pre">std::runtime_error</span></tt> if an error occurs while applying <em>fmt</em> to <em>Args</em>.</td>
 </tr>
 </tbody>
 </table>
@@ -576,37 +606,37 @@ writes the result to <em>dst</em>.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="write__std::basic_ostreamR.boost::basic_string_refCR.ArgsRR">
-basic_formatter <tt class="descname">write</tt><big>(</big>std::basic_ostream&amp; <em>os</em>, const boost::basic_string_ref&amp; <em>fmt</em>, Args&amp;&amp; <em>args</em><big>)</big><a class="headerlink" href="#write__std::basic_ostreamR.boost::basic_string_refCR.ArgsRR" title="Permalink to this definition">¶</a></dt>
-<dt id="print__boost::basic_string_refCR.ArgsRR">
-basic_formatter <tt class="descname">print</tt><big>(</big>const boost::basic_string_ref&amp; <em>fmt</em>, Args&amp;&amp; <em>args</em><big>)</big><a class="headerlink" href="#print__boost::basic_string_refCR.ArgsRR" title="Permalink to this definition">¶</a></dt>
-<dt id="err__boost::basic_string_refCR.ArgsRR">
-basic_formatter <tt class="descname">err</tt><big>(</big>const boost::basic_string_ref&amp; <em>fmt</em>, Args&amp;&amp; <em>args</em><big>)</big><a class="headerlink" href="#err__boost::basic_string_refCR.ArgsRR" title="Permalink to this definition">¶</a></dt>
+<dt id="write__std::basic_ostreamR.boost::basic_string_refCR.X">
+basic_formatter <tt class="descname">write</tt><big>(</big>std::basic_ostream&amp; <em>os</em>, const boost::basic_string_ref&amp; <em>fmt</em>, <em>Args</em><big>)</big><a class="headerlink" href="#write__std::basic_ostreamR.boost::basic_string_refCR.X" title="Permalink to this definition">¶</a></dt>
+<dt id="print__boost::basic_string_refCR.X">
+basic_formatter <tt class="descname">print</tt><big>(</big>const boost::basic_string_ref&amp; <em>fmt</em>, <em>Args</em><big>)</big><a class="headerlink" href="#print__boost::basic_string_refCR.X" title="Permalink to this definition">¶</a></dt>
+<dt id="err__boost::basic_string_refCR.X">
+basic_formatter <tt class="descname">err</tt><big>(</big>const boost::basic_string_ref&amp; <em>fmt</em>, <em>Args</em><big>)</big><a class="headerlink" href="#err__boost::basic_string_refCR.X" title="Permalink to this definition">¶</a></dt>
 <dd><p>Interprets <em>fmt</em> as a format string, and applies it to the parameter pack
-<em>args</em>. The result is written to the destination output stream, and the
+<em>Args</em>. The result is written to the destination output stream, and the
 <tt class="xref cpp cpp-class docutils literal"><span class="pre">cc::basic_formatter&lt;Char,</span> <span class="pre">Traits&gt;</span></tt> object that is created in the process is returned.</p>
 <ul class="simple">
-<li>For <a class="reference internal" href="#write__std::basic_ostreamR.boost::basic_string_refCR.ArgsRR" title="write"><tt class="xref cpp cpp-func docutils literal"><span class="pre">write()</span></tt></a>, the destination output stream is <em>os</em>.</li>
-<li>For <a class="reference internal" href="#print__boost::basic_string_refCR.ArgsRR" title="print"><tt class="xref cpp cpp-func docutils literal"><span class="pre">print()</span></tt></a>, the destination output stream is <tt class="xref cpp cpp-type docutils literal"><span class="pre">std::cout</span></tt>.</li>
-<li>For <a class="reference internal" href="#err__boost::basic_string_refCR.ArgsRR" title="err"><tt class="xref cpp cpp-func docutils literal"><span class="pre">err()</span></tt></a>, the destination output stream is <tt class="xref cpp cpp-type docutils literal"><span class="pre">std::cerr</span></tt>.</li>
+<li>For <a class="reference internal" href="#write__std::basic_ostreamR.boost::basic_string_refCR.X" title="write"><tt class="xref cpp cpp-func docutils literal"><span class="pre">write()</span></tt></a>, the destination output stream is <em>os</em>.</li>
+<li>For <a class="reference internal" href="#print__boost::basic_string_refCR.X" title="print"><tt class="xref cpp cpp-func docutils literal"><span class="pre">print()</span></tt></a>, the destination output stream is <tt class="xref cpp cpp-type docutils literal"><span class="pre">std::cout</span></tt>.</li>
+<li>For <a class="reference internal" href="#err__boost::basic_string_refCR.X" title="err"><tt class="xref cpp cpp-func docutils literal"><span class="pre">err()</span></tt></a>, the destination output stream is <tt class="xref cpp cpp-type docutils literal"><span class="pre">std::cerr</span></tt>.</li>
 </ul>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Throws:</th><td class="field-body"><tt class="xref cpp cpp-class docutils literal"><span class="pre">std::runtime_error</span></tt> if an error occurs while parsing <em>fmt</em> or applying <em>fmt</em> to <em>args</em>.</td>
+<tr class="field-odd field"><th class="field-name">Throws:</th><td class="field-body"><tt class="xref cpp cpp-class docutils literal"><span class="pre">std::runtime_error</span></tt> if an error occurs while parsing <em>fmt</em> or applying <em>fmt</em> to <em>Args</em>.</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
 <dl class="function">
-<dt id="writeln__std::basic_ostreamR.boost::basic_string_refCR.ArgsRR">
-basic_formatter <tt class="descname">writeln</tt><big>(</big>std::basic_ostream&amp; <em>os</em>, const boost::basic_string_ref&amp; <em>fmt</em>, Args&amp;&amp; <em>args</em><big>)</big><a class="headerlink" href="#writeln__std::basic_ostreamR.boost::basic_string_refCR.ArgsRR" title="Permalink to this definition">¶</a></dt>
-<dt id="println__boost::basic_string_refCR.ArgsRR">
-basic_formatter <tt class="descname">println</tt><big>(</big>const boost::basic_string_ref&amp; <em>fmt</em>, Args&amp;&amp; <em>args</em><big>)</big><a class="headerlink" href="#println__boost::basic_string_refCR.ArgsRR" title="Permalink to this definition">¶</a></dt>
-<dt id="errln__boost::basic_string_refCR.ArgsRR">
-basic_formatter <tt class="descname">errln</tt><big>(</big>const boost::basic_string_ref&amp; <em>fmt</em>, Args&amp;&amp; <em>args</em><big>)</big><a class="headerlink" href="#errln__boost::basic_string_refCR.ArgsRR" title="Permalink to this definition">¶</a></dt>
+<dt id="writeln__std::basic_ostreamR.boost::basic_string_refCR.X">
+basic_formatter <tt class="descname">writeln</tt><big>(</big>std::basic_ostream&amp; <em>os</em>, const boost::basic_string_ref&amp; <em>fmt</em>, <em>Args</em><big>)</big><a class="headerlink" href="#writeln__std::basic_ostreamR.boost::basic_string_refCR.X" title="Permalink to this definition">¶</a></dt>
+<dt id="println__boost::basic_string_refCR.X">
+basic_formatter <tt class="descname">println</tt><big>(</big>const boost::basic_string_ref&amp; <em>fmt</em>, <em>Args</em><big>)</big><a class="headerlink" href="#println__boost::basic_string_refCR.X" title="Permalink to this definition">¶</a></dt>
+<dt id="errln__boost::basic_string_refCR.X">
+basic_formatter <tt class="descname">errln</tt><big>(</big>const boost::basic_string_ref&amp; <em>fmt</em>, <em>Args</em><big>)</big><a class="headerlink" href="#errln__boost::basic_string_refCR.X" title="Permalink to this definition">¶</a></dt>
 <dd><p>These functions are similar to their counterparts that do not end in <tt class="docutils literal"><span class="pre">ln</span></tt>,
 but these functions append newlines to their destination output streams
 after performing the formatting operations.</p>
@@ -614,7 +644,7 @@ after performing the formatting operations.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Throws:</th><td class="field-body"><tt class="xref cpp cpp-class docutils literal"><span class="pre">std::runtime_error</span></tt> if an error occurs while parsing <em>fmt</em> or applying <em>fmt</em> to <em>args</em>.</td>
+<tr class="field-odd field"><th class="field-name">Throws:</th><td class="field-body"><tt class="xref cpp cpp-class docutils literal"><span class="pre">std::runtime_error</span></tt> if an error occurs while parsing <em>fmt</em> or applying <em>fmt</em> to <em>Args</em>.</td>
 </tr>
 </tbody>
 </table>
@@ -640,31 +670,31 @@ containing a single <tt class="docutils literal"><span class="pre">$</span></tt>
 </dd></dl>
 
 <dl class="function">
-<dt id="format__boost::basic_string_refCR.ArgsRR">
-std::basic_string <tt class="descname">format</tt><big>(</big>const boost::basic_string_ref&amp; <em>fmt</em>, Args&amp;&amp; <em>args</em><big>)</big><a class="headerlink" href="#format__boost::basic_string_refCR.ArgsRR" title="Permalink to this definition">¶</a></dt>
-<dt id="format__std::basic_stringCR.ArgsRR">
-std::basic_string <tt class="descname">format</tt><big>(</big>const std::basic_string&amp; <em>fmt</em>, Args&amp;&amp; <em>args</em><big>)</big><a class="headerlink" href="#format__std::basic_stringCR.ArgsRR" title="Permalink to this definition">¶</a></dt>
-<dt id="format__CharTCP.ArgsRR">
-std::basic_string <tt class="descname">format</tt><big>(</big>const CharT* <em>fmt</em>, Args&amp;&amp; <em>args</em><big>)</big><a class="headerlink" href="#format__CharTCP.ArgsRR" title="Permalink to this definition">¶</a></dt>
+<dt id="format__boost::basic_string_refCR.X">
+std::basic_string <tt class="descname">format</tt><big>(</big>const boost::basic_string_ref&amp; <em>fmt</em>, <em>Args</em><big>)</big><a class="headerlink" href="#format__boost::basic_string_refCR.X" title="Permalink to this definition">¶</a></dt>
+<dt id="format__std::basic_stringCR.X">
+std::basic_string <tt class="descname">format</tt><big>(</big>const std::basic_string&amp; <em>fmt</em>, <em>Args</em><big>)</big><a class="headerlink" href="#format__std::basic_stringCR.X" title="Permalink to this definition">¶</a></dt>
+<dt id="format__CharTCP.X">
+std::basic_string <tt class="descname">format</tt><big>(</big>const CharT* <em>fmt</em>, <em>Args</em><big>)</big><a class="headerlink" href="#format__CharTCP.X" title="Permalink to this definition">¶</a></dt>
 <dd><p>Interprets <em>fmt</em> as a format string, and applies it to the parameter pack
-<em>args</em>. The result is returned as a <tt class="xref cpp cpp-class docutils literal"><span class="pre">std::basic_string&lt;Char,</span> <span class="pre">Traits&gt;</span></tt>.</p>
+<em>Args</em>. The result is returned as a <tt class="xref cpp cpp-class docutils literal"><span class="pre">std::basic_string&lt;Char,</span> <span class="pre">Traits&gt;</span></tt>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Throws:</th><td class="field-body"><tt class="xref cpp cpp-class docutils literal"><span class="pre">std::runtime_error</span></tt> if an error occurs while parsing <em>fmt</em> or applying <em>fmt</em> to <em>args</em>.</td>
+<tr class="field-odd field"><th class="field-name">Throws:</th><td class="field-body"><tt class="xref cpp cpp-class docutils literal"><span class="pre">std::runtime_error</span></tt> if an error occurs while parsing <em>fmt</em> or applying <em>fmt</em> to <em>Args</em>.</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
 <dl class="function">
-<dt id="formatln__boost::basic_string_refCR.ArgsRR">
-std::basic_string <tt class="descname">formatln</tt><big>(</big>const boost::basic_string_ref&amp; <em>fmt</em>, Args&amp;&amp; <em>args</em><big>)</big><a class="headerlink" href="#formatln__boost::basic_string_refCR.ArgsRR" title="Permalink to this definition">¶</a></dt>
-<dt id="formatln__std::basic_stringCR.ArgsRR">
-std::basic_string <tt class="descname">formatln</tt><big>(</big>const std::basic_string&amp; <em>fmt</em>, Args&amp;&amp; <em>args</em><big>)</big><a class="headerlink" href="#formatln__std::basic_stringCR.ArgsRR" title="Permalink to this definition">¶</a></dt>
-<dt id="formatln__CharTCP.ArgsRR">
-std::basic_string <tt class="descname">formatln</tt><big>(</big>const CharT* <em>fmt</em>, Args&amp;&amp; <em>args</em><big>)</big><a class="headerlink" href="#formatln__CharTCP.ArgsRR" title="Permalink to this definition">¶</a></dt>
+<dt id="formatln__boost::basic_string_refCR.X">
+std::basic_string <tt class="descname">formatln</tt><big>(</big>const boost::basic_string_ref&amp; <em>fmt</em>, <em>Args</em><big>)</big><a class="headerlink" href="#formatln__boost::basic_string_refCR.X" title="Permalink to this definition">¶</a></dt>
+<dt id="formatln__std::basic_stringCR.X">
+std::basic_string <tt class="descname">formatln</tt><big>(</big>const std::basic_string&amp; <em>fmt</em>, <em>Args</em><big>)</big><a class="headerlink" href="#formatln__std::basic_stringCR.X" title="Permalink to this definition">¶</a></dt>
+<dt id="formatln__CharTCP.X">
+std::basic_string <tt class="descname">formatln</tt><big>(</big>const CharT* <em>fmt</em>, <em>Args</em><big>)</big><a class="headerlink" href="#formatln__CharTCP.X" title="Permalink to this definition">¶</a></dt>
 <dd><p>These functions are similar to their counterparts that do not end in <tt class="docutils literal"><span class="pre">ln</span></tt>,
 but these functions append newlines to the output strings after performing
 the formatting operations.</p>
@@ -672,7 +702,7 @@ the formatting operations.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Throws:</th><td class="field-body"><tt class="xref cpp cpp-class docutils literal"><span class="pre">std::runtime_error</span></tt> if an error occurs while parsing <em>fmt</em> or applying <em>fmt</em> to <em>args</em>.</td>
+<tr class="field-odd field"><th class="field-name">Throws:</th><td class="field-body"><tt class="xref cpp cpp-class docutils literal"><span class="pre">std::runtime_error</span></tt> if an error occurs while parsing <em>fmt</em> or applying <em>fmt</em> to <em>Args</em>.</td>
 </tr>
 </tbody>
 </table>

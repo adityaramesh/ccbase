@@ -1,6 +1,12 @@
 .. _ccbase-format-module:
 .. default-domain:: cpp
 
+.. |tuple| replace::
+   :class:`std::tuple`
+
+.. |optional| replace::
+   :class:`boost::optional<T>`
+
 .. |string| replace::
    :class:`std::string`
 
@@ -71,6 +77,29 @@ Examples
         auto msg = cc::format("{Name: ${quote}, ID: ${hex, base}}",
                 "test", 256);
         // Creates a string whose contents are "{Name: "test", ID: 0x100}".
+
+Special Printable Types
+-----------------------
+
+The :func:`operator<<` has been defined for two special types: |tuple| and
+|optional| [*]_. The effects of printing these types are shown by the following
+examples: ::
+
+	cc::println(std::make_tuple(1, 2, 3));
+        // Prints "(1, 2, 3)" to stdout.
+
+	cc::println(boost::make_optional(0));
+        // Prints "0" to stdout.
+
+	cc::println(boost::optional<int>{});
+        // Prints "none" to stdout.
+
+	cc::println(boost::none);
+        // Prints "none" to stdout.
+
+.. [*] The |optional| type is actually printable by default, but only because it
+   is implicitly convertible to :type:`bool`. So the output is generally not
+   going to be very useful.
 
 Syntax
 ------
@@ -288,36 +317,36 @@ when compiled with GCC.
 
       :throws: |runtime_error| if an error occurs while parsing *fmt_str*.
 
-   .. function:: void operator()(std::basic_ostream& dst, Args&& args)
+   .. function:: void operator()(std::basic_ostream& dst, Args)
 
-      Applies the |basic_formatter| object to the parameter pack *args*, and
+      Applies the |basic_formatter| object to the parameter pack *Args*, and
       writes the result to *dst*.
 
-      :throws: |runtime_error| if an error occurs while applying *fmt* to *args*.
+      :throws: |runtime_error| if an error occurs while applying *fmt* to *Args*.
 
-.. function:: basic_formatter write(std::basic_ostream& os, const boost::basic_string_ref& fmt, Args&& args)
-              basic_formatter print(const boost::basic_string_ref& fmt, Args&& args)
-              basic_formatter err(const boost::basic_string_ref& fmt, Args&& args)
+.. function:: basic_formatter write(std::basic_ostream& os, const boost::basic_string_ref& fmt, Args)
+              basic_formatter print(const boost::basic_string_ref& fmt, Args)
+              basic_formatter err(const boost::basic_string_ref& fmt, Args)
 
     Interprets *fmt* as a format string, and applies it to the parameter pack
-    *args*. The result is written to the destination output stream, and the
+    *Args*. The result is written to the destination output stream, and the
     |basic_formatter| object that is created in the process is returned.
 
     - For :func:`write`, the destination output stream is *os*.
     - For :func:`print`, the destination output stream is :type:`std::cout`.
     - For :func:`err`, the destination output stream is :type:`std::cerr`.
 
-    :throws: |runtime_error| if an error occurs while parsing *fmt* or applying *fmt* to *args*.
+    :throws: |runtime_error| if an error occurs while parsing *fmt* or applying *fmt* to *Args*.
 
-.. function:: basic_formatter writeln(std::basic_ostream& os, const boost::basic_string_ref& fmt, Args&& args)
-              basic_formatter println(const boost::basic_string_ref& fmt, Args&& args)
-              basic_formatter errln(const boost::basic_string_ref& fmt, Args&& args)
+.. function:: basic_formatter writeln(std::basic_ostream& os, const boost::basic_string_ref& fmt, Args)
+              basic_formatter println(const boost::basic_string_ref& fmt, Args)
+              basic_formatter errln(const boost::basic_string_ref& fmt, Args)
 
     These functions are similar to their counterparts that do not end in ``ln``,
     but these functions append newlines to their destination output streams
     after performing the formatting operations.
 
-    :throws: |runtime_error| if an error occurs while parsing *fmt* or applying *fmt* to *args*.
+    :throws: |runtime_error| if an error occurs while parsing *fmt* or applying *fmt* to *Args*.
 
 .. function:: void write(basic_ostream& os, Arg&& arg)
               void writeln(basic_ostream& os, Arg&& arg)
@@ -331,22 +360,22 @@ when compiled with GCC.
     argument needs to be printed, in which case the use of a format string
     containing a single ``$`` would be redundant.
 
-.. function:: std::basic_string format(const boost::basic_string_ref& fmt, Args&& args)
-              std::basic_string format(const std::basic_string& fmt, Args&& args)
-              std::basic_string format(const CharT* fmt, Args&& args)
+.. function:: std::basic_string format(const boost::basic_string_ref& fmt, Args)
+              std::basic_string format(const std::basic_string& fmt, Args)
+              std::basic_string format(const CharT* fmt, Args)
 
 
     Interprets *fmt* as a format string, and applies it to the parameter pack
-    *args*. The result is returned as a |basic_string|.
+    *Args*. The result is returned as a |basic_string|.
 
-    :throws: |runtime_error| if an error occurs while parsing *fmt* or applying *fmt* to *args*.
+    :throws: |runtime_error| if an error occurs while parsing *fmt* or applying *fmt* to *Args*.
 
-.. function:: std::basic_string formatln(const boost::basic_string_ref& fmt, Args&& args)
-              std::basic_string formatln(const std::basic_string& fmt, Args&& args)
-              std::basic_string formatln(const CharT* fmt, Args&& args)
+.. function:: std::basic_string formatln(const boost::basic_string_ref& fmt, Args)
+              std::basic_string formatln(const std::basic_string& fmt, Args)
+              std::basic_string formatln(const CharT* fmt, Args)
 
     These functions are similar to their counterparts that do not end in ``ln``,
     but these functions append newlines to the output strings after performing
     the formatting operations.
 
-    :throws: |runtime_error| if an error occurs while parsing *fmt* or applying *fmt* to *args*.
+    :throws: |runtime_error| if an error occurs while parsing *fmt* or applying *fmt* to *Args*.

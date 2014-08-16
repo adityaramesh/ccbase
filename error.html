@@ -66,6 +66,7 @@
 <li class="toctree-l1"><a class="reference internal" href="format.html">Format Module</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="format.html#overview">Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="format.html#examples">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="format.html#special-printable-types">Special Printable Types</a></li>
 <li class="toctree-l2"><a class="reference internal" href="format.html#syntax">Syntax</a></li>
 <li class="toctree-l2"><a class="reference internal" href="format.html#attributes">Attributes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="format.html#escaping-characters">Escaping Characters</a></li>
@@ -94,6 +95,8 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="">Error Module</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#reference">Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#functions">Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#specializations">Specializations</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="unit_test.html">Unit Test Module</a><ul>
@@ -144,7 +147,7 @@
 <em>invalid</em> state. If an instance is in an invalid state, then it stores an
 exception; if it is in a valid state, then it stores an instance of <em>T</em>. This
 allows us to return arbitrarily-rich error codes from a given function, without
-forcing the programmer to respond to the exception immediately.</p>
+forcing the programmer to respond to any errors immediately.</p>
 <p>Here&#8217;s an example where the <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> class is used to provide an error-checked
 wrapper over a low-level POSIX function:</p>
 <div class="highlight-cpp"><div class="highlight"><pre><span class="n">std</span><span class="o">::</span><span class="n">system_error</span> <span class="n">current_system_error</span><span class="p">()</span> <span class="n">noexcept</span>
@@ -155,12 +158,10 @@ wrapper over a low-level POSIX function:</p>
 <span class="n">noexcept</span>
 <span class="p">{</span>
         <span class="k">auto</span> <span class="n">r</span> <span class="o">=</span> <span class="kt">int</span><span class="p">{};</span>
-        <span class="k">do</span> <span class="p">{</span>
-                <span class="n">r</span> <span class="o">=</span> <span class="o">::</span><span class="n">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">flags</span><span class="p">,</span> <span class="n">S_IRUSR</span> <span class="o">|</span> <span class="n">S_IWUSR</span><span class="p">);</span>
-        <span class="p">}</span>
+        <span class="k">do</span> <span class="n">r</span> <span class="o">=</span> <span class="o">::</span><span class="n">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">flags</span><span class="p">,</span> <span class="n">S_IRUSR</span> <span class="o">|</span> <span class="n">S_IWUSR</span><span class="p">);</span>
         <span class="k">while</span> <span class="p">(</span><span class="n">r</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="n">errno</span> <span class="o">==</span> <span class="n">EINTR</span><span class="p">);</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="n">r</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">current_system_error</span><span class="p">();</span> <span class="p">}</span> <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">r</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">return</span> <span class="n">current_system_error</span><span class="p">();</span>
         <span class="k">return</span> <span class="n">r</span><span class="p">;</span>
 <span class="p">}</span>
 
@@ -192,184 +193,867 @@ function does not really return anything. Consider the following example:</p>
 <span class="n">safe_close</span><span class="p">(</span><span class="kt">int</span> <span class="n">fd</span><span class="p">)</span>
 <span class="p">{</span>
         <span class="k">auto</span> <span class="n">r</span> <span class="o">=</span> <span class="o">::</span><span class="n">close</span><span class="p">(</span><span class="n">fd</span><span class="p">);</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">r</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nb">true</span><span class="p">;</span> <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">r</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">cc</span><span class="o">::</span><span class="n">no_error</span><span class="p">;</span> <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">errno</span> <span class="o">!=</span> <span class="n">EINTR</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">current_system_error</span><span class="p">();</span> <span class="p">}</span>
 
         <span class="k">for</span> <span class="p">(;;)</span> <span class="p">{</span>
                 <span class="n">r</span> <span class="o">=</span> <span class="o">::</span><span class="n">close</span><span class="p">(</span><span class="n">fd</span><span class="p">);</span>
-                <span class="k">if</span> <span class="p">(</span><span class="n">errno</span> <span class="o">==</span> <span class="n">EBADF</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nb">true</span><span class="p">;</span> <span class="p">}</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">errno</span> <span class="o">==</span> <span class="n">EBADF</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">cc</span><span class="o">::</span><span class="n">no_error</span><span class="p">;</span> <span class="p">}</span>
                 <span class="k">if</span> <span class="p">(</span><span class="n">errno</span> <span class="o">!=</span> <span class="n">EINTR</span><span class="p">)</span> <span class="p">{</span> <span class="n">current_system_error</span><span class="p">();</span> <span class="p">}</span>
         <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 <p>This module&#8217;s implementation of <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> is based on the one Andrei
-Alexandrescu discusses in his talk at C++ Next 2012 called &#8220;Systematic Error
-Handling&#8221; <a class="footnote-reference" href="#id3" id="id1">[1]</a>. The implementation in CCBase is extended in the following ways:</p>
+Alexandrescu discusses in his talk at C++ Next 2012, called &#8220;Systematic Error
+Handling&#8221; <a class="footnote-reference" href="#id2" id="id1">[5]</a>. Further improvements were made based on the implementation found
+in <a class="reference external" href="http://mnmlstc.github.io/core/optional.html#expected-type">MNMLSTC Core</a>. CCBase&#8217;s implementation differs in the following ways:</p>
 <ul class="simple">
-<li>Several useful member functions and overloaded operators have been added.</li>
-<li>It works for <tt class="docutils literal"><span class="pre">void</span></tt> and reference types <a class="footnote-reference" href="#id4" id="id2">[2]</a>.</li>
-<li>If <tt class="docutils literal"><span class="pre">NEO_NO_DEBUG</span></tt> is not defined, an assertion is performed to ensure that the state of the <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object is read at least once prior to destruction.</li>
+<li>It works for reference types.</li>
+<li>One can move the <tt class="xref cpp cpp-class docutils literal"><span class="pre">std::exception_ptr</span></tt> from an <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object without rethrowing the referred exception. Attempting to do this with current implementations of <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> may cause the program to crash because of a double-free.</li>
+<li>If <tt class="docutils literal"><span class="pre">CC_DONT_EXPECTED_ENFORCE_DISMISSAL</span></tt> is not defined, the destructor of <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> will throw if the state of the object is not read at least once prior to destruction. Otherwise, no code is generated to perform this bookkeeping.</li>
+<li>If the expected type <em>T</em> is copy assignable or move assignable, then the implementation will use these operations instead of redundantly destroying and copy or move constructing the expected object. This can potentially accelerate copy- or move-assignment of <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a>, when <em>T</em> has a non-trivial destructor.</li>
+<li>Accessors are overloaded for lvalue and rvalues to <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a>. Accessors overloaded for lvalues return lvalue references, while those overloaded for rvalues return rvalue references.</li>
+<li>Relational operators are not implemented. I am not convinced relational operators can be defined intuitively for algebraic data types like <tt class="xref cpp cpp-class docutils literal"><span class="pre">boost::optional</span></tt> and <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a>.</li>
 </ul>
+<table class="docutils footnote" frame="void" id="id2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[5]</a></td><td><a class="reference external" href="http://channel9.msdn.com/Shows/Going+Deep/C-and-Beyond-2012-Andrei-Alexandrescu-Systematic-Error-Handling-in-C">http://channel9.msdn.com/Shows/Going+Deep/C-and-Beyond-2012-Andrei-Alexandrescu-Systematic-Error-Handling-in-C</a></td></tr>
+</tbody>
+</table>
 <table class="docutils footnote" frame="void" id="id3" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td><a class="reference external" href="http://channel9.msdn.com/Shows/Going+Deep/C-and-Beyond-2012-Andrei-Alexandrescu-Systematic-Error-Handling-in-C">http://channel9.msdn.com/Shows/Going+Deep/C-and-Beyond-2012-Andrei-Alexandrescu-Systematic-Error-Handling-in-C</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="id4" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td><a class="reference external" href="http://anto-nonco.blogspot.com/2013/03/extending-expected-to-deal-with.html">http://anto-nonco.blogspot.com/2013/03/extending-expected-to-deal-with.html</a></td></tr>
+<tr><td class="label">[6]</td><td><a class="reference external" href="http://anto-nonco.blogspot.com/2013/03/extending-expected-to-deal-with.html">http://anto-nonco.blogspot.com/2013/03/extending-expected-to-deal-with.html</a></td></tr>
 </tbody>
 </table>
 </div>
 <div class="section" id="reference">
 <h2>Reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="expected:T:">
-<em class="property">class </em><tt class="descname">expected&lt;T&gt;</tt><a class="headerlink" href="#expected:T:" title="Permalink to this definition">¶</a></dt>
-<dd><p>Note that this class has a distinct specialization for <tt class="xref cpp cpp-type docutils literal"><span class="pre">void</span></tt>, with
-slightly different semantics.</p>
-<dl class="function">
-<dt id="expected:T:::expected__TCR">
- <tt class="descname">expected</tt><big>(</big>const T&amp; <em>rhs</em><big>)</big><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#expected:T:::expected__TCR" title="Permalink to this definition">¶</a></dt>
-<dd><p>Constructs an <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object in a valid state by copying the given
-object.</p>
+<dt id="in_place_t">
+<em class="property">class </em><tt class="descname">in_place_t</tt><a class="headerlink" href="#in_place_t" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class is used as a tag to disambiguate overloaded member functions that
+use variadic templates to construct values in-place.</p>
+<p>An instance of this class is available in the :ns`cc` namespace by the name
+<tt class="docutils literal"><span class="pre">in_place</span></tt>.</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="expected:T:::expected__TRR">
- <tt class="descname">expected</tt><big>(</big>T&amp;&amp; <em>rhs</em><big>)</big><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#expected:T:::expected__TRR" title="Permalink to this definition">¶</a></dt>
-<dd><p>Constructs an <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object in a valid state by moving the given
-object.</p>
+<dl class="class">
+<dt id="bad_expected_type">
+<em class="property">class </em><tt class="descname">bad_expected_type</tt><a class="headerlink" href="#bad_expected_type" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Inherits:</th><td class="field-body"><tt class="xref cpp cpp-class docutils literal"><span class="pre">std::logic_error</span></tt></td>
+</tr>
+</tbody>
+</table>
+<p>Thrown when an operation that requires an <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object to be in a valid
+state is performed on an <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object in an invalid state, or vice
+versa.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="expected:T:">
+<em class="property">class </em><tt class="descname">expected&lt;T&gt;</tt><a class="headerlink" href="#expected:T:" title="Permalink to this definition">¶</a></dt>
+<dd><p>An <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object is either in a <em>valid</em> or an <em>invalid</em> state. If
+<tt class="docutils literal"><span class="pre">CC_EXPECTED_DONT_ENFORCE_DISMISSAL</span></tt> is not defined, then the <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a>
+object is also associated with a binary <em>dismissal</em> state. The <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a>
+object is put into the dismissed state when a member function is invoked that
+reveals whether the object is in a valid or invalid state.</p>
+<p>The <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object can also be put into the dismissed state manually using
+the <a class="reference internal" href="#expected:T:::dismiss" title="expected&lt;T&gt;::dismiss"><tt class="xref cpp cpp-func docutils literal"><span class="pre">dismiss()</span></tt></a> member function. If the <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object is not in the
+dismissed state when its destructor is called, then an exception is thrown.
+This feature is intended to help enforce that all potential errors produced
+by functions returning <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> are checked.</p>
+<p>Note that this class has distinct specializations for references and
+<tt class="xref cpp cpp-type docutils literal"><span class="pre">void</span></tt>. The specialization to references has slightly different
+semantics, and the <tt class="xref cpp cpp-type docutils literal"><span class="pre">void</span></tt> specialization lacks the member functions
+that have only to do with the expected type.</p>
+<dl class="type">
+<dt id="expected:T:::value_type">
+<em class="property">type </em><tt class="descname">value_type</tt><a class="headerlink" href="#expected:T:::value_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the type managed by an <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object that is in a valid state.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p>The <a class="reference internal" href="#expected:T:::value_type" title="expected&lt;T&gt;::value_type"><tt class="xref cpp cpp-type docutils literal"><span class="pre">value_type</span></tt></a> must satify the following
+requirements. These requirements are enforced using static assertions
+within the class definition.</p>
+<ul class="simple">
+<li>Its decayed type must not be <tt class="xref cpp cpp-class docutils literal"><span class="pre">std::exception_ptr</span></tt>. <a class="footnote-reference" href="#id11" id="id5">[1]</a></li>
+<li>Its decayed type must not be derived from <tt class="xref cpp cpp-class docutils literal"><span class="pre">std::exception</span></tt>. <a class="footnote-reference" href="#id11" id="id6">[1]</a></li>
+<li>It must be either an object or an lvalue reference. <a class="footnote-reference" href="#id12" id="id7">[2]</a></li>
+<li>It must be copy constructible. <a class="footnote-reference" href="#id12" id="id8">[2]</a> <a class="footnote-reference" href="#id13" id="id9">[3]</a></li>
+<li>It must be nothrow destructible. <a class="footnote-reference" href="#id14" id="id10">[4]</a></li>
+</ul>
+<table class="docutils footnote" frame="void" id="id11" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[1]</td><td><em>(<a class="fn-backref" href="#id5">1</a>, <a class="fn-backref" href="#id6">2</a>)</em> This would ambiguate calls to certain member functions.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id12" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[2]</td><td><em>(<a class="fn-backref" href="#id7">1</a>, <a class="fn-backref" href="#id8">2</a>)</em> This would make the definition of <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> ill-formed.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id13" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id9">[3]</a></td><td>Note that copy constructibility implies move constructibility.</td></tr>
+</tbody>
+</table>
+<table class="last docutils footnote" frame="void" id="id14" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id10">[4]</a></td><td>This would violate exception safety.</td></tr>
+</tbody>
+</table>
+</div>
 </dd></dl>
 
 <dl class="function">
 <dt id="expected:T:::expected">
- <tt class="descname">expected</tt><big>(</big><big>)</big><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#expected:T:::expected" title="Permalink to this definition">¶</a></dt>
-<dd><p>Constructs an <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object in an invalid state from the exception
-that is currently in flight (i.e. from <tt class="xref cpp cpp-func docutils literal"><span class="pre">std::current_exception()</span></tt>).</p>
+ <tt class="descname">expected</tt><big>(</big><big>)</big><a class="headerlink" href="#expected:T:::expected" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Noexcept:</th><td class="field-body">If <em>T</em> is nothrow default constructible.</td>
+</tr>
+</tbody>
+</table>
+<p>Disabled if <em>T</em> is not default constructible. Default-constructs an
+<a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object in a valid state.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="expected:T:::expected__std::exception_ptr">
- <tt class="descname">expected</tt><big>(</big>std::exception_ptr <em>p</em><big>)</big><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#expected:T:::expected__std::exception_ptr" title="Permalink to this definition">¶</a></dt>
-<dd><p>Constructs an <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object in an invalid state from the given
-<tt class="xref cpp cpp-type docutils literal"><span class="pre">std::exception_ptr</span></tt> object.</p>
+<dt id="expected:T:::expected__TCR">
+ <tt class="descname">expected</tt><big>(</big>const T&amp; <em>rhs</em><big>)</big><a class="headerlink" href="#expected:T:::expected__TCR" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Noexcept:</th><td class="field-body">If <em>T</em> is nothrow copy constructible.</td>
+</tr>
+</tbody>
+</table>
+<p>Constructs an <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object in a valid state by copying <em>rhs</em>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="expected:T:::expected__TRR">
+ <tt class="descname">expected</tt><big>(</big>T&amp;&amp; <em>rhs</em><big>)</big><a class="headerlink" href="#expected:T:::expected__TRR" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Noexcept:</th><td class="field-body">If <em>T</em> is nothrow move constructible.</td>
+</tr>
+</tbody>
+</table>
+<p>Constructs an <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object in a valid state by moving <em>rhs</em>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="expected:T:::expected__X.X">
+ <tt class="descname">expected</tt><big>(</big><em>const in_place_t&amp;</em>, <em>Args</em><big>)</big><a class="headerlink" href="#expected:T:::expected__X.X" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Noexcept:</th><td class="field-body">If <em>T</em> is nothrow constructible from <em>Args</em>.</td>
+</tr>
+</tbody>
+</table>
+<p>Constructs an <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object in a valid state by initializing the
+expected type in-place using <em>Args</em>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="expected:T:::expected__expectedCR">
+ <tt class="descname">expected</tt><big>(</big>const expected&amp; <em>rhs</em><big>)</big><a class="headerlink" href="#expected:T:::expected__expectedCR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructs an <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object in the same state as <em>rhs</em>, and copies
+either the value stored by <em>rhs</em> or its <tt class="xref cpp cpp-class docutils literal"><span class="pre">std::exception_ptr</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Noexcept:</th><td class="field-body">If <em>T</em> is nothrow copy constructible.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="expected:T:::expected__expectedRR">
+ <tt class="descname">expected</tt><big>(</big>expected&amp;&amp; <em>rhs</em><big>)</big><a class="headerlink" href="#expected:T:::expected__expectedRR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructs an <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object in the same state as <em>rhs</em>, and moves
+either the value stored by <em>rhs</em> or its <tt class="xref cpp cpp-class docutils literal"><span class="pre">std::exception_ptr</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Noexcept:</th><td class="field-body">If <em>T</em> is nothrow move constructible.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="expected:T:::expected__std::exception_ptrCR">
+ <tt class="descname">expected</tt><big>(</big>const std::exception_ptr&amp; <em>ptr</em><big>)</big><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#expected:T:::expected__std::exception_ptrCR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructs an <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object in an invalid state by copying <em>ptr</em>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="expected:T:::expected__exception_ptrRR">
+ <tt class="descname">expected</tt><big>(</big>exception_ptr&amp;&amp; <em>ptr</em><big>)</big><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#expected:T:::expected__exception_ptrRR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructs an <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object in an invalid state by moving <em>ptr</em>.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="expected:T:::expected__ExceptionCR">
- <tt class="descname">expected</tt><big>(</big>const Exception&amp; <em>e</em><big>)</big><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#expected:T:::expected__ExceptionCR" title="Permalink to this definition">¶</a></dt>
+ <tt class="descname">expected</tt><big>(</big>const Exception&amp; <em>e</em><big>)</big><a class="headerlink" href="#expected:T:::expected__ExceptionCR" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Requires:</th><td class="field-body"><em>Exception</em> to be derived from <tt class="docutils literal"><span class="pre">std::exception</span></tt>.</td>
 </tr>
+<tr class="field-even field"><th class="field-name">Noexcept:</th><td class="field-body">If <tt class="docutils literal"><span class="pre">CC_NO_DEBUG</span></tt> is defined.</td>
+</tr>
 </tbody>
 </table>
-<p>Constructs an <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object in an invalid state from the given exception.</p>
+<p>Constructs an <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object in an invalid state from <em>e</em>.  If
+<tt class="docutils literal"><span class="pre">CC_NO_DEBUG</span></tt> is not defined, then this function throws if <tt class="docutils literal"><span class="pre">typeid(e)</span>
+<span class="pre">!=</span> <span class="pre">typeid(Exception)</span></tt>. If this happens, then slicing has occurred.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="expected:T:::expected__expectedCR">
- <tt class="descname">expected</tt><big>(</big>const expected&amp; <em>rhs</em><big>)</big><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#expected:T:::expected__expectedCR" title="Permalink to this definition">¶</a></dt>
-<dt id="expected:T:::expected__expectedRR">
- <tt class="descname">expected</tt><big>(</big>expected&amp;&amp; <em>rhs</em><big>)</big><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#expected:T:::expected__expectedRR" title="Permalink to this definition">¶</a></dt>
+<dt id="expected:T:::assign-operator__expectedCR">
+expected&amp; <tt class="descname">operator=</tt><big>(</big>const expected&amp; <em>rhs</em><big>)</big><a class="headerlink" href="#expected:T:::assign-operator__expectedCR" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Noexcept:</th><td class="field-body">If <em>T</em> is copy assignable, then the function is noexcept if <em>T</em> is nothrow copy assignable. Otherwise, the function is noexcept if <em>T</em> is nothrow copy constructible. In addition, <tt class="docutils literal"><span class="pre">CC_EXPECTED_DONT_ENFORCE_DISMISSAL</span></tt> must be defined.</td>
+</tr>
+</tbody>
+</table>
+<p>Assigns this <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object to the same state as <em>rhs</em>, by copying
+either the value stored by <em>rhs</em> or its <tt class="xref cpp cpp-class docutils literal"><span class="pre">std::exception_ptr</span></tt>. If
+<tt class="docutils literal"><span class="pre">CC_EXPECTED_DONT_ENFORCE_DISMISSAL</span></tt> is not defined, then an exception
+is thrown if the object&#8217;s state was not read prior to assignment.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="expected:T:::assign-operator__expectedRR">
+expected&amp; <tt class="descname">operator=</tt><big>(</big>expected&amp;&amp; <em>rhs</em><big>)</big><a class="headerlink" href="#expected:T:::assign-operator__expectedRR" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Noexcept:</th><td class="field-body">If <em>T</em> is move assignable, then the function is noexcept if <em>T</em> is nothrow move assignable. Otherwise, the function is noexcept if <em>T</em> is nothrow move constructible. In addition, <tt class="docutils literal"><span class="pre">CC_EXPECTED_DONT_ENFORCE_DISMISSAL</span></tt> must be defined.</td>
+</tr>
+</tbody>
+</table>
+<p>Assigns this <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object to the same state as <em>rhs</em>, by moving
+either the value stored by <em>rhs</em> or its <tt class="xref cpp cpp-class docutils literal"><span class="pre">std::exception_ptr</span></tt>. If
+<tt class="docutils literal"><span class="pre">CC_EXPECTED_DONT_ENFORCE_DISMISSAL</span></tt> is not defined, then an exception
+is thrown if the object&#8217;s state was not read prior to assignment.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="expected:T:::assign-operator__TCR">
+expected&amp; <tt class="descname">operator=</tt><big>(</big>const T&amp; <em>rhs</em><big>)</big><a class="headerlink" href="#expected:T:::assign-operator__TCR" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Noexcept:</th><td class="field-body">If <em>T</em> is copy assignable, then the function is noexcept if <em>T</em> is nothrow copy assignable. Otherwise, the function is noexcept if <em>T</em> is nothrow copy constructible. In addition, <tt class="docutils literal"><span class="pre">CC_EXPECTED_DONT_ENFORCE_DISMISSAL</span></tt> must be defined.</td>
+</tr>
+</tbody>
+</table>
+<p>Assigns this <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object to a valid state, and copies the value
+stored by <em>rhs</em>. If <tt class="docutils literal"><span class="pre">CC_EXPECTED_DONT_ENFORCE_DISMISSAL</span></tt> is not defined,
+then an exception is thrown if the object&#8217;s state was not read prior to
+assignment.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="expected:T:::assign-operator__TRR">
+expected&amp; <tt class="descname">operator=</tt><big>(</big>T&amp;&amp; <em>rhs</em><big>)</big><a class="headerlink" href="#expected:T:::assign-operator__TRR" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Noexcept:</th><td class="field-body">If <em>T</em> is move assignable, then the function is noexcept if <em>T</em> is nothrow move assignable. Otherwise, the function is noexcept if <em>T</em> is nothrow move constructible. In addition, <tt class="docutils literal"><span class="pre">CC_EXPECTED_DONT_ENFORCE_DISMISSAL</span></tt> must be defined.</td>
+</tr>
+</tbody>
+</table>
+<p>Assigns this <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object to a valid state, and moves the value
+stored by <em>rhs</em>. If <tt class="docutils literal"><span class="pre">CC_EXPECTED_DONT_ENFORCE_DISMISSAL</span></tt> is not defined,
+then an exception is thrown if the object&#8217;s state was not read prior to
+assignment.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="expected:T:::assign-operator__std::exception_ptrCR">
+expected&amp; <tt class="descname">operator=</tt><big>(</big>const std::exception_ptr&amp; <em>ptr</em><big>)</big><a class="headerlink" href="#expected:T:::assign-operator__std::exception_ptrCR" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Noexcept:</th><td class="field-body">If <tt class="docutils literal"><span class="pre">CC_EXPECTED_DONT_ENFORCE_DISMISSAL</span></tt> is defined.</td>
+</tr>
+</tbody>
+</table>
+<p>Assigns this <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object to an invalid state by copying <em>ptr</em>. If
+<tt class="docutils literal"><span class="pre">CC_EXPECTED_DONT_ENFORCE_DISMISSAL</span></tt> is not defined, then an exception
+is thrown if the object&#8217;s state was not read prior to assignment.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="expected:T:::assign-operator__std::exception_ptrRR">
+expected&amp; <tt class="descname">operator=</tt><big>(</big>std::exception_ptr&amp;&amp; <em>ptr</em><big>)</big><a class="headerlink" href="#expected:T:::assign-operator__std::exception_ptrRR" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Noexcept:</th><td class="field-body">If <tt class="docutils literal"><span class="pre">CC_EXPECTED_DONT_ENFORCE_DISMISSAL</span></tt> is defined.</td>
+</tr>
+</tbody>
+</table>
+<p>Assigns this <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object to an invalid state by moving <em>ptr</em>. If
+<tt class="docutils literal"><span class="pre">CC_EXPECTED_DONT_ENFORCE_DISMISSAL</span></tt> is not defined, then an exception
+is thrown if the object&#8217;s state was not read prior to assignment.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="expected:T:::~expected">
+ <tt class="descname">~expected</tt><big>(</big><big>)</big><a class="headerlink" href="#expected:T:::~expected" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Noexcept:</th><td class="field-body">If <tt class="docutils literal"><span class="pre">CC_EXPECTED_DONT_ENFORCE_DISMISSAL</span></tt> is defined.</td>
+</tr>
+</tbody>
+</table>
+<p>Destroys this <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object by calling either the destructor of the
+expected type, or the destructor of the <tt class="xref cpp cpp-class docutils literal"><span class="pre">std::exception_ptr</span></tt>. If
+<tt class="docutils literal"><span class="pre">CC_DONT_EXPECTED_ENFORCE_DISMISSAL</span></tt> is not defined, an exception is
+thrown <em>after destroying the managed object</em> if the <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object is
+not in the dismissed state.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="expected:T:::raiseC">
+void <tt class="descname">raise</tt><big>(</big><big>)</big><tt class="descclassname"> const</tt><a class="headerlink" href="#expected:T:::raiseC" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Noexcept:</th><td class="field-body"><tt class="docutils literal"><span class="pre">false</span></tt></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Attributes:</th><td class="field-body"><tt class="docutils literal"><span class="pre">[[noreturn]]</span></tt></td>
+</tr>
+</tbody>
+</table>
+<p>If the <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object is invalid, throws the exception referred to by
+the managed <tt class="xref cpp cpp-class docutils literal"><span class="pre">std::exception_ptr</span></tt>. Otherwise, throws <a class="reference internal" href="#bad_expected_type" title="bad_expected_type"><tt class="xref cpp cpp-class docutils literal"><span class="pre">bad_expected_type</span></tt></a>. If
+<tt class="docutils literal"><span class="pre">CC_DONT_EXPECTED_ENFORCE_DISMISSAL</span></tt> is not defined, this function also
+puts the <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object in the dismissed state.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="expected:T:::dismiss">
+expected&amp; <tt class="descname">dismiss</tt><big>(</big><big>)</big><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#expected:T:::dismiss" title="Permalink to this definition">¶</a></dt>
+<dt id="expected:T:::dismissC">
+const expected&amp; <tt class="descname">dismiss</tt><big>(</big><big>)</big><tt class="descclassname"> const</tt><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#expected:T:::dismissC" title="Permalink to this definition">¶</a></dt>
+<dd><p>If <tt class="docutils literal"><span class="pre">CC_EXPECTED_DONT_ENFORCE_DISMISSAL</span></tt> is defined, puts the <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a>
+object in the dismissed state. Otherwise, this function is a no-op.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="expected:T:::castto-b-operatorC">
+ <tt class="descname">operator</tt> bool<big>(</big><big>)</big><tt class="descclassname"> const</tt><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#expected:T:::castto-b-operatorC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns whether this <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object is valid. If
+<tt class="docutils literal"><span class="pre">CC_EXPECTED_DONT_ENFORCE_DISMISSAL</span></tt> is defined, puts the <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a>
+object in the dismissed state.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="expected:T:::value">
+T&amp; <tt class="descname">value</tt><big>(</big><big>)</big><a class="headerlink" href="#expected:T:::value" title="Permalink to this definition">¶</a></dt>
+<dt>
+T&amp;&amp; <tt class="descname">value</tt><big>(</big><big>)</big></dt>
+<dt id="expected:T:::valueC">
+const T&amp; <tt class="descname">value</tt><big>(</big><big>)</big><tt class="descclassname"> const</tt><a class="headerlink" href="#expected:T:::valueC" title="Permalink to this definition">¶</a></dt>
+<dt id="expected:T:::mul-operator">
+T&amp; <tt class="descname">operator*</tt><big>(</big><big>)</big><a class="headerlink" href="#expected:T:::mul-operator" title="Permalink to this definition">¶</a></dt>
+<dt>
+T&amp;&amp; <tt class="descname">operator*</tt><big>(</big><big>)</big></dt>
+<dt id="expected:T:::mul-operatorC">
+const T&amp; <tt class="descname">operator*</tt><big>(</big><big>)</big><tt class="descclassname"> const</tt><a class="headerlink" href="#expected:T:::mul-operatorC" title="Permalink to this definition">¶</a></dt>
+<dd><p>The functions returning lvalue references are overloaded for lvalues to
+<a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a>, while those returning rvalue references are overloaded for
+rvalues to <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a>.</p>
+<p>If this <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object is valid, returns a reference to the managed
+value. Otherwise, throws <a class="reference internal" href="#bad_expected_type" title="bad_expected_type"><tt class="xref cpp cpp-class docutils literal"><span class="pre">bad_expected_type</span></tt></a>. If
+<tt class="docutils literal"><span class="pre">CC_EXPECTED_DONT_ENFORCE_DISMISSAL</span></tt> is defined, puts the <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a>
+object in the dismissed state.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="expected:T:::pointer-operator">
+T* <tt class="descname">operator-&gt;</tt><big>(</big><big>)</big><a class="headerlink" href="#expected:T:::pointer-operator" title="Permalink to this definition">¶</a></dt>
+<dt id="expected:T:::pointer-operatorC">
+const T* <tt class="descname">operator-&gt;</tt><big>(</big><big>)</big><tt class="descclassname"> const</tt><a class="headerlink" href="#expected:T:::pointer-operatorC" title="Permalink to this definition">¶</a></dt>
+<dd><p>These functions are overloaded for lvalues to <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a>. If the
+<a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object is valid, returns a pointer to the managed value.
+Otherwise, throws <a class="reference internal" href="#bad_expected_type" title="bad_expected_type"><tt class="xref cpp cpp-class docutils literal"><span class="pre">bad_expected_type</span></tt></a>. If
+<tt class="docutils literal"><span class="pre">CC_EXPECTED_DONT_ENFORCE_DISMISSAL</span></tt> is defined, puts the <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a>
+object in the dismissed state.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="expected:T:::exceptionC">
+const std::exception_ptr&amp; <tt class="descname">exception</tt><big>(</big><big>)</big><tt class="descclassname"> const</tt><a class="headerlink" href="#expected:T:::exceptionC" title="Permalink to this definition">¶</a></dt>
+<dt id="expected:T:::exception">
+std::exception_ptr&amp;&amp; <tt class="descname">exception</tt><big>(</big><big>)</big><a class="headerlink" href="#expected:T:::exception" title="Permalink to this definition">¶</a></dt>
+<dd><p>This first function is overloaded for lvalues to <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a>, while the
+second is overloaded for rvalues to <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a>. If the <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object
+is valid, returns an reference to the managed <tt class="xref cpp cpp-class docutils literal"><span class="pre">std::exception_ptr</span></tt>. Otherwise,
+throws <a class="reference internal" href="#bad_expected_type" title="bad_expected_type"><tt class="xref cpp cpp-class docutils literal"><span class="pre">bad_expected_type</span></tt></a>.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">If transferring ownership of the <tt class="xref cpp cpp-class docutils literal"><span class="pre">std::exception_ptr</span></tt> to another
+<a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object, then the rvalue overload of <a class="reference internal" href="#expected:T:::exceptionC" title="expected&lt;T&gt;::exception"><tt class="xref cpp cpp-func docutils literal"><span class="pre">exception()</span></tt></a>
+<strong>must</strong> be used. Otherwise, the program may crash due to double-free
+issues.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="expected:T:::swap__expectedR">
+void <tt class="descname">swap</tt><big>(</big>expected&amp; <em>rhs</em><big>)</big><a class="headerlink" href="#expected:T:::swap__expectedR" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Noexcept:</th><td class="field-body">If <em>T</em> is nothrow move constructible.</td>
+</tr>
+</tbody>
+</table>
+<p>Exchanges the state and contents of this <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object with those of
+<em>rhs</em>. If <tt class="docutils literal"><span class="pre">CC_DONT_EXPECTED_ENFORCE_DISMISSAL</span></tt> is defined, then the
+dismissal states of both <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> objects are also exchanged.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="expected:T:::emplace__X">
+expected&amp; <tt class="descname">emplace</tt><big>(</big><em>Args</em><big>)</big><a class="headerlink" href="#expected:T:::emplace__X" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Noexcept:</th><td class="field-body">If <em>T</em> is nothrow constructible from <em>Args</em> and <tt class="docutils literal"><span class="pre">CC_EXPECTED_DONT_ENFORCE_DISMISSAL</span></tt> is defined.</td>
+</tr>
+</tbody>
+</table>
+<p>Assigns this <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object to a valid state by first destroying the
+managed object (either <a class="reference internal" href="#expected:T:::value_type" title="expected&lt;T&gt;::value_type"><tt class="xref cpp cpp-type docutils literal"><span class="pre">value_type</span></tt></a> or <tt class="xref cpp cpp-class docutils literal"><span class="pre">std::exception_ptr</span></tt>), and then
+constructing <a class="reference internal" href="#expected:T:::value_type" title="expected&lt;T&gt;::value_type"><tt class="xref cpp cpp-type docutils literal"><span class="pre">value_type</span></tt></a> in-place from <em>Args</em>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="expected:T:::expectC">
+Exception <tt class="descname">expect</tt><big>(</big><big>)</big><tt class="descclassname"> const</tt><a class="headerlink" href="#expected:T:::expectC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an exception of type <em>Exception</em> by rethrowing the <tt class="xref cpp cpp-class docutils literal"><span class="pre">std::exception_ptr</span></tt>
+managed by this <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object. If the <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object is valid,
+<a class="reference internal" href="#bad_expected_type" title="bad_expected_type"><tt class="xref cpp cpp-class docutils literal"><span class="pre">bad_expected_type</span></tt></a> is thrown. If the managed <tt class="xref cpp cpp-class docutils literal"><span class="pre">std::exception_ptr</span></tt> does not
+refer to an exception of type <em>Exception</em>, then a <tt class="xref cpp cpp-class docutils literal"><span class="pre">nested_exception</span></tt> is
+thrown. This <tt class="xref cpp cpp-class docutils literal"><span class="pre">nested_exception</span></tt> is used to nest the exception referred to
+by the <tt class="xref cpp cpp-class docutils literal"><span class="pre">std::exception_ptr</span></tt> within an instance of <a class="reference internal" href="#bad_expected_type" title="bad_expected_type"><tt class="xref cpp cpp-class docutils literal"><span class="pre">bad_expected_type</span></tt></a>.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="swap__expectedR.expectedR">
+ <tt class="descname">swap</tt><big>(</big>expected&amp; <em>lhs</em>, expected&amp; <em>rhs</em><big>)</big><a class="headerlink" href="#swap__expectedR.expectedR" title="Permalink to this definition">¶</a></dt>
+<dd><p>This global version of swap is defined for ADL.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="specializations">
+<h2>Specializations<a class="headerlink" href="#specializations" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="expected:TR:">
+<em class="property">class </em><tt class="descname">expected&lt;T&amp;&gt;</tt><a class="headerlink" href="#expected:TR:" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the specialization of <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> to reference types. Consult the
+class reference for <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> to read the complete descriptions.</p>
+<dl class="function">
+<dt id="expected:TR:::expected">
+ <tt class="descname">expected</tt><big>(</big><big>)</big><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#expected:TR:::expected" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
-<dt id="expected:T:::validC">
-bool <tt class="descname">valid</tt><big>(</big><big>)</big><tt class="descclassname"> const</tt><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#expected:T:::validC" title="Permalink to this definition">¶</a></dt>
-<dt id="expected:T:::castto-b-operatorC">
- <tt class="descname">operator</tt> bool<big>(</big><big>)</big><tt class="descclassname"> const</tt><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#expected:T:::castto-b-operatorC" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns whether this <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object is in a valid state.</p>
+<dt id="expected:TR:::expected__TR">
+ <tt class="descname">expected</tt><big>(</big>T&amp; <em>rhs</em><big>)</big><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#expected:TR:::expected__TR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="expected:TR:::expected__expectedCR">
+ <tt class="descname">expected</tt><big>(</big>const expected&amp; <em>rhs</em><big>)</big><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#expected:TR:::expected__expectedCR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="expected:TR:::expected__expectedRR">
+ <tt class="descname">expected</tt><big>(</big>expected&amp;&amp; <em>rhs</em><big>)</big><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#expected:TR:::expected__expectedRR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="expected:TR:::expected__std::exception_ptrCR">
+ <tt class="descname">expected</tt><big>(</big>const std::exception_ptr&amp; <em>ptr</em><big>)</big><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#expected:TR:::expected__std::exception_ptrCR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="expected:TR:::expected__exception_ptrRR">
+ <tt class="descname">expected</tt><big>(</big>exception_ptr&amp;&amp; <em>ptr</em><big>)</big><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#expected:TR:::expected__exception_ptrRR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="expected:TR:::expected__ExceptionCR">
+ <tt class="descname">expected</tt><big>(</big>const Exception&amp; <em>e</em><big>)</big><a class="headerlink" href="#expected:TR:::expected__ExceptionCR" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Requires:</th><td class="field-body"><em>Exception</em> to be derived from <tt class="docutils literal"><span class="pre">std::exception</span></tt>.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Noexcept:</th><td class="field-body">If <tt class="docutils literal"><span class="pre">CC_NO_DEBUG</span></tt> is defined.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
-<dt id="expected:T:::get">
-reference <tt class="descname">get</tt><big>(</big><big>)</big><a class="headerlink" href="#expected:T:::get" title="Permalink to this definition">¶</a></dt>
-<dt id="expected:T:::getC">
-const reference <tt class="descname">get</tt><big>(</big><big>)</big><tt class="descclassname"> const</tt><a class="headerlink" href="#expected:T:::getC" title="Permalink to this definition">¶</a></dt>
-<dt id="expected:T:::mul-operator">
-reference <tt class="descname">operator*</tt><big>(</big><big>)</big><a class="headerlink" href="#expected:T:::mul-operator" title="Permalink to this definition">¶</a></dt>
-<dt id="expected:T:::mul-operatorC">
-const reference <tt class="descname">operator*</tt><big>(</big><big>)</big><tt class="descclassname"> const</tt><a class="headerlink" href="#expected:T:::mul-operatorC" title="Permalink to this definition">¶</a></dt>
-<dd><p>If the <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object is in a valid state, returns a reference to the
-stored object. Otherwise, throws the stored exception.</p>
+<dt id="expected:TR:::assign-operator__expectedCR">
+expected&amp; <tt class="descname">operator=</tt><big>(</big>const expected&amp; <em>rhs</em><big>)</big><a class="headerlink" href="#expected:TR:::assign-operator__expectedCR" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Noexcept:</th><td class="field-body">If <tt class="docutils literal"><span class="pre">CC_EXPECTED_DONT_ENFORCE_DISMISSAL</span></tt> is defined.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
-<dt id="expected:T:::move">
-T&amp;&amp; <tt class="descname">move</tt><big>(</big><big>)</big><a class="headerlink" href="#expected:T:::move" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function is not defined if <em>T</em> is a <tt class="docutils literal"><span class="pre">const</span></tt> reference. If the
-<a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object is in a valid state, returns an rvalue reference to the
-stored object. Otherwise, throws the stored exception.</p>
+<dt id="expected:TR:::assign-operator__expectedRR">
+expected&amp; <tt class="descname">operator=</tt><big>(</big>expected&amp;&amp; <em>rhs</em><big>)</big><a class="headerlink" href="#expected:TR:::assign-operator__expectedRR" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Noexcept:</th><td class="field-body">If <tt class="docutils literal"><span class="pre">CC_EXPECTED_DONT_ENFORCE_DISMISSAL</span></tt> is defined.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
+
+<dl class="function">
+<dt id="expected:TR:::assign-operator__TR">
+expected&amp; <tt class="descname">operator=</tt><big>(</big>T&amp; <em>rhs</em><big>)</big><a class="headerlink" href="#expected:TR:::assign-operator__TR" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Noexcept:</th><td class="field-body">If <tt class="docutils literal"><span class="pre">CC_EXPECTED_DONT_ENFORCE_DISMISSAL</span></tt> is defined.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="expected:TR:::assign-operator__std::exception_ptrCR">
+expected&amp; <tt class="descname">operator=</tt><big>(</big>const std::exception_ptr&amp; <em>ptr</em><big>)</big><a class="headerlink" href="#expected:TR:::assign-operator__std::exception_ptrCR" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Noexcept:</th><td class="field-body">If <tt class="docutils literal"><span class="pre">CC_EXPECTED_DONT_ENFORCE_DISMISSAL</span></tt> is defined.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="expected:TR:::assign-operator__std::exception_ptrRR">
+expected&amp; <tt class="descname">operator=</tt><big>(</big>std::exception_ptr&amp;&amp; <em>ptr</em><big>)</big><a class="headerlink" href="#expected:TR:::assign-operator__std::exception_ptrRR" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Noexcept:</th><td class="field-body">If <tt class="docutils literal"><span class="pre">CC_EXPECTED_DONT_ENFORCE_DISMISSAL</span></tt> is defined.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="expected:TR:::~expected">
+ <tt class="descname">~expected</tt><big>(</big><big>)</big><a class="headerlink" href="#expected:TR:::~expected" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Noexcept:</th><td class="field-body">If <tt class="docutils literal"><span class="pre">CC_EXPECTED_DONT_ENFORCE_DISMISSAL</span></tt> is defined.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="expected:TR:::raiseC">
+void <tt class="descname">raise</tt><big>(</big><big>)</big><tt class="descclassname"> const</tt><a class="headerlink" href="#expected:TR:::raiseC" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Noexcept:</th><td class="field-body"><tt class="docutils literal"><span class="pre">false</span></tt></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Attributes:</th><td class="field-body"><tt class="docutils literal"><span class="pre">[[noreturn]]</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="expected:TR:::dismiss">
+expected&amp; <tt class="descname">dismiss</tt><big>(</big><big>)</big><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#expected:TR:::dismiss" title="Permalink to this definition">¶</a></dt>
+<dt id="expected:TR:::dismissC">
+const expected&amp; <tt class="descname">dismiss</tt><big>(</big><big>)</big><tt class="descclassname"> const</tt><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#expected:TR:::dismissC" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="expected:TR:::castto-b-operatorC">
+ <tt class="descname">operator</tt> bool<big>(</big><big>)</big><tt class="descclassname"> const</tt><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#expected:TR:::castto-b-operatorC" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="expected:TR:::value">
+T&amp; <tt class="descname">value</tt><big>(</big><big>)</big><a class="headerlink" href="#expected:TR:::value" title="Permalink to this definition">¶</a></dt>
+<dt>
+T&amp;&amp; <tt class="descname">value</tt><big>(</big><big>)</big></dt>
+<dt id="expected:TR:::valueC">
+const T&amp; <tt class="descname">value</tt><big>(</big><big>)</big><tt class="descclassname"> const</tt><a class="headerlink" href="#expected:TR:::valueC" title="Permalink to this definition">¶</a></dt>
+<dt id="expected:TR:::mul-operator">
+T&amp; <tt class="descname">operator*</tt><big>(</big><big>)</big><a class="headerlink" href="#expected:TR:::mul-operator" title="Permalink to this definition">¶</a></dt>
+<dt>
+T&amp;&amp; <tt class="descname">operator*</tt><big>(</big><big>)</big></dt>
+<dt id="expected:TR:::mul-operatorC">
+const T&amp; <tt class="descname">operator*</tt><big>(</big><big>)</big><tt class="descclassname"> const</tt><a class="headerlink" href="#expected:TR:::mul-operatorC" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="expected:TR:::pointer-operator">
+T* <tt class="descname">operator-&gt;</tt><big>(</big><big>)</big><a class="headerlink" href="#expected:TR:::pointer-operator" title="Permalink to this definition">¶</a></dt>
+<dt id="expected:TR:::pointer-operatorC">
+const T* <tt class="descname">operator-&gt;</tt><big>(</big><big>)</big><tt class="descclassname"> const</tt><a class="headerlink" href="#expected:TR:::pointer-operatorC" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="expected:TR:::exceptionC">
+const std::exception_ptr&amp; <tt class="descname">exception</tt><big>(</big><big>)</big><tt class="descclassname"> const</tt><a class="headerlink" href="#expected:TR:::exceptionC" title="Permalink to this definition">¶</a></dt>
+<dt id="expected:TR:::exception">
+std::exception_ptr&amp;&amp; <tt class="descname">exception</tt><big>(</big><big>)</big><a class="headerlink" href="#expected:TR:::exception" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="expected:TR:::swap__expectedR">
+void <tt class="descname">swap</tt><big>(</big>expected&amp; <em>rhs</em><big>)</big><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#expected:TR:::swap__expectedR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="expected:TR:::expectC">
+Exception <tt class="descname">expect</tt><big>(</big><big>)</big><tt class="descclassname"> const</tt><a class="headerlink" href="#expected:TR:::expectC" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
 <dl class="class">
 <dt id="expected:void:">
 <em class="property">class </em><tt class="descname">expected&lt;void&gt;</tt><a class="headerlink" href="#expected:void:" title="Permalink to this definition">¶</a></dt>
-<dd><p>This is the specialization of <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> for <tt class="xref cpp cpp-type docutils literal"><span class="pre">void</span></tt>.</p>
+<dd><p>This is the specialization of <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> to <tt class="xref cpp cpp-type docutils literal"><span class="pre">void</span></tt>. Consult the
+class reference for <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> to read the complete descriptions.</p>
 <dl class="function">
 <dt id="expected:void:::expected">
  <tt class="descname">expected</tt><big>(</big><big>)</big><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#expected:void:::expected" title="Permalink to this definition">¶</a></dt>
-<dd><p>Constructs an <a class="reference internal" href="#expected:void:" title="expected&lt;void&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;void&gt;</span></tt></a> object in an invalid state from the
-exception that is currently in flight (i.e. from
-<tt class="xref cpp cpp-func docutils literal"><span class="pre">std::current_exception()</span></tt>).</p>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="function">
-<dt id="expected:void:::expected__std::exception_ptr">
- <tt class="descname">expected</tt><big>(</big>std::exception_ptr <em>p</em><big>)</big><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#expected:void:::expected__std::exception_ptr" title="Permalink to this definition">¶</a></dt>
-<dd><p>Constructs an <a class="reference internal" href="#expected:void:" title="expected&lt;void&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;void&gt;</span></tt></a> object in an invalid state from the given
-<tt class="xref cpp cpp-type docutils literal"><span class="pre">std::exception_ptr</span></tt> object.</p>
-</dd></dl>
+<dt id="expected:void:::expected__std::exception_ptrCR">
+ <tt class="descname">expected</tt><big>(</big>const std::exception_ptr&amp; <em>ptr</em><big>)</big><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#expected:void:::expected__std::exception_ptrCR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="expected:void:::expected__exception_ptrRR">
+ <tt class="descname">expected</tt><big>(</big>exception_ptr&amp;&amp; <em>ptr</em><big>)</big><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#expected:void:::expected__exception_ptrRR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="function">
 <dt id="expected:void:::expected__ExceptionCR">
- <tt class="descname">expected</tt><big>(</big>const Exception&amp; <em>e</em><big>)</big><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#expected:void:::expected__ExceptionCR" title="Permalink to this definition">¶</a></dt>
+ <tt class="descname">expected</tt><big>(</big>const Exception&amp; <em>e</em><big>)</big><a class="headerlink" href="#expected:void:::expected__ExceptionCR" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Requires:</th><td class="field-body"><em>Exception</em> to be derived from <tt class="docutils literal"><span class="pre">std::exception</span></tt>.</td>
 </tr>
+<tr class="field-even field"><th class="field-name">Noexcept:</th><td class="field-body">If <tt class="docutils literal"><span class="pre">CC_NO_DEBUG</span></tt> is defined.</td>
+</tr>
 </tbody>
 </table>
-<p>Constructs an <a class="reference internal" href="#expected:void:" title="expected&lt;void&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;void&gt;</span></tt></a> object in an invalid state from the given
-exception.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="expected:void:::expected__expectedCR">
- <tt class="descname">expected</tt><big>(</big>const expected&amp; <em>rhs</em><big>)</big><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#expected:void:::expected__expectedCR" title="Permalink to this definition">¶</a></dt>
+<dt id="expected:void:::assign-operator__expectedCR">
+expected&amp; <tt class="descname">operator=</tt><big>(</big>const expected&amp; <em>rhs</em><big>)</big><a class="headerlink" href="#expected:void:::assign-operator__expectedCR" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Noexcept:</th><td class="field-body">If <tt class="docutils literal"><span class="pre">CC_EXPECTED_DONT_ENFORCE_DISMISSAL</span></tt> is defined.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="expected:void:::assign-operator__expectedRR">
+expected&amp; <tt class="descname">operator=</tt><big>(</big>expected&amp;&amp; <em>rhs</em><big>)</big><a class="headerlink" href="#expected:void:::assign-operator__expectedRR" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Noexcept:</th><td class="field-body">If <tt class="docutils literal"><span class="pre">CC_EXPECTED_DONT_ENFORCE_DISMISSAL</span></tt> is defined.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="expected:void:::assign-operator__std::exception_ptrCR">
+expected&amp; <tt class="descname">operator=</tt><big>(</big>const std::exception_ptr&amp; <em>ptr</em><big>)</big><a class="headerlink" href="#expected:void:::assign-operator__std::exception_ptrCR" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Noexcept:</th><td class="field-body">If <tt class="docutils literal"><span class="pre">CC_EXPECTED_DONT_ENFORCE_DISMISSAL</span></tt> is defined.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="expected:void:::assign-operator__std::exception_ptrRR">
+expected&amp; <tt class="descname">operator=</tt><big>(</big>std::exception_ptr&amp;&amp; <em>ptr</em><big>)</big><a class="headerlink" href="#expected:void:::assign-operator__std::exception_ptrRR" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Noexcept:</th><td class="field-body">If <tt class="docutils literal"><span class="pre">CC_EXPECTED_DONT_ENFORCE_DISMISSAL</span></tt> is defined.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="expected:void:::~expected">
+ <tt class="descname">~expected</tt><big>(</big><big>)</big><a class="headerlink" href="#expected:void:::~expected" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Noexcept:</th><td class="field-body">If <tt class="docutils literal"><span class="pre">CC_EXPECTED_DONT_ENFORCE_DISMISSAL</span></tt> is defined.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="expected:void:::raiseC">
+void <tt class="descname">raise</tt><big>(</big><big>)</big><tt class="descclassname"> const</tt><a class="headerlink" href="#expected:void:::raiseC" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Noexcept:</th><td class="field-body"><tt class="docutils literal"><span class="pre">false</span></tt></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Attributes:</th><td class="field-body"><tt class="docutils literal"><span class="pre">[[noreturn]]</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="expected:void:::dismiss">
+expected&amp; <tt class="descname">dismiss</tt><big>(</big><big>)</big><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#expected:void:::dismiss" title="Permalink to this definition">¶</a></dt>
+<dt id="expected:void:::dismissC">
+const expected&amp; <tt class="descname">dismiss</tt><big>(</big><big>)</big><tt class="descclassname"> const</tt><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#expected:void:::dismissC" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
-<dt id="expected:void:::expected__expectedRR">
- <tt class="descname">expected</tt><big>(</big>expected&amp;&amp; <em>rhs</em><big>)</big><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#expected:void:::expected__expectedRR" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="expected:void:::validC">
-bool <tt class="descname">valid</tt><big>(</big><big>)</big><tt class="descclassname"> const</tt><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#expected:void:::validC" title="Permalink to this definition">¶</a></dt>
 <dt id="expected:void:::castto-b-operatorC">
  <tt class="descname">operator</tt> bool<big>(</big><big>)</big><tt class="descclassname"> const</tt><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#expected:void:::castto-b-operatorC" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns whether this <a class="reference internal" href="#expected:void:" title="expected&lt;void&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;void&gt;</span></tt></a> object is in a valid state.</p>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="expected:void:::exceptionC">
+const std::exception_ptr&amp; <tt class="descname">exception</tt><big>(</big><big>)</big><tt class="descclassname"> const</tt><a class="headerlink" href="#expected:void:::exceptionC" title="Permalink to this definition">¶</a></dt>
+<dt id="expected:void:::exception">
+std::exception_ptr&amp;&amp; <tt class="descname">exception</tt><big>(</big><big>)</big><a class="headerlink" href="#expected:void:::exception" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="expected:void:::swap__expectedR">
+void <tt class="descname">swap</tt><big>(</big>expected&amp; <em>rhs</em><big>)</big><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#expected:void:::swap__expectedR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="expected:void:::expectC">
+Exception <tt class="descname">expect</tt><big>(</big><big>)</big><tt class="descclassname"> const</tt><a class="headerlink" href="#expected:void:::expectC" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="hash:expected:T::">
+<em class="property">class </em><tt class="descname">hash&lt;expected&lt;T&gt;&gt;</tt><a class="headerlink" href="#hash:expected:T::" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is a specialization of <tt class="xref cpp cpp-type docutils literal"><span class="pre">std::hash&lt;U&gt;</span></tt> to <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a>.</p>
+<dl class="type">
+<dt id="hash:expected:T::::result_type">
+<em class="property">type </em><tt class="descname">result_type</tt><a class="headerlink" href="#hash:expected:T::::result_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Aliased to <tt class="docutils literal"><span class="pre">typename</span> <span class="pre">hash&lt;T&gt;::result_type</span></tt>.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="expected:void:::getC">
-void <tt class="descname">get</tt><big>(</big><big>)</big><tt class="descclassname"> const</tt><a class="headerlink" href="#expected:void:::getC" title="Permalink to this definition">¶</a></dt>
-<dt id="expected:void:::mul-operatorC">
-void <tt class="descname">operator*</tt><big>(</big><big>)</big><tt class="descclassname"> const</tt><a class="headerlink" href="#expected:void:::mul-operatorC" title="Permalink to this definition">¶</a></dt>
-<dd><p>If the <a class="reference internal" href="#expected:void:" title="expected&lt;void&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;void&gt;</span></tt></a> object is in a valid state, returns <tt class="xref cpp cpp-type docutils literal"><span class="pre">void</span></tt>.
-Otherwise, throws the stored exception.</p>
+<dt id="hash:expected:T::::call-operator__expectedCRC">
+<a class="reference internal" href="#hash:expected:T::::result_type" title="hash&lt;expected&lt;T&gt;&gt;::result_type">result_type</a> <tt class="descname">operator()</tt><big>(</big>const expected&amp; <em>val</em><big>)</big><tt class="descclassname"> const</tt><tt class="descclassname"> noexcept</tt><a class="headerlink" href="#hash:expected:T::::call-operator__expectedCRC" title="Permalink to this definition">¶</a></dt>
+<dd><p>If <em>val</em> is valid, returns the hash value of the managed value type.
+Otherwise, returns a default-constructed <a class="reference internal" href="#hash:expected:T::::result_type" title="hash&lt;expected&lt;T&gt;&gt;::result_type"><tt class="xref cpp cpp-type docutils literal"><span class="pre">result_type</span></tt></a>.</p>
 </dd></dl>
 
 </dd></dl>
