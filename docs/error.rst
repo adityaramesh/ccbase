@@ -384,9 +384,14 @@ Reference
 Functions
 ---------
 
-.. function:: swap(expected& lhs, expected& rhs)
+.. function:: void swap(expected& lhs, expected& rhs)
 
    This global version of swap is defined for ADL.
+
+.. function:: expected<ReturnValue> attempt(const NullaryFunction& f)
+
+   Invokes *f* and returns the resulting value (if not :type:`void`) or thrown
+   exception wrapped in an |expected| object.
 
 Specializations
 ---------------

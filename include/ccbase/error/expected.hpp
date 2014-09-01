@@ -999,6 +999,12 @@ public:
 		rethrow_exception();
 	}
 
+	void operator*() const
+	{
+		dismiss();
+		if (!*this) raise();
+	}
+
 	expected& dismiss() noexcept
 	{
 		#ifndef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
@@ -1112,6 +1118,37 @@ template <class T>
 void swap(expected<T>& lhs, expected<T>& rhs)
 noexcept(noexcept(lhs.swap(rhs)))
 { lhs.swap(rhs); }
+
+template <class NullaryFunction>
+auto attempt(const NullaryFunction& f) ->
+typename std::enable_if<
+	!std::is_same<decltype(f()), void>::value,
+	expected<decltype(f())>
+>::type
+{
+	try {
+		return f();
+	}
+	catch (const std::exception& e) {
+		return e;
+	}
+}
+
+template <class NullaryFunction>
+auto attempt(const NullaryFunction& f) ->
+typename std::enable_if<
+	std::is_same<decltype(f()), void>::value,
+	expected<void>
+>::type
+{
+	try {
+		f();
+	}
+	catch (const std::exception& e) {
+		return e;
+	}
+	return cc::no_error;
+}
 
 }
 
