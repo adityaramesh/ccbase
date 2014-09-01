@@ -690,8 +690,15 @@ by the <tt class="xref cpp cpp-class docutils literal"><span class="pre">std::ex
 <h2>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="swap__expectedR.expectedR">
- <tt class="descname">swap</tt><big>(</big>expected&amp; <em>lhs</em>, expected&amp; <em>rhs</em><big>)</big><a class="headerlink" href="#swap__expectedR.expectedR" title="Permalink to this definition">¶</a></dt>
+void <tt class="descname">swap</tt><big>(</big>expected&amp; <em>lhs</em>, expected&amp; <em>rhs</em><big>)</big><a class="headerlink" href="#swap__expectedR.expectedR" title="Permalink to this definition">¶</a></dt>
 <dd><p>This global version of swap is defined for ADL.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="attempt__NullaryFunctionCR">
+expected&lt;ReturnValue&gt; <tt class="descname">attempt</tt><big>(</big>const NullaryFunction&amp; <em>f</em><big>)</big><a class="headerlink" href="#attempt__NullaryFunctionCR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Invokes <em>f</em> and returns the resulting value (if not <tt class="xref cpp cpp-type docutils literal"><span class="pre">void</span></tt>) or thrown
+exception wrapped in an <a class="reference internal" href="#expected:T:" title="expected&lt;T&gt;"><tt class="xref cpp cpp-class docutils literal"><span class="pre">expected&lt;T&gt;</span></tt></a> object.</p>
 </dd></dl>
 
 </div>
