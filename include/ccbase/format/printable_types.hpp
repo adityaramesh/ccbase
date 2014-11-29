@@ -74,6 +74,17 @@ noexcept -> decltype(os)
 	return os << "none";
 }
 
+template <class Char, class Traits = std::char_traits<Char>, class T, size_t N>
+auto operator<<(std::basic_ostream<Char, Traits>& os, const std::array<T, N>& arr)
+noexcept -> decltype(os)
+{
+	os << "[";
+	for (auto i = size_t{0}; i != N - 1; ++i) {
+		os << arr[i] << ", ";
+	}
+	return os << arr[N - 1] << "]";
+}
+
 }
 
 #endif
