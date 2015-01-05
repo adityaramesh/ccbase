@@ -436,7 +436,6 @@ void apply_manipulator_attribute(
 		dst << std::scientific;
 		break;
 	default:
-		std::cout << "A" << std::endl;
 		throw std::runtime_error{"Invalid attribute type."};
 	}
 }
@@ -573,7 +572,6 @@ void apply_string_output_attribute(
 		dst.flags(flags);
 	}
 	else {
-		std::cout << "B" << std::endl;
 		throw std::runtime_error{"Invalid attribute type."};
 	}
 }
@@ -594,7 +592,6 @@ void apply_string_output_attribute(
 		dst << "\"" << t << "\"";
 	}
 	else {
-		std::cout << "C" << std::endl;
 		throw std::runtime_error{"Invalid attribute type."};
 	}
 }
@@ -694,7 +691,6 @@ void apply_string_output_attribute(
 		dst.flags(flags);
 	}
 	else {
-		std::cout << "D" << std::endl;
 		throw std::runtime_error{"Invalid attribute type."};
 	}
 }
