@@ -4,7 +4,7 @@
 ** Date:	08/12/2013
 ** Contact:	_@adityaramesh.com
 **
-** This file overloads `operator<<` for a few special types.
+** `operator<<` overloaded for a few special types.
 */
 
 #ifndef ZC216C426_75CD_4BC3_B7CC_5B44145C130F
@@ -14,31 +14,22 @@
 #include <cstring>
 #include <ostream>
 #include <string>
-
 #include <tuple>
+#include <utility>
+
 #include <boost/optional.hpp>
 
 namespace cc {
+
+/*
+** Note: this forward declaration must appear before the definition of
+** `operator<<` for tuples; otherwise, attempting to print nested tuples will
+** fail.
+*/
 namespace detail {
 
 template <uintmax_t Current, uintmax_t Max, class Stream, class Tuple>
-struct print_tuple
-{
-	static void apply(Stream& os, const Tuple& t)
-	{
-		os << std::get<Current>(t) << ", ";
-		return print_tuple<Current + 1, Max, Stream, Tuple>::apply(os, t);
-	}
-};
-
-template <uintmax_t Max, class Stream, class Tuple>
-struct print_tuple<Max, Max, Stream, Tuple>
-{
-	static void apply(Stream& os, const Tuple& t)
-	{
-		os << std::get<Max>(t) << ")";
-	}
-};
+struct print_tuple;
 
 }
 
@@ -83,6 +74,29 @@ noexcept -> decltype(os)
 		os << arr[i] << ", ";
 	}
 	return os << arr[N - 1] << "]";
+}
+
+namespace detail {
+
+template <uintmax_t Current, uintmax_t Max, class Stream, class Tuple>
+struct print_tuple
+{
+	static void apply(Stream& os, const Tuple& t)
+	{
+		os << std::get<Current>(t) << ", ";
+		print_tuple<Current + 1, Max, Stream, Tuple>::apply(os, t);
+	}
+};
+
+template <uintmax_t Max, class Stream, class Tuple>
+struct print_tuple<Max, Max, Stream, Tuple>
+{
+	static void apply(Stream& os, const Tuple& t)
+	{
+		os << std::get<Max>(t) << ")";
+	}
+};
+
 }
 
 }
