@@ -86,9 +86,13 @@ struct parse_frac<false, Num, Den, seq<T, Ts...>>
 template <class Char, Char... Ts>
 constexpr auto operator"" _f()
 {
-	using sign_parser = detail::parse_sign<seq<Ts...>>;
+	using cc::detail::seq;
+	using cc::detail::parse_sign;
+	using cc::detail::parse_frac;
+
+	using sign_parser = parse_sign<seq<Ts...>>;
 	using tail = typename sign_parser::tail;
-	using frac_parser = detail::parse_frac<true, 0, 1, tail>;
+	using frac_parser = parse_frac<true, 0, 1, tail>;
 
 	return std::ratio<
 		sign_parser::sign * frac_parser::num,
