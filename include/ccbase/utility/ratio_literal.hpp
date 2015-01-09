@@ -1,5 +1,5 @@
 /*
-** File Name: fixed_point.hpp
+** File Name: ratio_literal.hpp
 ** Author:    Aditya Ramesh
 ** Date:      01/07/2015
 ** Contact:   _@adityaramesh.com
@@ -81,10 +81,15 @@ struct parse_frac<false, Num, Den, seq<T, Ts...>>
 	static constexpr auto den = next::den;
 };
 
-}}
+}
+
+template <class Scalar, class Ratio>
+static constexpr auto cast = Scalar(Ratio::num) / Ratio::den;
+
+}
 
 template <class Char, Char... Ts>
-constexpr auto operator"" _f()
+constexpr auto operator"" _ratio()
 {
 	using cc::detail::seq;
 	using cc::detail::parse_sign;
@@ -100,6 +105,6 @@ constexpr auto operator"" _f()
 	>{};
 }
 
-#define cc_fixed(x) decltype(#x ## _f)
+#define cc_ratio(x) decltype(#x ## _ratio)
 
 #endif
