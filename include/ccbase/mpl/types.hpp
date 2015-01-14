@@ -62,6 +62,34 @@ struct value_seq_helper<seq<c<Integer, Value>, Tail...>>
 template <class Seq>
 using value_seq = typename value_seq_helper<Seq>::type;
 
+/*
+** `value_seqs` is used to convert a `cc::seq`s of `cc::seq`s into a `cc::seq`
+** of `std::integer_sequence`s. Note that unlike `value_seq`, `value_seqs`
+** requires the programmer to specify the integral type of the value. This is
+** because it is possible that `Seq` is actually a sequence of empty sequences,
+** in which case we cannot automatically infer the integer type.
+*/
+
+template <class Integer, class Seq>
+struct value_seqs_helper2
+{ using type = value_seq<Seq>; };
+
+template <class Integer>
+struct value_seqs_helper2<Integer, seq<>>
+{ using type = std::integer_sequence<Integer>; };
+
+template <class Integer, class Seq>
+struct value_seqs_helper;
+
+template <class Integer, class... Seqs>
+struct value_seqs_helper<Integer, seq<Seqs...>>
+{
+	using type = seq<typename value_seqs_helper2<Integer, Seqs>::type...>;
+};
+
+template <class Integer, class Seq>
+using value_seqs = typename value_seqs_helper<Integer, Seq>::type;
+
 }
 
 #endif
