@@ -40,7 +40,7 @@ using at = typename at_helper<0, Index, Seq>::type;
 ** The `find` metafunction.
 */
 
-static constexpr auto no_match = size_t{-1};
+static constexpr auto no_match = int{-1};
 
 template <size_t Index, class Value, class Seq>
 struct find_helper;

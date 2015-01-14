@@ -23,7 +23,11 @@ struct seq
 };
 
 template <class Integer, Integer Value>
-struct c { static constexpr auto value = Value; }; 
+struct c
+{
+	using integer = Integer;
+	static constexpr auto value = Value;
+}; 
 
 /*
 ** `type_seq` is used to convert `std::integer_sequence`s into

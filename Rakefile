@@ -8,7 +8,7 @@ if ENV.key?('PYTHON_BIN')
 	sphinx_build = "#{ENV['PYTHON_BIN']}sphinx-build"
 end
 
-langflags  = "-std=c++11"
+langflags  = "-std=c++1y"
 wflags     = "-Wall -Wextra -pedantic -Wno-missing-field-initializers"
 archflags  = "-march=native"
 incflags   = "-I include -isystem #{boost}"
