@@ -22,6 +22,8 @@ namespace cc {
 template <class Char, class Traits>
 class basic_formatter;
 
+namespace detail {
+
 template <class Char, class Traits>
 void print_format_substring(
 	const boost::basic_string_ref<Char, Traits>& substr,
@@ -97,6 +99,8 @@ void apply_impl(
 	}
 }
 
+}
+
 template <class Char, class Traits, class... Args>
 void apply(
 	const basic_formatter<Char, Traits>& fmt,
@@ -104,6 +108,10 @@ void apply(
 	Args&&... args
 )
 {
+	using detail::apply_impl;
+	using detail::argument_base;
+	using detail::make_argument_wrapper;
+
 	apply_impl(fmt, dst, 
 		(const argument_base&)make_argument_wrapper(
 			args, dst, fmt.buffer(), fmt.format_argument_pointer()

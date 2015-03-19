@@ -18,6 +18,8 @@ namespace cc {
 template <class Char, class Traits>
 class basic_format_argument;
 
+namespace detail {
+
 template <
 	class T,
 	class Char,
@@ -374,6 +376,8 @@ struct apply_argument_helper<boost::basic_string_ref<Char, Traits>, void>
 	}
 };
 
+}
+
 template <class Char, class Traits>
 class basic_format_argument
 {
@@ -471,7 +475,7 @@ void apply(
 	std::basic_ostringstream<Char, Traits>& buf
 )
 {
-	apply_argument_helper<T>::apply(arg, t, dst, buf);
+	detail::apply_argument_helper<T>::apply(arg, t, dst, buf);
 }
 
 }

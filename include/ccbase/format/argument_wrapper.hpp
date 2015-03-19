@@ -11,6 +11,7 @@
 #include <ccbase/format/format_argument.hpp>
 
 namespace cc {
+namespace detail {
 
 class argument_base
 {
@@ -55,6 +56,6 @@ make_argument_wrapper(
 	return argument_wrapper<Char, Traits, T>{arg, dst, buf, list};
 }
 
-}
+}}
 
 #endif
