@@ -23,10 +23,12 @@
 
 namespace cc {
 
-CC_ALWAYS_INLINE int8_t bswap(int8_t x) noexcept { return x; }
+CC_ALWAYS_INLINE constexpr
+int8_t bswap(int8_t x) noexcept
+{ return x; }
 
-CC_ALWAYS_INLINE int16_t
-bswap(int16_t x) noexcept
+CC_ALWAYS_INLINE constexpr
+int16_t bswap(int16_t x) noexcept
 {
 #if PLATFORM_COMPILER == PLATFORM_COMPILER_CLANG || \
     PLATFORM_COMPILER == PLATFORM_COMPILER_GCC   || \
@@ -37,7 +39,7 @@ bswap(int16_t x) noexcept
 #endif
 }
 
-CC_ALWAYS_INLINE
+CC_ALWAYS_INLINE constexpr
 int32_t bswap(int32_t x) noexcept
 {
 #if PLATFORM_COMPILER == PLATFORM_COMPILER_CLANG || \
@@ -52,7 +54,7 @@ int32_t bswap(int32_t x) noexcept
 #endif
 }
 
-CC_ALWAYS_INLINE
+CC_ALWAYS_INLINE constexpr
 int64_t bswap(int64_t x) noexcept
 {
 #if PLATFORM_COMPILER == PLATFORM_COMPILER_CLANG || \
@@ -71,10 +73,12 @@ int64_t bswap(int64_t x) noexcept
 #endif
 }
 
-CC_ALWAYS_INLINE uint8_t bswap(uint8_t x) noexcept { return x; }
+CC_ALWAYS_INLINE constexpr
+uint8_t bswap(uint8_t x) noexcept
+{ return x; }
 
-CC_ALWAYS_INLINE uint16_t
-bswap(uint16_t x) noexcept
+CC_ALWAYS_INLINE constexpr
+uint16_t bswap(uint16_t x) noexcept
 {
 #if PLATFORM_COMPILER == PLATFORM_COMPILER_CLANG || \
     PLATFORM_COMPILER == PLATFORM_COMPILER_GCC   || \
@@ -85,7 +89,7 @@ bswap(uint16_t x) noexcept
 #endif
 }
 
-CC_ALWAYS_INLINE
+CC_ALWAYS_INLINE constexpr
 uint32_t bswap(uint32_t x) noexcept
 {
 #if PLATFORM_COMPILER == PLATFORM_COMPILER_CLANG || \
@@ -100,7 +104,7 @@ uint32_t bswap(uint32_t x) noexcept
 #endif
 }
 
-CC_ALWAYS_INLINE
+CC_ALWAYS_INLINE constexpr
 uint64_t bswap(uint64_t x) noexcept
 {
 #if PLATFORM_COMPILER == PLATFORM_COMPILER_CLANG || \

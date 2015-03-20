@@ -25,8 +25,8 @@
 
 namespace cc {
 
-CC_ALWAYS_INLINE void
-yield_execution() noexcept
+CC_ALWAYS_INLINE
+void yield_execution() noexcept
 {
 #if PLATFORM_COMPILER == PLATFORM_COMPILER_CLANG || \
     PLATFORM_COMPILER == PLATFORM_COMPILER_GCC   || \
