@@ -446,6 +446,18 @@ mpl_define_binary_relational_op(<=, less_equal)
 
 #undef mpl_define_binary_relational_op
 
+template <bool... Ts>
+static constexpr auto all_true = apply<
+	uncurry<make_nary<quote<logical_and>>>,
+	to_types<std::integer_sequence<bool, Ts...>>
+>::value;
+
+template <bool... Ts>
+static constexpr auto any_true = apply<
+	uncurry<make_nary<quote<logical_or>>>,
+	to_types<std::integer_sequence<bool, Ts...>>
+>::value;
+
 /*
 ** Metafunctions for working with multiple streams of data simultaneously.
 */
