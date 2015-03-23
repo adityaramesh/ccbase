@@ -3,6 +3,9 @@
 ** Author:    Aditya Ramesh
 ** Date:      03/20/2015
 ** Contact:   _@adityaramesh.com
+**
+** XXX: Clang seems to be buggy in compiling the inline assembly below in
+** certain situations.
 */
 
 #ifndef ZC5D2A64A_2B75_4209_B5EE_48410B26BFAE
@@ -40,7 +43,7 @@ noexcept
 	auto res = uint8_t{};
 	asm("rolb %%cl, %0"
 		: "=r" (res)
-		: "c" (shift), "r" (x)
+		: "c" (shift), "0" (x)
 	);
 	return res;
 }
@@ -58,7 +61,7 @@ noexcept
 	auto res = uint16_t{};
 	asm("rolw %%cl, %0"
 		: "=r" (res)
-		: "c" (shift), "r" (x)
+		: "c" (shift), "0" (x)
 	);
 	return res;
 }
@@ -76,7 +79,7 @@ noexcept
 	auto res = uint32_t{};
 	asm("roll %%cl, %0"
 		: "=r" (res)
-		: "c" (shift), "r" (x)
+		: "c" (shift), "0" (x)
 	);
 	return res;
 }
@@ -94,7 +97,7 @@ noexcept
 	auto res = uint64_t{};
 	asm("rolq %%cl, %0"
 		: "=r" (res)
-		: "c" (shift), "r" (x)
+		: "c" (shift), "0" (x)
 	);
 	return res;
 }
@@ -112,7 +115,7 @@ noexcept
 	auto res = uint8_t{};
 	asm("rorb %%cl, %0"
 		: "=r" (res)
-		: "c" (shift), "r" (x)
+		: "c" (shift), "0" (x)
 	);
 	return res;
 }
@@ -130,7 +133,7 @@ noexcept
 	auto res = uint16_t{};
 	asm("rorw %%cl, %0"
 		: "=r" (res)
-		: "c" (shift), "r" (x)
+		: "c" (shift), "0" (x)
 	);
 	return res;
 }
@@ -148,7 +151,7 @@ noexcept
 	auto res = uint32_t{};
 	asm("rorl %%cl, %0"
 		: "=r" (res)
-		: "c" (shift), "r" (x)
+		: "c" (shift), "0" (x)
 	);
 	return res;
 }
@@ -166,7 +169,7 @@ noexcept
 	auto res = uint64_t{};
 	asm("rorq %%cl, %0"
 		: "=r" (res)
-		: "c" (shift), "r" (x)
+		: "c" (shift), "0" (x)
 	);
 	return res;
 }
