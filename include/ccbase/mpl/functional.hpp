@@ -643,6 +643,16 @@ zip<list<
 	reverse<erase_back<Perms>>
 >>;
 
+/*
+** Miscellaneous helpful metafunctions.
+*/
+
+template <template <class...> class F, class T>
+struct is_specialization_of : std::false_type {};
+
+template <template <class...> class F, class... Args>
+struct is_specialization_of<F, F<Args...>> : std::true_type {};
+
 }}
 
 #endif
