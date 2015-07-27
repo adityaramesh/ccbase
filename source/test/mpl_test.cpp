@@ -49,6 +49,14 @@ module("test composition")
 	>;
 	using expected = to_types<std::integer_sequence<int, 0, 3, 6>>;
 	static_assert(std::is_same<r2, expected>::value, "");
+
+	using l1 = to_types<std::index_sequence<1, 2, 3>>;
+	using f = bind_back<quote<greater>, cc::mpl::size_t<2>>;
+	using r3 = find_first_if<f, l1>;
+	static_assert(r3::value == 2, "");
+
+	using r4 = slice_c<1, 1, l1>;
+	static_assert(at_c<0, r4>::value == 2, "");
 }
 
 /*

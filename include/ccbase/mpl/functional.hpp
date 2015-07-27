@@ -9,6 +9,11 @@
 ** https://github.com/ericniebler/range-v3/blob/master/include/range/v3/utility/meta.hpp.
 ** Niebler's blog post explaining some of the concepts in this header file was
 ** also very useful.
+**
+** Note this header depends on `list.hpp`, so we can't move functions from
+** `list.hpp` to this file. The former header file is designed to contain the
+** minimal functionality necessary to make the implementation of this header
+** reasonable.
 */
 
 #ifndef ZB2EFAF00_D7AB_413B_810D_B90D84B03654
@@ -288,10 +293,34 @@ template <class Lists>
 using join = apply_list<quote<cat>, Lists>;
 
 /*
+** More list utilities.
+**
 ** TODO:
-** - Replace (all), find (all), erase (all), replace_if, find_if, erase_if.
+** - Replace (all), find (all), replace_if, erase_if.
 ** - Unique.
 */
+
+namespace detail {
+
+template <std::intmax_t Index, class Func, class List>
+struct find_first_if_helper;
+
+template <std::intmax_t Index, class Func>
+struct find_first_if_helper<Index, Func, list<>>
+{ using type = no_match; };
+
+template <std::intmax_t Index, class Func, class Head, class... Tail>
+struct find_first_if_helper<Index, Func, list<Head, Tail...>> :
+std::conditional_t<
+	apply<Func, Head>::value,
+	id<size_t<Index>>,
+	find_first_if_helper<Index + 1, Func, list<Tail...>>
+> {};
+
+}
+
+template <class Func, class List>
+using find_first_if = eval<detail::find_first_if_helper<0, Func, List>>;
 
 /*
 ** The `foldl` and `foldr` metafunctions.
@@ -330,6 +359,34 @@ using foldl = eval<detail::foldl_helper<List, State, F>>;
 
 template <class List, class State, class F>
 using foldr = eval<detail::foldr_helper<List, State, F>>;
+
+/*
+** More list functions.
+*/
+
+namespace detail {
+
+template <class A, class B, class List>
+struct slice_helper
+{
+	using actions = cat<
+		repeat_n<A, quote<erase_front>>,
+		repeat_nc<List::size() - B::value - 1, quote<erase_back>>
+	>;
+	using type = foldl<
+		actions,
+		List,
+		reverse_args<quote<apply>>
+	>;
+};
+
+}
+
+template <class A, class B, class List>
+using slice = eval<detail::slice_helper<A, B, List>>;
+
+template <std::size_t A, std::size_t B, class List>
+using slice_c = slice<size_t<A>, size_t<B>, List>;
 
 /*
 ** Makes an nary version of a binary function (e.g. `plus`, `logical_and`).
