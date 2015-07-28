@@ -567,19 +567,23 @@ public:
 };
 
 template <class Start, class End>
-using range = foldl<repeat_n<minus<End, Start>>, list<Start>,
-compose<
-	quote<list>,
-	select_c<0, 0>,
-	uncurry<combine<
-		compose<
-			quote<back>,
-			bind_front<quote<plus>, int_<1>>
-		>,
-		quote_trait<id>
-	>>,
-	uncurry<quote<append>>
->>;
+using range = foldl<
+	repeat_n<minus<End, Start>>,
+	list<Start>,
+	compose<
+		quote<list>,
+		select_c<0, 0>,
+		uncurry<combine<
+			compose<
+				quote<back>,
+				bind_front<quote<plus>, int_<1>>,
+				bind_front<quote<cast>, char>
+			>,
+			quote_trait<id>
+		>>,
+		uncurry<quote<append>>
+	>
+>;
 
 template <class T, T Start, T End>
 using range_c = range<

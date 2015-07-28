@@ -50,6 +50,9 @@ using intmax_t = std::integral_constant<intmax_t, N>;
 template <uintmax_t N>
 using uintmax_t = std::integral_constant<uintmax_t, N>;
 
+template <class T, class Var>
+using cast = std::integral_constant<T, Var::value>;
+
 }}
 
 #endif
