@@ -37,14 +37,14 @@ using empty = bool_<List::size() == 0>;
 
 namespace detail {
 
-template <std::uintmax_t Current, std::uintmax_t Index, class List>
+template <std::size_t Current, std::size_t Index, class List>
 struct at_c_helper;
 
-template <std::uintmax_t Current, std::uintmax_t Index, class Head, class... Tail>
+template <std::size_t Current, std::size_t Index, class Head, class... Tail>
 struct at_c_helper<Current, Index, list<Head, Tail...>> :
 at_c_helper<Current + 1, Index, list<Tail...>> {};
 
-template <std::uintmax_t Index, class Head, class... Tail>
+template <std::size_t Index, class Head, class... Tail>
 struct at_c_helper<Index, Index, list<Head, Tail...>>
 { using type = Head; };
 
@@ -192,8 +192,8 @@ using append = typename detail::append_helper<Value, List>::type;
 namespace detail {
 
 template <
-	std::uintmax_t Current,
-	std::uintmax_t Index,
+	std::size_t Current,
+	std::size_t Index,
 	class          Value,
 	class          Head,
 	class          Tail
@@ -201,8 +201,8 @@ template <
 struct set_at_helper;
 
 template <
-	std::uintmax_t Current,
-	std::uintmax_t Index,
+	std::size_t Current,
+	std::size_t Index,
 	class          Value,
 	class...       Ts,
 	class          U,
@@ -212,7 +212,7 @@ struct set_at_helper<Current, Index, Value, list<Ts...>, list<U, Us...>> :
 set_at_helper<Current + 1, Index, Value, list<Ts..., U>, list<Us...>> {};
 
 template <
-	std::uintmax_t Index,
+	std::size_t Index,
 	class          Value,
 	class...       Ts,
 	class          U,
@@ -223,7 +223,7 @@ struct set_at_helper<Index, Index, Value, list<Ts...>, list<U, Us...>>
 
 }
 
-template <std::uintmax_t Index, class Value, class List>
+template <std::size_t Index, class Value, class List>
 using set_at_c = typename detail::set_at_helper<0, Index, Value, list<>, List>::type;
 
 template <class Index, class Value, class List>
@@ -236,8 +236,8 @@ using set_at = set_at_c<Index::type::value, Value, List>;
 namespace detail {
 
 template <
-	std::uintmax_t Current,
-	std::uintmax_t Index,
+	std::size_t Current,
+	std::size_t Index,
 	class          T,
 	class          Head,
 	class          Tail
@@ -245,8 +245,8 @@ template <
 struct insert_at_helper;
 
 template <
-	std::uintmax_t Current,
-	std::uintmax_t Index,
+	std::size_t Current,
+	std::size_t Index,
 	class          T,
 	class          Head,
 	class          U,
@@ -256,7 +256,7 @@ struct insert_at_helper<Current, Index, T, Head, list<U, Us...>> :
 insert_at_helper<Current + 1, Index, T, append<U, Head>, list<Us...>> {};
 
 template <
-	std::uintmax_t Index,
+	std::size_t Index,
 	class          T,
 	class          Head,
 	class          U,
@@ -270,7 +270,7 @@ struct insert_at_helper<Index, Index, T, Head, list<U, Us...>>
 };
 
 template <
-	std::uintmax_t Index,
+	std::size_t Index,
 	class          T,
 	class          Head
 >
@@ -279,7 +279,7 @@ struct insert_at_helper<Index, Index, T, Head, list<>>
 
 }
 
-template <std::uintmax_t Index, class T, class List>
+template <std::size_t Index, class T, class List>
 using insert_at_c = typename detail::insert_at_helper<
 	0, Index, T, list<>, List
 >::type;
@@ -294,16 +294,16 @@ using insert_at = insert_at_c<Index::type::value, T, List>;
 namespace detail {
 
 template <
-	std::uintmax_t Current,
-	std::uintmax_t Index,
+	std::size_t Current,
+	std::size_t Index,
 	class          Head,
 	class          Tail
 >
 struct erase_at_helper;
 
 template <
-	std::uintmax_t Current,
-	std::uintmax_t Index,
+	std::size_t Current,
+	std::size_t Index,
 	class          Head,
 	class          T,
 	class...       Ts
@@ -312,7 +312,7 @@ struct erase_at_helper<Current, Index, Head, list<T, Ts...>> :
 erase_at_helper<Current + 1, Index, append<T, Head>, list<Ts...>> {};
 
 template <
-	std::uintmax_t Index,
+	std::size_t Index,
 	class          Head,
 	class          T,
 	class...       Ts
@@ -322,7 +322,7 @@ struct erase_at_helper<Index, Index, Head, list<T, Ts...>>
 
 }
 
-template <std::uintmax_t Index, class List>
+template <std::size_t Index, class List>
 using erase_at_c = typename detail::erase_at_helper<
 	0, Index, list<>, List
 >::type;
@@ -335,6 +335,16 @@ using erase_front = erase_at_c<0, List>;
 
 template <class List>
 using erase_back = erase_at_c<List::size() - 1, List>;
+
+/*
+** The `replace_at` metafunction.
+*/
+
+template <class Index, class T, class List>
+using replace_at = insert_at<Index, T, erase_at<Index, List>>;
+
+template <std::size_t Index, class T, class List>
+using replace_at_c = replace_at<size_t<Index>, T, List>;
 
 /*
 ** The `contains` metafunction.
@@ -390,7 +400,7 @@ using reverse = typename detail::reverse_helper<list<>, List>::type;
 
 namespace detail {
 
-template <std::uintmax_t N, class T>
+template <std::size_t N, class T>
 struct repeat_n_helper
 {
 	using type = cat<
@@ -410,7 +420,7 @@ struct repeat_n_helper<1, T>
 
 }
 
-template <std::uintmax_t N, class T = void>
+template <std::size_t N, class T = void>
 using repeat_nc = typename detail::repeat_n_helper<N, T>::type;
 
 template <class N, class T = void>

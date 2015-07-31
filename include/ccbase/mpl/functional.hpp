@@ -547,7 +547,7 @@ struct select
 	>;
 };
 
-template <std::uintmax_t... Indices>
+template <std::size_t... Indices>
 struct select_c
 {
 private:
@@ -555,7 +555,7 @@ private:
 	struct helper
 	{
 		using type =
-		apply<select<list<uintmax_t<Indices>...>>, List>;
+		apply<select<list<size_t<Indices>...>>, List>;
 	};
 public:
 	/*
@@ -594,8 +594,8 @@ using range_c = range<
 template <class Start, class End>
 using select_range = select<range<Start, End>>;
 
-template <std::uintmax_t Start, std::uintmax_t End>
-using select_range_c = select_range<uintmax_t<Start>, uintmax_t<End>>;
+template <std::size_t Start, std::size_t End>
+using select_range_c = select_range<size_t<Start>, size_t<End>>;
 
 namespace detail {
 
@@ -684,8 +684,8 @@ public:
 	using apply = eval<helper<List...>>;
 };
 
-template <std::uintmax_t Start, std::uintmax_t End>
-using group_range_c = group_range<uintmax_t<Start>, uintmax_t<End>>;
+template <std::size_t Start, std::size_t End>
+using group_range_c = group_range<size_t<Start>, size_t<End>>;
 
 /*
 ** Functions involving permutations.
