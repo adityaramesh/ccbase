@@ -9,14 +9,6 @@
 #include <ccbase/unit_test.hpp>
 #include <ccbase/mpl/functional.hpp>
 
-/*
-#include <ccbase/mpl/parse_natural.hpp>
-#include <ccbase/mpl/parse_ratio.hpp>
-#include <ccbase/mpl/skip_whitespace.hpp>
-#include <ccbase/mpl/parse_wsv.hpp>
-#include <ccbase/utility/ratio_literal.hpp>
-*/
-
 module("test composition")
 {
 	using namespace cc::mpl;
