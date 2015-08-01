@@ -1,6 +1,18 @@
+# General files.
 *.DS_Store
-*.lib
-*.run
+*.log
+
+# Vim-related files.
 *.swp
-*.vim
+*.swo
+
+# Compilation-related files.
+*.s
+*.ll
+*.gch
 *.out
+*.run
+*.lib
+
+# Directories to ignore
+out
