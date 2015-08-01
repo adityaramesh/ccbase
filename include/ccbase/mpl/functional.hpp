@@ -516,6 +516,67 @@ static constexpr auto any_true = apply<
 >::value;
 
 /*
+** Functions for list comparison.
+*/
+
+template <class T1, class T2>
+using is_same = bool_<std::is_same<T1, T2>::value>;
+
+namespace detail {
+
+template <bool LengthsEqual, class List1, class List2>
+struct lists_same_helper;
+
+template <class List1, class List2>
+struct lists_same_helper<false, List1, List2>
+{ using type = bool_<false>; };
+
+template <class List1, class List2>
+struct lists_same_helper<true, List1, List2>
+{
+	using type = foldl<
+		transform<
+			zip<list<List1, List2>>,
+			uncurry<quote<is_same>>
+		>,
+		bool_<true>,
+		quote<logical_and>
+	>;
+};
+
+}
+
+template <class List1, class List2>
+using lists_same = eval<detail::lists_same_helper<
+	List1::size() == List2::size(), List1, List2
+>>;
+
+namespace detail {
+
+template <bool MatchPossible, class Query, class List>
+struct starts_with_helper;
+
+template <class Query, class List>
+struct starts_with_helper<false, Query, List>
+{ using type = bool_<false>; };
+
+template <class Query, class List>
+struct starts_with_helper<true, Query, List>
+{
+	using type = lists_same<
+		Query,
+		slice_c<0, Query::size() - 1, List>
+	>;
+};
+
+}
+
+template <class Query, class List>
+using starts_with = eval<detail::starts_with_helper<
+	Query::size() <= List::size(), Query, List
+>>;
+
+/*
 ** Metafunctions for working with multiple streams of data simultaneously.
 */
 

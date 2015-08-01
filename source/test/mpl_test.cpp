@@ -49,6 +49,12 @@ module("test composition")
 
 	using r4 = slice_c<1, 1, l1>;
 	static_assert(at_c<0, r4>::value == 2, "");
+
+	using r5 = lists_same<l1, l1>;
+	static_assert(r5::value == true, "");
+
+	using r5 = starts_with<list<size_t<1>>, l1>;
+	static_assert(r5::value == true, "");
 }
 
 /*
