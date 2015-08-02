@@ -471,6 +471,31 @@ mpl_define_binary_arithmetic_op(%, modulus)
 mpl_define_binary_arithmetic_op(&, bit_and)
 mpl_define_binary_arithmetic_op(|, bit_or)
 mpl_define_binary_arithmetic_op(^, bit_xor)
+mpl_define_binary_arithmetic_op(<<, shift_left)
+
+/*
+** We need the help of a helper struct to implement right shift, in order to
+** avoid a parsing error due to the `>>` operator being interpreted as the end
+** of the template alias declaration. Let me know if you find a more elegant
+** solution.
+*/
+
+namespace detail {
+
+template <class T, class U, T A, U B>
+struct right_shift_helper
+{ static constexpr auto value = (A >> B); };
+
+}
+
+template <class T, class U>
+using shift_right = std::integral_constant<
+	decltype(T::type::value >> U::type::value),
+	detail::right_shift_helper<
+		typename T::type, typename U::type,
+		T::type::value, U::type::value
+	>::value
+>;
 
 #undef mpl_define_binary_arithmetic_op
 
@@ -502,6 +527,16 @@ mpl_define_binary_relational_op(<,  less)
 mpl_define_binary_relational_op(<=, less_equal)
 
 #undef mpl_define_binary_relational_op
+
+/*
+** Logical operations.
+*/
+
+template <bool V, class A, class B>
+using if_c = std::conditional_t<V, A, B>;
+
+template <class T, class A, class B>
+using if_ = if_c<T::value, A, B>;
 
 template <bool... Ts>
 static constexpr auto all_true = apply<
