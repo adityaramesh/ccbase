@@ -68,66 +68,28 @@ using back = at_c<List::size() - 1, List>;
 
 namespace detail {
 
-template <class... Lists>
+template <class Head, class Tail>
 struct cat_helper;
 
-template <class... As>
-struct cat_helper<list<As...>>
-{ using type = list<As...>; };
+template <class... Ts, class... Us, class... Lists>
+struct cat_helper<mpl::list<Ts...>, mpl::list<mpl::list<Us...>, Lists...>>
+{
+	using type = typename cat_helper<
+		mpl::list<Ts..., Us...>,
+		mpl::list<Lists...>
+	>::type;
+};
 
-template <class... As, class... Bs>
-struct cat_helper<list<As...>, list<Bs...>> :
-cat_helper<list<As..., Bs...>> {};
-
-template <class... As, class... Bs, class... Cs>
-struct cat_helper<list<As...>, list<Bs...>, list<Cs...>> :
-cat_helper<list<As..., Bs..., Cs...>> {};
-
-template <class... As, class... Bs, class... Cs, class... Ds>
-struct cat_helper<list<As...>, list<Bs...>, list<Cs...>, list<Ds...>> :
-cat_helper<list<As..., Bs..., Cs..., Ds...>> {};
-
-template <class... As, class... Bs, class... Cs, class... Ds, class... Es>
-struct cat_helper<list<As...>, list<Bs...>, list<Cs...>, list<Ds...>,
-	list<Es...>> :
-cat_helper<list<As..., Bs..., Cs..., Ds..., Es...>> {};
-
-template <class... As, class... Bs, class... Cs, class... Ds, class... Es,
-	 class... Fs>
-struct cat_helper<list<As...>, list<Bs...>, list<Cs...>, list<Ds...>, list<Es...>,
-	list<Fs...>> :
-cat_helper<list<As..., Bs..., Cs..., Ds..., Es..., Fs...>> {};
-
-template <class... As, class... Bs, class... Cs, class... Ds, class... Es,
-	 class... Fs, class... Gs>
-struct cat_helper<list<As...>, list<Bs...>, list<Cs...>, list<Ds...>, list<Es...>,
-	list<Fs...>, list<Gs...>> :
-cat_helper<list<As..., Bs..., Cs..., Ds..., Es..., Fs..., Gs...>> {};
-
-template <class... As, class... Bs, class... Cs, class... Ds, class... Es,
-	 class... Fs, class... Gs, class... Hs>
-struct cat_helper<list<As...>, list<Bs...>, list<Cs...>, list<Ds...>, list<Es...>,
-	list<Fs...>, list<Gs...>, list<Hs...>> :
-cat_helper<list<As..., Bs..., Cs..., Ds..., Es..., Fs..., Gs..., Hs...>> {};
-
-template <class... As, class... Bs, class... Cs, class... Ds, class... Es,
-	 class... Fs, class... Gs, class... Hs, class... Is>
-struct cat_helper<list<As...>, list<Bs...>, list<Cs...>, list<Ds...>, list<Es...>,
-	list<Fs...>, list<Gs...>, list<Hs...>, list<Is...>> :
-cat_helper<list<As..., Bs..., Cs..., Ds..., Es..., Fs..., Gs..., Hs...,
-	Is...>> {};
-
-template <class... As, class... Bs, class... Cs, class... Ds, class... Es,
-	 class... Fs, class... Gs, class... Hs, class... Is, class... Js>
-struct cat_helper<list<As...>, list<Bs...>, list<Cs...>, list<Ds...>, list<Es...>,
-	list<Fs...>, list<Gs...>, list<Hs...>, list<Is...>, list<Js...>> :
-cat_helper<list<As..., Bs..., Cs..., Ds..., Es..., Fs..., Gs..., Hs..., Is...,
-	Js...>> {};
+template <class Head>
+struct cat_helper<Head, mpl::list<>>
+{ using type = Head; };
 
 }
 
 template <class... Lists>
-using cat = typename detail::cat_helper<Lists...>::type;
+using cat = typename detail::cat_helper<
+	mpl::list<>, mpl::list<Lists...>
+>::type;
 
 /*
 ** The `find_first` metafunction.
