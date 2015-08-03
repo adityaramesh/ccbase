@@ -15,7 +15,7 @@
 namespace cc {
 namespace mpl {
 
-using size_type = std::size_t;
+using list_index = std::size_t;
 
 template <class... Ts>
 struct list
@@ -25,7 +25,7 @@ struct list
 };
 
 template <class List>
-using size = std::integral_constant<size_type, List::size>;
+using size = std::integral_constant<list_index, List::size>;
 
 template <class List>
 using empty = bool_<List::size == 0>;
@@ -36,18 +36,18 @@ using empty = bool_<List::size == 0>;
 
 namespace detail {
 
-template <size_type Current, size_type Index, class List>
+template <list_index Current, list_index Index, class List>
 struct at_impl;
 
-template <size_type Current, size_type Index, class Head, class... Tail>
+template <list_index Current, list_index Index, class Head, class... Tail>
 struct at_impl<Current, Index, list<Head, Tail...>> :
 at_impl<Current + 1, Index, list<Tail...>> {};
 
-template <size_type Index, class Head, class... Tail>
+template <list_index Index, class Head, class... Tail>
 struct at_impl<Index, Index, list<Head, Tail...>>
 { using type = Head; };
 
-template <size_type Index, class List>
+template <list_index Index, class List>
 struct at_helper
 {
 	static_assert(Index < List::size, "Index out of bounds.");
@@ -56,7 +56,7 @@ struct at_helper
 
 }
 
-template <size_type Index, class List>
+template <list_index Index, class List>
 using at_c = typename detail::at_helper<Index, List>::type;
 
 template <class Index, class List>
@@ -116,18 +116,18 @@ using npos = intmax_t<-1>;
 
 namespace detail {
 
-template <size_type Index, class Value, class List>
+template <list_index Index, class Value, class List>
 struct find_first_helper;
 
-template <size_type Index, class Value, class Head, class... Tail>
+template <list_index Index, class Value, class Head, class... Tail>
 struct find_first_helper<Index, Value, list<Head, Tail...>> :
 find_first_helper<Index + 1, Value, list<Tail...>> {};
 
-template <size_type Index, class Value, class... Tail>
+template <list_index Index, class Value, class... Tail>
 struct find_first_helper<Index, Value, list<Value, Tail...>>
 { using type = intmax_t<Index>; };
 
-template <size_type Index, class Value>
+template <list_index Index, class Value>
 struct find_first_helper<Index, Value, list<>>
 { using type = npos; };
 
@@ -171,36 +171,36 @@ using append = typename detail::append_helper<Value, List>::type;
 namespace detail {
 
 template <
-	size_type Current,
-	size_type Index,
-	class     Value,
-	class     Head,
-	class     Tail
+	list_index Current,
+	list_index Index,
+	class      Value,
+	class      Head,
+	class      Tail
 >
 struct set_at_impl;
 
 template <
-	size_type Current,
-	size_type Index,
-	class     Value,
-	class...  Ts,
-	class     U,
-	class...  Us
+	list_index Current,
+	list_index Index,
+	class      Value,
+	class...   Ts,
+	class      U,
+	class...   Us
 >
 struct set_at_impl<Current, Index, Value, list<Ts...>, list<U, Us...>> :
 set_at_impl<Current + 1, Index, Value, list<Ts..., U>, list<Us...>> {};
 
 template <
-	size_type Index,
-	class     Value,
-	class...  Ts,
-	class     U,
-	class...  Us
+	list_index Index,
+	class      Value,
+	class...   Ts,
+	class      U,
+	class...   Us
 >
 struct set_at_impl<Index, Index, Value, list<Ts...>, list<U, Us...>>
 { using type = list<Ts..., Value, Us...>; };
 
-template <size_type Index, class Value, class List>
+template <list_index Index, class Value, class List>
 struct set_at_helper
 {
 	static_assert(Index < List::size, "Index out of bounds.");
@@ -209,7 +209,7 @@ struct set_at_helper
 
 }
 
-template <size_type Index, class Value, class List>
+template <list_index Index, class Value, class List>
 using set_at_c = typename detail::set_at_helper<Index, Value, List>::type;
 
 template <class Index, class Value, class List>
@@ -222,31 +222,31 @@ using set_at = set_at_c<Index::value, Value, List>;
 namespace detail {
 
 template <
-	size_type Current,
-	size_type Index,
-	class     T,
-	class     Head,
-	class     Tail
+	list_index Current,
+	list_index Index,
+	class      T,
+	class      Head,
+	class      Tail
 >
 struct insert_at_impl;
 
 template <
-	size_type Current,
-	size_type Index,
-	class     T,
-	class     Head,
-	class     U,
-	class...  Us
+	list_index Current,
+	list_index Index,
+	class      T,
+	class      Head,
+	class      U,
+	class...   Us
 >
 struct insert_at_impl<Current, Index, T, Head, list<U, Us...>> :
 insert_at_impl<Current + 1, Index, T, append<U, Head>, list<Us...>> {};
 
 template <
-	size_type Index,
-	class     T,
-	class     Head,
-	class     U,
-	class...  Us
+	list_index Index,
+	class      T,
+	class      Head,
+	class      U,
+	class...   Us
 >
 struct insert_at_impl<Index, Index, T, Head, list<U, Us...>>
 {
@@ -256,14 +256,14 @@ struct insert_at_impl<Index, Index, T, Head, list<U, Us...>>
 };
 
 template <
-	size_type Index,
-	class     T,
-	class     Head
+	list_index Index,
+	class      T,
+	class      Head
 >
 struct insert_at_impl<Index, Index, T, Head, list<>>
 { using type = append<T, Head>; };
 
-template <size_type Index, class T, class List>
+template <list_index Index, class T, class List>
 struct insert_at_helper
 {
 	static_assert(Index < List::size, "Index out of bounds.");
@@ -272,7 +272,7 @@ struct insert_at_helper
 
 }
 
-template <size_type Index, class T, class List>
+template <list_index Index, class T, class List>
 using insert_at_c = typename detail::insert_at_helper<Index, T, List>::type;
 
 template <class Index, class T, class List>
@@ -285,33 +285,33 @@ using insert_at = insert_at_c<Index::value, T, List>;
 namespace detail {
 
 template <
-	size_type Current,
-	size_type Index,
-	class     Head,
-	class     Tail
+	list_index Current,
+	list_index Index,
+	class      Head,
+	class      Tail
 >
 struct erase_at_impl;
 
 template <
-	size_type Current,
-	size_type Index,
-	class     Head,
-	class     T,
-	class...  Ts
+	list_index Current,
+	list_index Index,
+	class      Head,
+	class      T,
+	class...   Ts
 >
 struct erase_at_impl<Current, Index, Head, list<T, Ts...>> :
 erase_at_impl<Current + 1, Index, append<T, Head>, list<Ts...>> {};
 
 template <
-	size_type Index,
-	class     Head,
-	class     T,
-	class...  Ts
+	list_index Index,
+	class      Head,
+	class      T,
+	class...   Ts
 >
 struct erase_at_impl<Index, Index, Head, list<T, Ts...>>
 { using type = cat<Head, list<Ts...>>; };
 
-template <size_type Index, class List>
+template <list_index Index, class List>
 struct erase_at_helper
 {
 	static_assert(Index < List::size, "Index out of bounds.");
@@ -320,7 +320,7 @@ struct erase_at_helper
 
 }
 
-template <size_type Index, class List>
+template <list_index Index, class List>
 using erase_at_c = typename detail::erase_at_helper<Index, List>::type;
 
 template <class Index, class List>
@@ -336,7 +336,7 @@ using erase_back = erase_at_c<List::size - 1, List>;
 ** `replace_at`
 */
 
-template <size_type Index, class T, class List>
+template <list_index Index, class T, class List>
 using replace_at_c = insert_at_c<Index, T, erase_at_c<Index, List>>;
 
 template <class Index, class T, class List>
@@ -377,7 +377,7 @@ using reverse = typename detail::reverse_helper<list<>, List>::type;
 
 namespace detail {
 
-template <size_type N, class T>
+template <list_index N, class T>
 struct repeat_n_helper
 {
 	using type = cat<
@@ -397,7 +397,7 @@ struct repeat_n_helper<1, T>
 
 }
 
-template <size_type N, class T = void>
+template <list_index N, class T = void>
 using repeat_nc = typename detail::repeat_n_helper<N, T>::type;
 
 template <class N, class T = void>
