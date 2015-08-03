@@ -104,37 +104,7 @@ struct cat_helper
 }
 
 template <class... Lists>
-using cat = typename detail::cat_helper<
-	mpl::list<>, mpl::list<Lists...>
->::type;
-
-/*
-** `find_first`
-*/
-
-using npos = intmax_t<-1>;
-
-namespace detail {
-
-template <list_index Index, class Value, class List>
-struct find_first_helper;
-
-template <list_index Index, class Value, class Head, class... Tail>
-struct find_first_helper<Index, Value, list<Head, Tail...>> :
-find_first_helper<Index + 1, Value, list<Tail...>> {};
-
-template <list_index Index, class Value, class... Tail>
-struct find_first_helper<Index, Value, list<Value, Tail...>>
-{ using type = intmax_t<Index>; };
-
-template <list_index Index, class Value>
-struct find_first_helper<Index, Value, list<>>
-{ using type = npos; };
-
-}
-
-template <class Value, class List>
-using find_first = typename detail::find_first_helper<0, Value, List>::type;
+using cat = typename detail::cat_helper<Lists...>::type;
 
 /*
 ** `prepend`, `append`
@@ -163,6 +133,34 @@ using prepend = typename detail::prepend_helper<Value, List>::type;
 
 template <class Value, class List>
 using append = typename detail::append_helper<Value, List>::type;
+
+/*
+** `find_first`
+*/
+
+using npos = intmax_t<-1>;
+
+namespace detail {
+
+template <list_index Index, class Value, class List>
+struct find_first_helper;
+
+template <list_index Index, class Value, class Head, class... Tail>
+struct find_first_helper<Index, Value, list<Head, Tail...>> :
+find_first_helper<Index + 1, Value, list<Tail...>> {};
+
+template <list_index Index, class Value, class... Tail>
+struct find_first_helper<Index, Value, list<Value, Tail...>>
+{ using type = intmax_t<Index>; };
+
+template <list_index Index, class Value>
+struct find_first_helper<Index, Value, list<>>
+{ using type = npos; };
+
+}
+
+template <class Value, class List>
+using find_first = typename detail::find_first_helper<0, Value, List>::type;
 
 /*
 ** `set_at`
