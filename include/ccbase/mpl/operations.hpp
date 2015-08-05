@@ -17,11 +17,12 @@ namespace mpl {
 ** Arithmetic operations.
 */
 
-#define mpl_define_binary_arithmetic_op(symbol, name)   \
-template <class T, class U>                             \
-using name = std::integral_constant<                    \
-	decltype(T::type::value symbol U::type::value), \
-	T::type::value symbol U::type::value>;
+#define mpl_define_binary_arithmetic_op(symbol, name) \
+template <class T, class U>                           \
+using name = std::integral_constant<                  \
+	decltype(T::value symbol U::value),           \
+	T::value symbol U::value                      \
+>;
 
 #define mpl_make_nary_op(name) \
 	template <class... Ts> \
@@ -55,10 +56,10 @@ mpl_define_binary_arithmetic_op(<<, left_shift)
 #undef mpl_define_binary_arithmetic_op
 
 template <class T>
-using negate = std::integral_constant<decltype(-T::type::value), -T::type::value>;
+using negate = std::integral_constant<decltype(-T::value), -T::value>;
 
 template <class T>
-using bit_not = std::integral_constant<decltype(~T::type::value), ~T::type::value>;
+using bit_not = std::integral_constant<decltype(~T::value), ~T::value>;
 
 /*
 ** We need the help of a helper struct to implement right shift, in order to
@@ -77,18 +78,20 @@ struct right_shift_helper
 
 template <class T, class U>
 using right_shift = std::integral_constant<
-	decltype(T::type::value >> U::type::value),
+	decltype(T::value >> U::value),
 	detail::right_shift_helper<
 		typename T::type, typename U::type,
-		T::type::value, U::type::value
+		T::value, U::value
 	>::value
 >;
 
 template <class T>
-using inc = std::integral_constant<decltype(T::value), T::value + 1>;
+using inc = std::integral_constant<std::remove_cv_t<decltype(T::value)>,
+      T::value + 1>;
 
 template <class T>
-using dec = std::integral_constant<decltype(T::value), T::value - 1>;
+using dec = std::integral_constant<std::remove_cv_t<decltype(T::value)>,
+      T::value - 1>;
 
 /*
 ** Logical operations.
@@ -97,7 +100,7 @@ using dec = std::integral_constant<decltype(T::value), T::value - 1>;
 #define mpl_define_binary_logical_op(symbol, name) \
 template <class T, class U>                        \
 using name = std::integral_constant<bool,          \
-	T::type::value symbol U::type::value>;
+	T::value symbol U::value>;
 
 namespace detail {
 
@@ -121,9 +124,9 @@ using and_c = and_<bool_<Ts>...>;
 template <bool... Ts>
 using or_c = or_<bool_<Ts>...>;
 
-#define mpl_define_binary_relational_op(symbol, name)     \
-template <class T, class U>                               \
-using name = bool_<(T::type::value symbol U::type::value)>;
+#define mpl_define_binary_relational_op(symbol, name) \
+template <class T, class U>                           \
+using name = bool_<(T::value symbol U::value)>;
 
 mpl_define_binary_relational_op(==, equal_to)
 mpl_define_binary_relational_op(!=, not_equal_to)

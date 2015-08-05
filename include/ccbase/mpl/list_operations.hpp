@@ -68,11 +68,31 @@ using slice = apply_list<
 template <list_index Start, list_index End, class List>
 using slice_c = slice<list_index_c<Start>, list_index_c<End>, List>;
 
-template <class N, class List>
-using erase_front_n = slice<N, dec<size<List>>, List>;
+namespace detail {
+
+template <class N, class Size, class List>
+struct erase_front_n_helper
+{ using type = slice<N, dec<size<List>>, List>; };
 
 template <class N, class List>
-using erase_back_n = slice<list_index_c<0>, minus<dec<size<List>>, N>, List>;
+struct erase_front_n_helper<N, N, List>
+{ using type = list<>; };
+
+template <class N, class Size, class List>
+struct erase_back_n_helper
+{ using type = slice<list_index_c<0>, minus<dec<size<List>>, N>, List>; };
+
+template <class N, class List>
+struct erase_back_n_helper<N, N, List>
+{ using type = list<>; };
+
+}
+
+template <class N, class List>
+using erase_front_n = _t<detail::erase_front_n_helper<N, size<List>, List>>;
+
+template <class N, class List>
+using erase_back_n = _t<detail::erase_back_n_helper<N, size<List>, List>>;
 
 template <list_index N, class List>
 using erase_front_nc = erase_front_n<list_index_c<N>, List>;
