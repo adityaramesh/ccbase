@@ -3,564 +3,416 @@ if &cp | set nocp | endif
 let s:cpo_save=&cpo
 set cpo&vim
 imap <S-Tab> <Plug>SuperTabBackward
-inoremap <silent> <C-Tab> =UltiSnips#ListSnippets()
+inoremap <C-Tab> 	
 inoremap <Right> <Nop>
 inoremap <Left> <Nop>
 inoremap <Down> <Nop>
 inoremap <Up> <Nop>
 map! <D-v> *
-snoremap <silent>  c
-xnoremap <silent> 	 :call UltiSnips#SaveLastVisualSelection()gvs
-snoremap <silent> 	 :call UltiSnips#ExpandSnippetOrJump()
 nnoremap <silent>  :nohl
-snoremap  "_c
 vnoremap < <gv
-xnoremap > >gv
-snoremap > >gv
-onoremap <silent> Ar :call targets#omap('[]', 'seekselectp expand')
-onoremap <silent> Anr :call targets#omap('[]', 'nextp selectp expand')
-onoremap <silent> Alr :call targets#omap('[]', 'lastp selectp expand')
-xnoremap <silent> <expr> A targets#uppercaseXmap('A')
-onoremap <silent> Ala :call targets#omap('<>', 'lastp selectp expand')
-onoremap <silent> Ana :call targets#omap('<>', 'nextp selectp expand')
-onoremap <silent> Aa :call targets#omap('<>', 'seekselectp expand')
-onoremap <silent> AL$ :call targets#omap('$', 'double last select expand')
-onoremap <silent> AN$ :call targets#omap('$', 'double next select expand')
-onoremap <silent> Al$ :call targets#omap('$', 'last select expand')
-onoremap <silent> An$ :call targets#omap('$', 'next select expand')
-onoremap <silent> A$ :call targets#omap('$', 'seekselect expand')
-onoremap <silent> AL& :call targets#omap('&', 'double last select expand')
-onoremap <silent> AN& :call targets#omap('&', 'double next select expand')
-onoremap <silent> Al& :call targets#omap('&', 'last select expand')
-onoremap <silent> An& :call targets#omap('&', 'next select expand')
-onoremap <silent> A& :call targets#omap('&', 'seekselect expand')
-onoremap <silent> AL| :call targets#omap('|', 'double last select expand')
-onoremap <silent> AN| :call targets#omap('|', 'double next select expand')
-onoremap <silent> Al| :call targets#omap('|', 'last select expand')
-onoremap <silent> An| :call targets#omap('|', 'next select expand')
-onoremap <silent> A| :call targets#omap('|', 'seekselect expand')
-onoremap <silent> AL\ :call targets#omap('\', 'double last select expand')
-onoremap <silent> AN\ :call targets#omap('\', 'double next select expand')
-onoremap <silent> Al\ :call targets#omap('\', 'last select expand')
-onoremap <silent> An\ :call targets#omap('\', 'next select expand')
-onoremap <silent> A\ :call targets#omap('\', 'seekselect expand')
-onoremap <silent> AL/ :call targets#omap('/', 'double last select expand')
-onoremap <silent> AN/ :call targets#omap('/', 'double next select expand')
-onoremap <silent> Al/ :call targets#omap('/', 'last select expand')
-onoremap <silent> An/ :call targets#omap('/', 'next select expand')
-onoremap <silent> A/ :call targets#omap('/', 'seekselect expand')
-onoremap <silent> AL# :call targets#omap('#', 'double last select expand')
-onoremap <silent> AN# :call targets#omap('#', 'double next select expand')
-onoremap <silent> Al# :call targets#omap('#', 'last select expand')
-onoremap <silent> An# :call targets#omap('#', 'next select expand')
-onoremap <silent> A# :call targets#omap('#', 'seekselect expand')
-onoremap <silent> AL* :call targets#omap('*', 'double last select expand')
-onoremap <silent> AN* :call targets#omap('*', 'double next select expand')
-onoremap <silent> Al* :call targets#omap('*', 'last select expand')
-onoremap <silent> An* :call targets#omap('*', 'next select expand')
-onoremap <silent> A* :call targets#omap('*', 'seekselect expand')
-onoremap <silent> AL_ :call targets#omap('_', 'double last select expand')
-onoremap <silent> AN_ :call targets#omap('_', 'double next select expand')
-onoremap <silent> Al_ :call targets#omap('_', 'last select expand')
-onoremap <silent> An_ :call targets#omap('_', 'next select expand')
-onoremap <silent> A_ :call targets#omap('_', 'seekselect expand')
-onoremap <silent> AL~ :call targets#omap('~', 'double last select expand')
-onoremap <silent> AN~ :call targets#omap('~', 'double next select expand')
-onoremap <silent> Al~ :call targets#omap('~', 'last select expand')
-onoremap <silent> An~ :call targets#omap('~', 'next select expand')
-onoremap <silent> A~ :call targets#omap('~', 'seekselect expand')
-onoremap <silent> AL= :call targets#omap('=', 'double last select expand')
-onoremap <silent> AN= :call targets#omap('=', 'double next select expand')
-onoremap <silent> Al= :call targets#omap('=', 'last select expand')
-onoremap <silent> An= :call targets#omap('=', 'next select expand')
-onoremap <silent> A= :call targets#omap('=', 'seekselect expand')
-onoremap <silent> AL- :call targets#omap('-', 'double last select expand')
-onoremap <silent> AN- :call targets#omap('-', 'double next select expand')
-onoremap <silent> Al- :call targets#omap('-', 'last select expand')
-onoremap <silent> An- :call targets#omap('-', 'next select expand')
-onoremap <silent> A- :call targets#omap('-', 'seekselect expand')
-onoremap <silent> AL+ :call targets#omap('+', 'double last select expand')
-onoremap <silent> AN+ :call targets#omap('+', 'double next select expand')
-onoremap <silent> Al+ :call targets#omap('+', 'last select expand')
-onoremap <silent> An+ :call targets#omap('+', 'next select expand')
-onoremap <silent> A+ :call targets#omap('+', 'seekselect expand')
-onoremap <silent> AL: :call targets#omap(':', 'double last select expand')
-onoremap <silent> AN: :call targets#omap(':', 'double next select expand')
-onoremap <silent> Al: :call targets#omap(':', 'last select expand')
-onoremap <silent> An: :call targets#omap(':', 'next select expand')
-onoremap <silent> A: :call targets#omap(':', 'seekselect expand')
-onoremap <silent> AL; :call targets#omap(';', 'double last select expand')
-onoremap <silent> AN; :call targets#omap(';', 'double next select expand')
-onoremap <silent> Al; :call targets#omap(';', 'last select expand')
-onoremap <silent> An; :call targets#omap(';', 'next select expand')
-onoremap <silent> A; :call targets#omap(';', 'seekselect expand')
-onoremap <silent> AL. :call targets#omap('.', 'double last select expand')
-onoremap <silent> AN. :call targets#omap('.', 'double next select expand')
-onoremap <silent> Al. :call targets#omap('.', 'last select expand')
-onoremap <silent> An. :call targets#omap('.', 'next select expand')
-onoremap <silent> A. :call targets#omap('.', 'seekselect expand')
-onoremap <silent> AL, :call targets#omap(',', 'double last select expand')
-onoremap <silent> AN, :call targets#omap(',', 'double next select expand')
-onoremap <silent> Al, :call targets#omap(',', 'last select expand')
-onoremap <silent> An, :call targets#omap(',', 'next select expand')
-onoremap <silent> A, :call targets#omap(',', 'seekselect expand')
-onoremap <silent> AL` :call targets#omap('`', 'quote double last select expand')
-onoremap <silent> AN` :call targets#omap('`', 'quote double next select expand')
-onoremap <silent> Al` :call targets#omap('`', 'quote last select expand')
-onoremap <silent> An` :call targets#omap('`', 'quote next select expand')
-onoremap <silent> A` :call targets#omap('`', 'quote seekselect expand')
-onoremap <silent> AL' :call targets#omap('''', 'quote double last select expand')
-onoremap <silent> AN' :call targets#omap('''', 'quote double next select expand')
-onoremap <silent> Al' :call targets#omap('''', 'quote last select expand')
-onoremap <silent> An' :call targets#omap('''', 'quote next select expand')
-onoremap <silent> A' :call targets#omap('''', 'quote seekselect expand')
-onoremap <silent> AL" :call targets#omap('"', 'quote double last select expand')
-onoremap <silent> AN" :call targets#omap('"', 'quote double next select expand')
-onoremap <silent> Al" :call targets#omap('"', 'quote last select expand')
-onoremap <silent> An" :call targets#omap('"', 'quote next select expand')
-onoremap <silent> A" :call targets#omap('"', 'quote seekselect expand')
-onoremap <silent> Alt :call targets#omap('t', 'lastt selectp expand')
-onoremap <silent> Ant :call targets#omap('t', 'nextt selectp expand')
-onoremap <silent> At :call targets#omap('t', 'seekselectt expand')
-onoremap <silent> Al> :call targets#omap('<>', 'lastp selectp expand')
-onoremap <silent> An> :call targets#omap('<>', 'nextp selectp expand')
-onoremap <silent> A> :call targets#omap('<>', 'seekselectp expand')
-onoremap <silent> Al< :call targets#omap('<>', 'lastp selectp expand')
-onoremap <silent> An< :call targets#omap('<>', 'nextp selectp expand')
-onoremap <silent> A< :call targets#omap('<>', 'seekselectp expand')
-onoremap <silent> Al] :call targets#omap('[]', 'lastp selectp expand')
-onoremap <silent> An] :call targets#omap('[]', 'nextp selectp expand')
-onoremap <silent> A] :call targets#omap('[]', 'seekselectp expand')
-onoremap <silent> Al[ :call targets#omap('[]', 'lastp selectp expand')
-onoremap <silent> An[ :call targets#omap('[]', 'nextp selectp expand')
-onoremap <silent> A[ :call targets#omap('[]', 'seekselectp expand')
-onoremap <silent> AlB :call targets#omap('{}', 'lastp selectp expand')
-onoremap <silent> AnB :call targets#omap('{}', 'nextp selectp expand')
-onoremap <silent> AB :call targets#omap('{}', 'seekselectp expand')
-onoremap <silent> Al} :call targets#omap('{}', 'lastp selectp expand')
-onoremap <silent> An} :call targets#omap('{}', 'nextp selectp expand')
-onoremap <silent> A} :call targets#omap('{}', 'seekselectp expand')
-onoremap <silent> Al{ :call targets#omap('{}', 'lastp selectp expand')
-onoremap <silent> An{ :call targets#omap('{}', 'nextp selectp expand')
-onoremap <silent> A{ :call targets#omap('{}', 'seekselectp expand')
-onoremap <silent> Alb :call targets#omap('()', 'lastp selectp expand')
-onoremap <silent> Anb :call targets#omap('()', 'nextp selectp expand')
-onoremap <silent> Ab :call targets#omap('()', 'seekselectp expand')
-onoremap <silent> Al) :call targets#omap('()', 'lastp selectp expand')
-onoremap <silent> An) :call targets#omap('()', 'nextp selectp expand')
-onoremap <silent> A) :call targets#omap('()', 'seekselectp expand')
-onoremap <silent> Al( :call targets#omap('()', 'lastp selectp expand')
-onoremap <silent> An( :call targets#omap('()', 'nextp selectp expand')
-onoremap <silent> A( :call targets#omap('()', 'seekselectp expand')
-onoremap <silent> Ir :call targets#omap('[]', 'seekselectp shrink')
-onoremap <silent> Inr :call targets#omap('[]', 'nextp selectp shrink')
-onoremap <silent> Ilr :call targets#omap('[]', 'lastp selectp shrink')
-xnoremap <silent> <expr> I targets#uppercaseXmap('I')
-onoremap <silent> Ila :call targets#omap('<>', 'lastp selectp shrink')
-onoremap <silent> Ina :call targets#omap('<>', 'nextp selectp shrink')
-onoremap <silent> Ia :call targets#omap('<>', 'seekselectp shrink')
-onoremap <silent> IL$ :call targets#omap('$', 'double last select shrink')
-onoremap <silent> IN$ :call targets#omap('$', 'double next select shrink')
-onoremap <silent> Il$ :call targets#omap('$', 'last select shrink')
-onoremap <silent> In$ :call targets#omap('$', 'next select shrink')
-onoremap <silent> I$ :call targets#omap('$', 'seekselect shrink')
-onoremap <silent> IL& :call targets#omap('&', 'double last select shrink')
-onoremap <silent> IN& :call targets#omap('&', 'double next select shrink')
-onoremap <silent> Il& :call targets#omap('&', 'last select shrink')
-onoremap <silent> In& :call targets#omap('&', 'next select shrink')
-onoremap <silent> I& :call targets#omap('&', 'seekselect shrink')
-onoremap <silent> IL| :call targets#omap('|', 'double last select shrink')
-onoremap <silent> IN| :call targets#omap('|', 'double next select shrink')
-onoremap <silent> Il| :call targets#omap('|', 'last select shrink')
-onoremap <silent> In| :call targets#omap('|', 'next select shrink')
-onoremap <silent> I| :call targets#omap('|', 'seekselect shrink')
-onoremap <silent> IL\ :call targets#omap('\', 'double last select shrink')
-onoremap <silent> IN\ :call targets#omap('\', 'double next select shrink')
-onoremap <silent> Il\ :call targets#omap('\', 'last select shrink')
-onoremap <silent> In\ :call targets#omap('\', 'next select shrink')
-onoremap <silent> I\ :call targets#omap('\', 'seekselect shrink')
-onoremap <silent> IL/ :call targets#omap('/', 'double last select shrink')
-onoremap <silent> IN/ :call targets#omap('/', 'double next select shrink')
-onoremap <silent> Il/ :call targets#omap('/', 'last select shrink')
-onoremap <silent> In/ :call targets#omap('/', 'next select shrink')
-onoremap <silent> I/ :call targets#omap('/', 'seekselect shrink')
-onoremap <silent> IL# :call targets#omap('#', 'double last select shrink')
-onoremap <silent> IN# :call targets#omap('#', 'double next select shrink')
-onoremap <silent> Il# :call targets#omap('#', 'last select shrink')
-onoremap <silent> In# :call targets#omap('#', 'next select shrink')
-onoremap <silent> I# :call targets#omap('#', 'seekselect shrink')
-onoremap <silent> IL* :call targets#omap('*', 'double last select shrink')
-onoremap <silent> IN* :call targets#omap('*', 'double next select shrink')
-onoremap <silent> Il* :call targets#omap('*', 'last select shrink')
-onoremap <silent> In* :call targets#omap('*', 'next select shrink')
-onoremap <silent> I* :call targets#omap('*', 'seekselect shrink')
-onoremap <silent> IL_ :call targets#omap('_', 'double last select shrink')
-onoremap <silent> IN_ :call targets#omap('_', 'double next select shrink')
-onoremap <silent> Il_ :call targets#omap('_', 'last select shrink')
-onoremap <silent> In_ :call targets#omap('_', 'next select shrink')
-onoremap <silent> I_ :call targets#omap('_', 'seekselect shrink')
-onoremap <silent> IL~ :call targets#omap('~', 'double last select shrink')
-onoremap <silent> IN~ :call targets#omap('~', 'double next select shrink')
-onoremap <silent> Il~ :call targets#omap('~', 'last select shrink')
-onoremap <silent> In~ :call targets#omap('~', 'next select shrink')
-onoremap <silent> I~ :call targets#omap('~', 'seekselect shrink')
-onoremap <silent> IL= :call targets#omap('=', 'double last select shrink')
-onoremap <silent> IN= :call targets#omap('=', 'double next select shrink')
-onoremap <silent> Il= :call targets#omap('=', 'last select shrink')
-onoremap <silent> In= :call targets#omap('=', 'next select shrink')
-onoremap <silent> I= :call targets#omap('=', 'seekselect shrink')
-onoremap <silent> IL- :call targets#omap('-', 'double last select shrink')
-onoremap <silent> IN- :call targets#omap('-', 'double next select shrink')
-onoremap <silent> Il- :call targets#omap('-', 'last select shrink')
-onoremap <silent> In- :call targets#omap('-', 'next select shrink')
-onoremap <silent> I- :call targets#omap('-', 'seekselect shrink')
-onoremap <silent> IL+ :call targets#omap('+', 'double last select shrink')
-onoremap <silent> IN+ :call targets#omap('+', 'double next select shrink')
-onoremap <silent> Il+ :call targets#omap('+', 'last select shrink')
-onoremap <silent> In+ :call targets#omap('+', 'next select shrink')
-onoremap <silent> I+ :call targets#omap('+', 'seekselect shrink')
-onoremap <silent> IL: :call targets#omap(':', 'double last select shrink')
-onoremap <silent> IN: :call targets#omap(':', 'double next select shrink')
-onoremap <silent> Il: :call targets#omap(':', 'last select shrink')
-onoremap <silent> In: :call targets#omap(':', 'next select shrink')
-onoremap <silent> I: :call targets#omap(':', 'seekselect shrink')
-onoremap <silent> IL; :call targets#omap(';', 'double last select shrink')
-onoremap <silent> IN; :call targets#omap(';', 'double next select shrink')
-onoremap <silent> Il; :call targets#omap(';', 'last select shrink')
-onoremap <silent> In; :call targets#omap(';', 'next select shrink')
-onoremap <silent> I; :call targets#omap(';', 'seekselect shrink')
-onoremap <silent> IL. :call targets#omap('.', 'double last select shrink')
-onoremap <silent> IN. :call targets#omap('.', 'double next select shrink')
-onoremap <silent> Il. :call targets#omap('.', 'last select shrink')
-onoremap <silent> In. :call targets#omap('.', 'next select shrink')
-onoremap <silent> I. :call targets#omap('.', 'seekselect shrink')
-onoremap <silent> IL, :call targets#omap(',', 'double last select shrink')
-onoremap <silent> IN, :call targets#omap(',', 'double next select shrink')
-onoremap <silent> Il, :call targets#omap(',', 'last select shrink')
-onoremap <silent> In, :call targets#omap(',', 'next select shrink')
-onoremap <silent> I, :call targets#omap(',', 'seekselect shrink')
-onoremap <silent> IL` :call targets#omap('`', 'quote double last select shrink')
-onoremap <silent> IN` :call targets#omap('`', 'quote double next select shrink')
-onoremap <silent> Il` :call targets#omap('`', 'quote last select shrink')
-onoremap <silent> In` :call targets#omap('`', 'quote next select shrink')
-onoremap <silent> I` :call targets#omap('`', 'quote seekselect shrink')
-onoremap <silent> IL' :call targets#omap('''', 'quote double last select shrink')
-onoremap <silent> IN' :call targets#omap('''', 'quote double next select shrink')
-onoremap <silent> Il' :call targets#omap('''', 'quote last select shrink')
-onoremap <silent> In' :call targets#omap('''', 'quote next select shrink')
-onoremap <silent> I' :call targets#omap('''', 'quote seekselect shrink')
-onoremap <silent> IL" :call targets#omap('"', 'quote double last select shrink')
-onoremap <silent> IN" :call targets#omap('"', 'quote double next select shrink')
-onoremap <silent> Il" :call targets#omap('"', 'quote last select shrink')
-onoremap <silent> In" :call targets#omap('"', 'quote next select shrink')
-onoremap <silent> I" :call targets#omap('"', 'quote seekselect shrink')
-onoremap <silent> Ilt :call targets#omap('t', 'lastt selectp innert shrink')
-onoremap <silent> Int :call targets#omap('t', 'nextt selectp innert shrink')
-onoremap <silent> It :call targets#omap('t', 'seekselectt innert shrink')
-onoremap <silent> Il> :call targets#omap('<>', 'lastp selectp shrink')
-onoremap <silent> In> :call targets#omap('<>', 'nextp selectp shrink')
-onoremap <silent> I> :call targets#omap('<>', 'seekselectp shrink')
-onoremap <silent> Il< :call targets#omap('<>', 'lastp selectp shrink')
-onoremap <silent> In< :call targets#omap('<>', 'nextp selectp shrink')
-onoremap <silent> I< :call targets#omap('<>', 'seekselectp shrink')
-onoremap <silent> Il] :call targets#omap('[]', 'lastp selectp shrink')
-onoremap <silent> In] :call targets#omap('[]', 'nextp selectp shrink')
-onoremap <silent> I] :call targets#omap('[]', 'seekselectp shrink')
-onoremap <silent> Il[ :call targets#omap('[]', 'lastp selectp shrink')
-onoremap <silent> In[ :call targets#omap('[]', 'nextp selectp shrink')
-onoremap <silent> I[ :call targets#omap('[]', 'seekselectp shrink')
-onoremap <silent> IlB :call targets#omap('{}', 'lastp selectp shrink')
-onoremap <silent> InB :call targets#omap('{}', 'nextp selectp shrink')
-onoremap <silent> IB :call targets#omap('{}', 'seekselectp shrink')
-onoremap <silent> Il} :call targets#omap('{}', 'lastp selectp shrink')
-onoremap <silent> In} :call targets#omap('{}', 'nextp selectp shrink')
-onoremap <silent> I} :call targets#omap('{}', 'seekselectp shrink')
-onoremap <silent> Il{ :call targets#omap('{}', 'lastp selectp shrink')
-onoremap <silent> In{ :call targets#omap('{}', 'nextp selectp shrink')
-onoremap <silent> I{ :call targets#omap('{}', 'seekselectp shrink')
-onoremap <silent> Ilb :call targets#omap('()', 'lastp selectp shrink')
-onoremap <silent> Inb :call targets#omap('()', 'nextp selectp shrink')
-onoremap <silent> Ib :call targets#omap('()', 'seekselectp shrink')
-onoremap <silent> Il) :call targets#omap('()', 'lastp selectp shrink')
-onoremap <silent> In) :call targets#omap('()', 'nextp selectp shrink')
-onoremap <silent> I) :call targets#omap('()', 'seekselectp shrink')
-onoremap <silent> Il( :call targets#omap('()', 'lastp selectp shrink')
-onoremap <silent> In( :call targets#omap('()', 'nextp selectp shrink')
-onoremap <silent> I( :call targets#omap('()', 'seekselectp shrink')
+vnoremap > >gv
+xnoremap <silent> <expr> A targets#e('A')
+onoremap <silent> Ala :call targets#o('alA', v:count1)
+onoremap <silent> Ana :call targets#o('anA', v:count1)
+onoremap <silent> Aa :call targets#o('acA', v:count1)
+onoremap <silent> AL$ :call targets#o('$LA', v:count1)
+onoremap <silent> AN$ :call targets#o('$NA', v:count1)
+onoremap <silent> Al$ :call targets#o('$lA', v:count1)
+onoremap <silent> An$ :call targets#o('$nA', v:count1)
+onoremap <silent> A$ :call targets#o('$cA', v:count1)
+onoremap <silent> AL& :call targets#o('&LA', v:count1)
+onoremap <silent> AN& :call targets#o('&NA', v:count1)
+onoremap <silent> Al& :call targets#o('&lA', v:count1)
+onoremap <silent> An& :call targets#o('&nA', v:count1)
+onoremap <silent> A& :call targets#o('&cA', v:count1)
+onoremap <silent> AL| :call targets#o('|LA', v:count1)
+onoremap <silent> AN| :call targets#o('|NA', v:count1)
+onoremap <silent> Al| :call targets#o('|lA', v:count1)
+onoremap <silent> An| :call targets#o('|nA', v:count1)
+onoremap <silent> A| :call targets#o('|cA', v:count1)
+onoremap <silent> AL\ :call targets#o('\LA', v:count1)
+onoremap <silent> AN\ :call targets#o('\NA', v:count1)
+onoremap <silent> Al\ :call targets#o('\lA', v:count1)
+onoremap <silent> An\ :call targets#o('\nA', v:count1)
+onoremap <silent> A\ :call targets#o('\cA', v:count1)
+onoremap <silent> AL/ :call targets#o('/LA', v:count1)
+onoremap <silent> AN/ :call targets#o('/NA', v:count1)
+onoremap <silent> Al/ :call targets#o('/lA', v:count1)
+onoremap <silent> An/ :call targets#o('/nA', v:count1)
+onoremap <silent> A/ :call targets#o('/cA', v:count1)
+onoremap <silent> AL# :call targets#o('#LA', v:count1)
+onoremap <silent> AN# :call targets#o('#NA', v:count1)
+onoremap <silent> Al# :call targets#o('#lA', v:count1)
+onoremap <silent> An# :call targets#o('#nA', v:count1)
+onoremap <silent> A# :call targets#o('#cA', v:count1)
+onoremap <silent> AL* :call targets#o('*LA', v:count1)
+onoremap <silent> AN* :call targets#o('*NA', v:count1)
+onoremap <silent> Al* :call targets#o('*lA', v:count1)
+onoremap <silent> An* :call targets#o('*nA', v:count1)
+onoremap <silent> A* :call targets#o('*cA', v:count1)
+onoremap <silent> AL_ :call targets#o('_LA', v:count1)
+onoremap <silent> AN_ :call targets#o('_NA', v:count1)
+onoremap <silent> Al_ :call targets#o('_lA', v:count1)
+onoremap <silent> An_ :call targets#o('_nA', v:count1)
+onoremap <silent> A_ :call targets#o('_cA', v:count1)
+onoremap <silent> AL~ :call targets#o('~LA', v:count1)
+onoremap <silent> AN~ :call targets#o('~NA', v:count1)
+onoremap <silent> Al~ :call targets#o('~lA', v:count1)
+onoremap <silent> An~ :call targets#o('~nA', v:count1)
+onoremap <silent> A~ :call targets#o('~cA', v:count1)
+onoremap <silent> AL= :call targets#o('=LA', v:count1)
+onoremap <silent> AN= :call targets#o('=NA', v:count1)
+onoremap <silent> Al= :call targets#o('=lA', v:count1)
+onoremap <silent> An= :call targets#o('=nA', v:count1)
+onoremap <silent> A= :call targets#o('=cA', v:count1)
+onoremap <silent> AL- :call targets#o('-LA', v:count1)
+onoremap <silent> AN- :call targets#o('-NA', v:count1)
+onoremap <silent> Al- :call targets#o('-lA', v:count1)
+onoremap <silent> An- :call targets#o('-nA', v:count1)
+onoremap <silent> A- :call targets#o('-cA', v:count1)
+onoremap <silent> AL+ :call targets#o('+LA', v:count1)
+onoremap <silent> AN+ :call targets#o('+NA', v:count1)
+onoremap <silent> Al+ :call targets#o('+lA', v:count1)
+onoremap <silent> An+ :call targets#o('+nA', v:count1)
+onoremap <silent> A+ :call targets#o('+cA', v:count1)
+onoremap <silent> AL: :call targets#o(':LA', v:count1)
+onoremap <silent> AN: :call targets#o(':NA', v:count1)
+onoremap <silent> Al: :call targets#o(':lA', v:count1)
+onoremap <silent> An: :call targets#o(':nA', v:count1)
+onoremap <silent> A: :call targets#o(':cA', v:count1)
+onoremap <silent> AL; :call targets#o(';LA', v:count1)
+onoremap <silent> AN; :call targets#o(';NA', v:count1)
+onoremap <silent> Al; :call targets#o(';lA', v:count1)
+onoremap <silent> An; :call targets#o(';nA', v:count1)
+onoremap <silent> A; :call targets#o(';cA', v:count1)
+onoremap <silent> AL. :call targets#o('.LA', v:count1)
+onoremap <silent> AN. :call targets#o('.NA', v:count1)
+onoremap <silent> Al. :call targets#o('.lA', v:count1)
+onoremap <silent> An. :call targets#o('.nA', v:count1)
+onoremap <silent> A. :call targets#o('.cA', v:count1)
+onoremap <silent> AL, :call targets#o(',LA', v:count1)
+onoremap <silent> AN, :call targets#o(',NA', v:count1)
+onoremap <silent> Al, :call targets#o(',lA', v:count1)
+onoremap <silent> An, :call targets#o(',nA', v:count1)
+onoremap <silent> A, :call targets#o(',cA', v:count1)
+onoremap <silent> AL` :call targets#o('`LA', v:count1)
+onoremap <silent> AN` :call targets#o('`NA', v:count1)
+onoremap <silent> Al` :call targets#o('`lA', v:count1)
+onoremap <silent> An` :call targets#o('`nA', v:count1)
+onoremap <silent> A` :call targets#o('`cA', v:count1)
+onoremap <silent> AL' :call targets#o('''LA', v:count1)
+onoremap <silent> AN' :call targets#o('''NA', v:count1)
+onoremap <silent> Al' :call targets#o('''lA', v:count1)
+onoremap <silent> An' :call targets#o('''nA', v:count1)
+onoremap <silent> A' :call targets#o('''cA', v:count1)
+onoremap <silent> AL" :call targets#o('"LA', v:count1)
+onoremap <silent> AN" :call targets#o('"NA', v:count1)
+onoremap <silent> Al" :call targets#o('"lA', v:count1)
+onoremap <silent> An" :call targets#o('"nA', v:count1)
+onoremap <silent> A" :call targets#o('"cA', v:count1)
+onoremap <silent> Alt :call targets#o('tlA', v:count1)
+onoremap <silent> Ant :call targets#o('tnA', v:count1)
+onoremap <silent> At :call targets#o('tcA', v:count1)
+onoremap <silent> Al> :call targets#o('>lA', v:count1)
+onoremap <silent> An> :call targets#o('>nA', v:count1)
+onoremap <silent> A> :call targets#o('>cA', v:count1)
+onoremap <silent> Al< :call targets#o('<lA', v:count1)
+onoremap <silent> An< :call targets#o('<nA', v:count1)
+onoremap <silent> A< :call targets#o('<cA', v:count1)
+onoremap <silent> Al] :call targets#o(']lA', v:count1)
+onoremap <silent> An] :call targets#o(']nA', v:count1)
+onoremap <silent> A] :call targets#o(']cA', v:count1)
+onoremap <silent> Al[ :call targets#o('[lA', v:count1)
+onoremap <silent> An[ :call targets#o('[nA', v:count1)
+onoremap <silent> A[ :call targets#o('[cA', v:count1)
+onoremap <silent> AlB :call targets#o('BlA', v:count1)
+onoremap <silent> AnB :call targets#o('BnA', v:count1)
+onoremap <silent> AB :call targets#o('BcA', v:count1)
+onoremap <silent> Al} :call targets#o('}lA', v:count1)
+onoremap <silent> An} :call targets#o('}nA', v:count1)
+onoremap <silent> A} :call targets#o('}cA', v:count1)
+onoremap <silent> Al{ :call targets#o('{lA', v:count1)
+onoremap <silent> An{ :call targets#o('{nA', v:count1)
+onoremap <silent> A{ :call targets#o('{cA', v:count1)
+onoremap <silent> Alb :call targets#o('blA', v:count1)
+onoremap <silent> Anb :call targets#o('bnA', v:count1)
+onoremap <silent> Ab :call targets#o('bcA', v:count1)
+onoremap <silent> Al) :call targets#o(')lA', v:count1)
+onoremap <silent> An) :call targets#o(')nA', v:count1)
+onoremap <silent> A) :call targets#o(')cA', v:count1)
+onoremap <silent> Al( :call targets#o('(lA', v:count1)
+onoremap <silent> An( :call targets#o('(nA', v:count1)
+onoremap <silent> A( :call targets#o('(cA', v:count1)
+xnoremap <silent> <expr> I targets#e('I')
+onoremap <silent> Ila :call targets#o('alI', v:count1)
+onoremap <silent> Ina :call targets#o('anI', v:count1)
+onoremap <silent> Ia :call targets#o('acI', v:count1)
+onoremap <silent> IL$ :call targets#o('$LI', v:count1)
+onoremap <silent> IN$ :call targets#o('$NI', v:count1)
+onoremap <silent> Il$ :call targets#o('$lI', v:count1)
+onoremap <silent> In$ :call targets#o('$nI', v:count1)
+onoremap <silent> I$ :call targets#o('$cI', v:count1)
+onoremap <silent> IL& :call targets#o('&LI', v:count1)
+onoremap <silent> IN& :call targets#o('&NI', v:count1)
+onoremap <silent> Il& :call targets#o('&lI', v:count1)
+onoremap <silent> In& :call targets#o('&nI', v:count1)
+onoremap <silent> I& :call targets#o('&cI', v:count1)
+onoremap <silent> IL| :call targets#o('|LI', v:count1)
+onoremap <silent> IN| :call targets#o('|NI', v:count1)
+onoremap <silent> Il| :call targets#o('|lI', v:count1)
+onoremap <silent> In| :call targets#o('|nI', v:count1)
+onoremap <silent> I| :call targets#o('|cI', v:count1)
+onoremap <silent> IL\ :call targets#o('\LI', v:count1)
+onoremap <silent> IN\ :call targets#o('\NI', v:count1)
+onoremap <silent> Il\ :call targets#o('\lI', v:count1)
+onoremap <silent> In\ :call targets#o('\nI', v:count1)
+onoremap <silent> I\ :call targets#o('\cI', v:count1)
+onoremap <silent> IL/ :call targets#o('/LI', v:count1)
+onoremap <silent> IN/ :call targets#o('/NI', v:count1)
+onoremap <silent> Il/ :call targets#o('/lI', v:count1)
+onoremap <silent> In/ :call targets#o('/nI', v:count1)
+onoremap <silent> I/ :call targets#o('/cI', v:count1)
+onoremap <silent> IL# :call targets#o('#LI', v:count1)
+onoremap <silent> IN# :call targets#o('#NI', v:count1)
+onoremap <silent> Il# :call targets#o('#lI', v:count1)
+onoremap <silent> In# :call targets#o('#nI', v:count1)
+onoremap <silent> I# :call targets#o('#cI', v:count1)
+onoremap <silent> IL* :call targets#o('*LI', v:count1)
+onoremap <silent> IN* :call targets#o('*NI', v:count1)
+onoremap <silent> Il* :call targets#o('*lI', v:count1)
+onoremap <silent> In* :call targets#o('*nI', v:count1)
+onoremap <silent> I* :call targets#o('*cI', v:count1)
+onoremap <silent> IL_ :call targets#o('_LI', v:count1)
+onoremap <silent> IN_ :call targets#o('_NI', v:count1)
+onoremap <silent> Il_ :call targets#o('_lI', v:count1)
+onoremap <silent> In_ :call targets#o('_nI', v:count1)
+onoremap <silent> I_ :call targets#o('_cI', v:count1)
+onoremap <silent> IL~ :call targets#o('~LI', v:count1)
+onoremap <silent> IN~ :call targets#o('~NI', v:count1)
+onoremap <silent> Il~ :call targets#o('~lI', v:count1)
+onoremap <silent> In~ :call targets#o('~nI', v:count1)
+onoremap <silent> I~ :call targets#o('~cI', v:count1)
+onoremap <silent> IL= :call targets#o('=LI', v:count1)
+onoremap <silent> IN= :call targets#o('=NI', v:count1)
+onoremap <silent> Il= :call targets#o('=lI', v:count1)
+onoremap <silent> In= :call targets#o('=nI', v:count1)
+onoremap <silent> I= :call targets#o('=cI', v:count1)
+onoremap <silent> IL- :call targets#o('-LI', v:count1)
+onoremap <silent> IN- :call targets#o('-NI', v:count1)
+onoremap <silent> Il- :call targets#o('-lI', v:count1)
+onoremap <silent> In- :call targets#o('-nI', v:count1)
+onoremap <silent> I- :call targets#o('-cI', v:count1)
+onoremap <silent> IL+ :call targets#o('+LI', v:count1)
+onoremap <silent> IN+ :call targets#o('+NI', v:count1)
+onoremap <silent> Il+ :call targets#o('+lI', v:count1)
+onoremap <silent> In+ :call targets#o('+nI', v:count1)
+onoremap <silent> I+ :call targets#o('+cI', v:count1)
+onoremap <silent> IL: :call targets#o(':LI', v:count1)
+onoremap <silent> IN: :call targets#o(':NI', v:count1)
+onoremap <silent> Il: :call targets#o(':lI', v:count1)
+onoremap <silent> In: :call targets#o(':nI', v:count1)
+onoremap <silent> I: :call targets#o(':cI', v:count1)
+onoremap <silent> IL; :call targets#o(';LI', v:count1)
+onoremap <silent> IN; :call targets#o(';NI', v:count1)
+onoremap <silent> Il; :call targets#o(';lI', v:count1)
+onoremap <silent> In; :call targets#o(';nI', v:count1)
+onoremap <silent> I; :call targets#o(';cI', v:count1)
+onoremap <silent> IL. :call targets#o('.LI', v:count1)
+onoremap <silent> IN. :call targets#o('.NI', v:count1)
+onoremap <silent> Il. :call targets#o('.lI', v:count1)
+onoremap <silent> In. :call targets#o('.nI', v:count1)
+onoremap <silent> I. :call targets#o('.cI', v:count1)
+onoremap <silent> IL, :call targets#o(',LI', v:count1)
+onoremap <silent> IN, :call targets#o(',NI', v:count1)
+onoremap <silent> Il, :call targets#o(',lI', v:count1)
+onoremap <silent> In, :call targets#o(',nI', v:count1)
+onoremap <silent> I, :call targets#o(',cI', v:count1)
+onoremap <silent> IL` :call targets#o('`LI', v:count1)
+onoremap <silent> IN` :call targets#o('`NI', v:count1)
+onoremap <silent> Il` :call targets#o('`lI', v:count1)
+onoremap <silent> In` :call targets#o('`nI', v:count1)
+onoremap <silent> I` :call targets#o('`cI', v:count1)
+onoremap <silent> IL' :call targets#o('''LI', v:count1)
+onoremap <silent> IN' :call targets#o('''NI', v:count1)
+onoremap <silent> Il' :call targets#o('''lI', v:count1)
+onoremap <silent> In' :call targets#o('''nI', v:count1)
+onoremap <silent> I' :call targets#o('''cI', v:count1)
+onoremap <silent> IL" :call targets#o('"LI', v:count1)
+onoremap <silent> IN" :call targets#o('"NI', v:count1)
+onoremap <silent> Il" :call targets#o('"lI', v:count1)
+onoremap <silent> In" :call targets#o('"nI', v:count1)
+onoremap <silent> I" :call targets#o('"cI', v:count1)
+onoremap <silent> Ilt :call targets#o('tlI', v:count1)
+onoremap <silent> Int :call targets#o('tnI', v:count1)
+onoremap <silent> It :call targets#o('tcI', v:count1)
+onoremap <silent> Il> :call targets#o('>lI', v:count1)
+onoremap <silent> In> :call targets#o('>nI', v:count1)
+onoremap <silent> I> :call targets#o('>cI', v:count1)
+onoremap <silent> Il< :call targets#o('<lI', v:count1)
+onoremap <silent> In< :call targets#o('<nI', v:count1)
+onoremap <silent> I< :call targets#o('<cI', v:count1)
+onoremap <silent> Il] :call targets#o(']lI', v:count1)
+onoremap <silent> In] :call targets#o(']nI', v:count1)
+onoremap <silent> I] :call targets#o(']cI', v:count1)
+onoremap <silent> Il[ :call targets#o('[lI', v:count1)
+onoremap <silent> In[ :call targets#o('[nI', v:count1)
+onoremap <silent> I[ :call targets#o('[cI', v:count1)
+onoremap <silent> IlB :call targets#o('BlI', v:count1)
+onoremap <silent> InB :call targets#o('BnI', v:count1)
+onoremap <silent> IB :call targets#o('BcI', v:count1)
+onoremap <silent> Il} :call targets#o('}lI', v:count1)
+onoremap <silent> In} :call targets#o('}nI', v:count1)
+onoremap <silent> I} :call targets#o('}cI', v:count1)
+onoremap <silent> Il{ :call targets#o('{lI', v:count1)
+onoremap <silent> In{ :call targets#o('{nI', v:count1)
+onoremap <silent> I{ :call targets#o('{cI', v:count1)
+onoremap <silent> Ilb :call targets#o('blI', v:count1)
+onoremap <silent> Inb :call targets#o('bnI', v:count1)
+onoremap <silent> Ib :call targets#o('bcI', v:count1)
+onoremap <silent> Il) :call targets#o(')lI', v:count1)
+onoremap <silent> In) :call targets#o(')nI', v:count1)
+onoremap <silent> I) :call targets#o(')cI', v:count1)
+onoremap <silent> Il( :call targets#o('(lI', v:count1)
+onoremap <silent> In( :call targets#o('(nI', v:count1)
+onoremap <silent> I( :call targets#o('(cI', v:count1)
 xmap S <Plug>VSurround
 nmap \\u <Plug>CommentaryUndo:echomsg '\\ is deprecated. Use gc'
 nmap \\\ <Plug>CommentaryLine:echomsg '\\ is deprecated. Use gc'
 nmap \\ :echomsg '\\ is deprecated. Use gc'<Plug>Commentary
 xmap \\ <Plug>Commentary:echomsg '\\ is deprecated. Use gc'
-xnoremap <silent> a( :call targets#xmap('()', 'grow seekselectp')
-xnoremap <silent> a) :call targets#xmap('()', 'grow seekselectp')
-xnoremap <silent> ab :call targets#xmap('()', 'grow seekselectp')
-xnoremap <silent> an( :call targets#xmap('()', 'nextp selectp')
-xnoremap <silent> an) :call targets#xmap('()', 'nextp selectp')
-xnoremap <silent> anb :call targets#xmap('()', 'nextp selectp')
-xnoremap <silent> al( :call targets#xmap('()', 'lastp selectp')
-xnoremap <silent> al) :call targets#xmap('()', 'lastp selectp')
-xnoremap <silent> alb :call targets#xmap('()', 'lastp selectp')
-xnoremap <silent> a{ :call targets#xmap('{}', 'grow seekselectp')
-xnoremap <silent> a} :call targets#xmap('{}', 'grow seekselectp')
-xnoremap <silent> aB :call targets#xmap('{}', 'grow seekselectp')
-xnoremap <silent> an{ :call targets#xmap('{}', 'nextp selectp')
-xnoremap <silent> an} :call targets#xmap('{}', 'nextp selectp')
-xnoremap <silent> anB :call targets#xmap('{}', 'nextp selectp')
-xnoremap <silent> al{ :call targets#xmap('{}', 'lastp selectp')
-xnoremap <silent> al} :call targets#xmap('{}', 'lastp selectp')
-xnoremap <silent> alB :call targets#xmap('{}', 'lastp selectp')
-xnoremap <silent> a[ :call targets#xmap('[]', 'grow seekselectp')
-xnoremap <silent> a] :call targets#xmap('[]', 'grow seekselectp')
-onoremap <silent> ar :call targets#omap('[]', 'grow seekselectp')
-xnoremap <silent> ar :call targets#xmap('[]', 'grow seekselectp')
-xnoremap <silent> an[ :call targets#xmap('[]', 'nextp selectp')
-xnoremap <silent> an] :call targets#xmap('[]', 'nextp selectp')
-onoremap <silent> anr :call targets#omap('[]', 'nextp selectp')
-xnoremap <silent> anr :call targets#xmap('[]', 'nextp selectp')
-xnoremap <silent> al[ :call targets#xmap('[]', 'lastp selectp')
-xnoremap <silent> al] :call targets#xmap('[]', 'lastp selectp')
-onoremap <silent> alr :call targets#omap('[]', 'lastp selectp')
-xnoremap <silent> alr :call targets#xmap('[]', 'lastp selectp')
-xnoremap <silent> a< :call targets#xmap('<>', 'grow seekselectp')
-xnoremap <silent> a> :call targets#xmap('<>', 'grow seekselectp')
-xnoremap <silent> aa :call targets#xmap('<>', 'grow seekselectp')
-xnoremap <silent> an< :call targets#xmap('<>', 'nextp selectp')
-xnoremap <silent> an> :call targets#xmap('<>', 'nextp selectp')
-xnoremap <silent> ana :call targets#xmap('<>', 'nextp selectp')
-xnoremap <silent> al< :call targets#xmap('<>', 'lastp selectp')
-xnoremap <silent> al> :call targets#xmap('<>', 'lastp selectp')
-xnoremap <silent> ala :call targets#xmap('<>', 'lastp selectp')
-xnoremap <silent> at :call targets#xmap('t', 'grow seekselectt')
-xnoremap <silent> ant :call targets#xmap('t', 'nextt selectp')
-xnoremap <silent> alt :call targets#xmap('t', 'lastt selectp')
-xnoremap <silent> a" :call targets#xmap('"', 'quote seekselect')
-xnoremap <silent> an" :call targets#xmap('"', 'quote next select')
-xnoremap <silent> al" :call targets#xmap('"', 'quote last select')
-xnoremap <silent> aN" :call targets#xmap('"', 'quote double next select')
-xnoremap <silent> aL" :call targets#xmap('"', 'quote double last select')
-xnoremap <silent> a' :call targets#xmap('''', 'quote seekselect')
-xnoremap <silent> an' :call targets#xmap('''', 'quote next select')
-xnoremap <silent> al' :call targets#xmap('''', 'quote last select')
-xnoremap <silent> aN' :call targets#xmap('''', 'quote double next select')
-xnoremap <silent> aL' :call targets#xmap('''', 'quote double last select')
-xnoremap <silent> a` :call targets#xmap('`', 'quote seekselect')
-xnoremap <silent> an` :call targets#xmap('`', 'quote next select')
-xnoremap <silent> al` :call targets#xmap('`', 'quote last select')
-xnoremap <silent> aN` :call targets#xmap('`', 'quote double next select')
-xnoremap <silent> aL` :call targets#xmap('`', 'quote double last select')
-xnoremap <silent> a, :call targets#xmap(',', 'seekselect dropr')
-xnoremap <silent> an, :call targets#xmap(',', 'next select dropr')
-xnoremap <silent> al, :call targets#xmap(',', 'last select dropr')
-xnoremap <silent> aN, :call targets#xmap(',', 'double next select dropr')
-xnoremap <silent> aL, :call targets#xmap(',', 'double last select dropr')
-xnoremap <silent> a. :call targets#xmap('.', 'seekselect dropr')
-xnoremap <silent> an. :call targets#xmap('.', 'next select dropr')
-xnoremap <silent> al. :call targets#xmap('.', 'last select dropr')
-xnoremap <silent> aN. :call targets#xmap('.', 'double next select dropr')
-xnoremap <silent> aL. :call targets#xmap('.', 'double last select dropr')
-xnoremap <silent> a; :call targets#xmap(';', 'seekselect dropr')
-xnoremap <silent> an; :call targets#xmap(';', 'next select dropr')
-xnoremap <silent> al; :call targets#xmap(';', 'last select dropr')
-xnoremap <silent> aN; :call targets#xmap(';', 'double next select dropr')
-xnoremap <silent> aL; :call targets#xmap(';', 'double last select dropr')
-xnoremap <silent> a: :call targets#xmap(':', 'seekselect dropr')
-xnoremap <silent> an: :call targets#xmap(':', 'next select dropr')
-xnoremap <silent> al: :call targets#xmap(':', 'last select dropr')
-xnoremap <silent> aN: :call targets#xmap(':', 'double next select dropr')
-xnoremap <silent> aL: :call targets#xmap(':', 'double last select dropr')
-xnoremap <silent> a+ :call targets#xmap('+', 'seekselect dropr')
-xnoremap <silent> an+ :call targets#xmap('+', 'next select dropr')
-xnoremap <silent> al+ :call targets#xmap('+', 'last select dropr')
-xnoremap <silent> aN+ :call targets#xmap('+', 'double next select dropr')
-xnoremap <silent> aL+ :call targets#xmap('+', 'double last select dropr')
-xnoremap <silent> a- :call targets#xmap('-', 'seekselect dropr')
-xnoremap <silent> an- :call targets#xmap('-', 'next select dropr')
-xnoremap <silent> al- :call targets#xmap('-', 'last select dropr')
-xnoremap <silent> aN- :call targets#xmap('-', 'double next select dropr')
-xnoremap <silent> aL- :call targets#xmap('-', 'double last select dropr')
-xnoremap <silent> a= :call targets#xmap('=', 'seekselect dropr')
-xnoremap <silent> an= :call targets#xmap('=', 'next select dropr')
-xnoremap <silent> al= :call targets#xmap('=', 'last select dropr')
-xnoremap <silent> aN= :call targets#xmap('=', 'double next select dropr')
-xnoremap <silent> aL= :call targets#xmap('=', 'double last select dropr')
-xnoremap <silent> a~ :call targets#xmap('~', 'seekselect dropr')
-xnoremap <silent> an~ :call targets#xmap('~', 'next select dropr')
-xnoremap <silent> al~ :call targets#xmap('~', 'last select dropr')
-xnoremap <silent> aN~ :call targets#xmap('~', 'double next select dropr')
-xnoremap <silent> aL~ :call targets#xmap('~', 'double last select dropr')
-xnoremap <silent> a_ :call targets#xmap('_', 'seekselect dropr')
-xnoremap <silent> an_ :call targets#xmap('_', 'next select dropr')
-xnoremap <silent> al_ :call targets#xmap('_', 'last select dropr')
-xnoremap <silent> aN_ :call targets#xmap('_', 'double next select dropr')
-xnoremap <silent> aL_ :call targets#xmap('_', 'double last select dropr')
-xnoremap <silent> a* :call targets#xmap('*', 'seekselect dropr')
-xnoremap <silent> an* :call targets#xmap('*', 'next select dropr')
-xnoremap <silent> al* :call targets#xmap('*', 'last select dropr')
-xnoremap <silent> aN* :call targets#xmap('*', 'double next select dropr')
-xnoremap <silent> aL* :call targets#xmap('*', 'double last select dropr')
-xnoremap <silent> a# :call targets#xmap('#', 'seekselect dropr')
-xnoremap <silent> an# :call targets#xmap('#', 'next select dropr')
-xnoremap <silent> al# :call targets#xmap('#', 'last select dropr')
-xnoremap <silent> aN# :call targets#xmap('#', 'double next select dropr')
-xnoremap <silent> aL# :call targets#xmap('#', 'double last select dropr')
-xnoremap <silent> a/ :call targets#xmap('/', 'seekselect dropr')
-xnoremap <silent> an/ :call targets#xmap('/', 'next select dropr')
-xnoremap <silent> al/ :call targets#xmap('/', 'last select dropr')
-xnoremap <silent> aN/ :call targets#xmap('/', 'double next select dropr')
-xnoremap <silent> aL/ :call targets#xmap('/', 'double last select dropr')
-xnoremap <silent> a\ :call targets#xmap('\', 'seekselect dropr')
-xnoremap <silent> an\ :call targets#xmap('\', 'next select dropr')
-xnoremap <silent> al\ :call targets#xmap('\', 'last select dropr')
-xnoremap <silent> aN\ :call targets#xmap('\', 'double next select dropr')
-xnoremap <silent> aL\ :call targets#xmap('\', 'double last select dropr')
-xnoremap <silent> a| :call targets#xmap('|', 'seekselect dropr')
-xnoremap <silent> an| :call targets#xmap('|', 'next select dropr')
-xnoremap <silent> al| :call targets#xmap('|', 'last select dropr')
-xnoremap <silent> aN| :call targets#xmap('|', 'double next select dropr')
-xnoremap <silent> aL| :call targets#xmap('|', 'double last select dropr')
-xnoremap <silent> a& :call targets#xmap('&', 'seekselect dropr')
-xnoremap <silent> an& :call targets#xmap('&', 'next select dropr')
-xnoremap <silent> al& :call targets#xmap('&', 'last select dropr')
-xnoremap <silent> aN& :call targets#xmap('&', 'double next select dropr')
-xnoremap <silent> aL& :call targets#xmap('&', 'double last select dropr')
-xnoremap <silent> a$ :call targets#xmap('$', 'seekselect dropr')
-xnoremap <silent> an$ :call targets#xmap('$', 'next select dropr')
-xnoremap <silent> al$ :call targets#xmap('$', 'last select dropr')
-xnoremap <silent> aN$ :call targets#xmap('$', 'double next select dropr')
-xnoremap <silent> aL$ :call targets#xmap('$', 'double last select dropr')
 xnoremap <silent> <expr> a targets#e('a')
-onoremap <silent> ala :call targets#omap('<>', 'lastp selectp')
-onoremap <silent> ana :call targets#omap('<>', 'nextp selectp')
-onoremap <silent> aa :call targets#omap('<>', 'grow seekselectp')
-onoremap <silent> aL$ :call targets#omap('$', 'double last select dropr')
-onoremap <silent> aN$ :call targets#omap('$', 'double next select dropr')
-onoremap <silent> al$ :call targets#omap('$', 'last select dropr')
-onoremap <silent> an$ :call targets#omap('$', 'next select dropr')
-onoremap <silent> a$ :call targets#omap('$', 'seekselect dropr')
-onoremap <silent> aL& :call targets#omap('&', 'double last select dropr')
-onoremap <silent> aN& :call targets#omap('&', 'double next select dropr')
-onoremap <silent> al& :call targets#omap('&', 'last select dropr')
-onoremap <silent> an& :call targets#omap('&', 'next select dropr')
-onoremap <silent> a& :call targets#omap('&', 'seekselect dropr')
-onoremap <silent> aL| :call targets#omap('|', 'double last select dropr')
-onoremap <silent> aN| :call targets#omap('|', 'double next select dropr')
-onoremap <silent> al| :call targets#omap('|', 'last select dropr')
-onoremap <silent> an| :call targets#omap('|', 'next select dropr')
-onoremap <silent> a| :call targets#omap('|', 'seekselect dropr')
-onoremap <silent> aL\ :call targets#omap('\', 'double last select dropr')
-onoremap <silent> aN\ :call targets#omap('\', 'double next select dropr')
-onoremap <silent> al\ :call targets#omap('\', 'last select dropr')
-onoremap <silent> an\ :call targets#omap('\', 'next select dropr')
-onoremap <silent> a\ :call targets#omap('\', 'seekselect dropr')
-onoremap <silent> aL/ :call targets#omap('/', 'double last select dropr')
-onoremap <silent> aN/ :call targets#omap('/', 'double next select dropr')
-onoremap <silent> al/ :call targets#omap('/', 'last select dropr')
-onoremap <silent> an/ :call targets#omap('/', 'next select dropr')
-onoremap <silent> a/ :call targets#omap('/', 'seekselect dropr')
-onoremap <silent> aL# :call targets#omap('#', 'double last select dropr')
-onoremap <silent> aN# :call targets#omap('#', 'double next select dropr')
-onoremap <silent> al# :call targets#omap('#', 'last select dropr')
-onoremap <silent> an# :call targets#omap('#', 'next select dropr')
-onoremap <silent> a# :call targets#omap('#', 'seekselect dropr')
-onoremap <silent> aL* :call targets#omap('*', 'double last select dropr')
-onoremap <silent> aN* :call targets#omap('*', 'double next select dropr')
-onoremap <silent> al* :call targets#omap('*', 'last select dropr')
-onoremap <silent> an* :call targets#omap('*', 'next select dropr')
-onoremap <silent> a* :call targets#omap('*', 'seekselect dropr')
-onoremap <silent> aL_ :call targets#omap('_', 'double last select dropr')
-onoremap <silent> aN_ :call targets#omap('_', 'double next select dropr')
-onoremap <silent> al_ :call targets#omap('_', 'last select dropr')
-onoremap <silent> an_ :call targets#omap('_', 'next select dropr')
-onoremap <silent> a_ :call targets#omap('_', 'seekselect dropr')
-onoremap <silent> aL~ :call targets#omap('~', 'double last select dropr')
-onoremap <silent> aN~ :call targets#omap('~', 'double next select dropr')
-onoremap <silent> al~ :call targets#omap('~', 'last select dropr')
-onoremap <silent> an~ :call targets#omap('~', 'next select dropr')
-onoremap <silent> a~ :call targets#omap('~', 'seekselect dropr')
-onoremap <silent> aL= :call targets#omap('=', 'double last select dropr')
-onoremap <silent> aN= :call targets#omap('=', 'double next select dropr')
-onoremap <silent> al= :call targets#omap('=', 'last select dropr')
-onoremap <silent> an= :call targets#omap('=', 'next select dropr')
-onoremap <silent> a= :call targets#omap('=', 'seekselect dropr')
-onoremap <silent> aL- :call targets#omap('-', 'double last select dropr')
-onoremap <silent> aN- :call targets#omap('-', 'double next select dropr')
-onoremap <silent> al- :call targets#omap('-', 'last select dropr')
-onoremap <silent> an- :call targets#omap('-', 'next select dropr')
-onoremap <silent> a- :call targets#omap('-', 'seekselect dropr')
-onoremap <silent> aL+ :call targets#omap('+', 'double last select dropr')
-onoremap <silent> aN+ :call targets#omap('+', 'double next select dropr')
-onoremap <silent> al+ :call targets#omap('+', 'last select dropr')
-onoremap <silent> an+ :call targets#omap('+', 'next select dropr')
-onoremap <silent> a+ :call targets#omap('+', 'seekselect dropr')
-onoremap <silent> aL: :call targets#omap(':', 'double last select dropr')
-onoremap <silent> aN: :call targets#omap(':', 'double next select dropr')
-onoremap <silent> al: :call targets#omap(':', 'last select dropr')
-onoremap <silent> an: :call targets#omap(':', 'next select dropr')
-onoremap <silent> a: :call targets#omap(':', 'seekselect dropr')
-onoremap <silent> aL; :call targets#omap(';', 'double last select dropr')
-onoremap <silent> aN; :call targets#omap(';', 'double next select dropr')
-onoremap <silent> al; :call targets#omap(';', 'last select dropr')
-onoremap <silent> an; :call targets#omap(';', 'next select dropr')
-onoremap <silent> a; :call targets#omap(';', 'seekselect dropr')
-onoremap <silent> aL. :call targets#omap('.', 'double last select dropr')
-onoremap <silent> aN. :call targets#omap('.', 'double next select dropr')
-onoremap <silent> al. :call targets#omap('.', 'last select dropr')
-onoremap <silent> an. :call targets#omap('.', 'next select dropr')
-onoremap <silent> a. :call targets#omap('.', 'seekselect dropr')
-onoremap <silent> aL, :call targets#omap(',', 'double last select dropr')
-onoremap <silent> aN, :call targets#omap(',', 'double next select dropr')
-onoremap <silent> al, :call targets#omap(',', 'last select dropr')
-onoremap <silent> an, :call targets#omap(',', 'next select dropr')
-onoremap <silent> a, :call targets#omap(',', 'seekselect dropr')
-onoremap <silent> aL` :call targets#omap('`', 'quote double last select')
-onoremap <silent> aN` :call targets#omap('`', 'quote double next select')
-onoremap <silent> al` :call targets#omap('`', 'quote last select')
-onoremap <silent> an` :call targets#omap('`', 'quote next select')
-onoremap <silent> a` :call targets#omap('`', 'quote seekselect')
-onoremap <silent> aL' :call targets#omap('''', 'quote double last select')
-onoremap <silent> aN' :call targets#omap('''', 'quote double next select')
-onoremap <silent> al' :call targets#omap('''', 'quote last select')
-onoremap <silent> an' :call targets#omap('''', 'quote next select')
-onoremap <silent> a' :call targets#omap('''', 'quote seekselect')
-onoremap <silent> aL" :call targets#omap('"', 'quote double last select')
-onoremap <silent> aN" :call targets#omap('"', 'quote double next select')
-onoremap <silent> al" :call targets#omap('"', 'quote last select')
-onoremap <silent> an" :call targets#omap('"', 'quote next select')
-onoremap <silent> a" :call targets#omap('"', 'quote seekselect')
-onoremap <silent> alt :call targets#omap('t', 'lastt selectp')
-onoremap <silent> ant :call targets#omap('t', 'nextt selectp')
-onoremap <silent> at :call targets#omap('t', 'grow seekselectt')
-onoremap <silent> al> :call targets#omap('<>', 'lastp selectp')
-onoremap <silent> an> :call targets#omap('<>', 'nextp selectp')
-onoremap <silent> a> :call targets#omap('<>', 'grow seekselectp')
-onoremap <silent> al< :call targets#omap('<>', 'lastp selectp')
-onoremap <silent> an< :call targets#omap('<>', 'nextp selectp')
-onoremap <silent> a< :call targets#omap('<>', 'grow seekselectp')
-onoremap <silent> al] :call targets#omap('[]', 'lastp selectp')
-onoremap <silent> an] :call targets#omap('[]', 'nextp selectp')
-onoremap <silent> a] :call targets#omap('[]', 'grow seekselectp')
-onoremap <silent> al[ :call targets#omap('[]', 'lastp selectp')
-onoremap <silent> an[ :call targets#omap('[]', 'nextp selectp')
-onoremap <silent> a[ :call targets#omap('[]', 'grow seekselectp')
-onoremap <silent> alB :call targets#omap('{}', 'lastp selectp')
-onoremap <silent> anB :call targets#omap('{}', 'nextp selectp')
-onoremap <silent> aB :call targets#omap('{}', 'grow seekselectp')
-onoremap <silent> al} :call targets#omap('{}', 'lastp selectp')
-onoremap <silent> an} :call targets#omap('{}', 'nextp selectp')
-onoremap <silent> a} :call targets#omap('{}', 'grow seekselectp')
-onoremap <silent> al{ :call targets#omap('{}', 'lastp selectp')
-onoremap <silent> an{ :call targets#omap('{}', 'nextp selectp')
-onoremap <silent> a{ :call targets#omap('{}', 'grow seekselectp')
-onoremap <silent> alb :call targets#omap('()', 'lastp selectp')
-onoremap <silent> anb :call targets#omap('()', 'nextp selectp')
-onoremap <silent> ab :call targets#omap('()', 'grow seekselectp')
-onoremap <silent> al) :call targets#omap('()', 'lastp selectp')
-onoremap <silent> an) :call targets#omap('()', 'nextp selectp')
-onoremap <silent> a) :call targets#omap('()', 'grow seekselectp')
-onoremap <silent> al( :call targets#omap('()', 'lastp selectp')
-onoremap <silent> an( :call targets#omap('()', 'nextp selectp')
-onoremap <silent> a( :call targets#omap('()', 'grow seekselectp')
+onoremap <silent> ala :call targets#o('ala', v:count1)
+onoremap <silent> ana :call targets#o('ana', v:count1)
+onoremap <silent> aa :call targets#o('aca', v:count1)
+onoremap <silent> aL$ :call targets#o('$La', v:count1)
+onoremap <silent> aN$ :call targets#o('$Na', v:count1)
+onoremap <silent> al$ :call targets#o('$la', v:count1)
+onoremap <silent> an$ :call targets#o('$na', v:count1)
+onoremap <silent> a$ :call targets#o('$ca', v:count1)
+onoremap <silent> aL& :call targets#o('&La', v:count1)
+onoremap <silent> aN& :call targets#o('&Na', v:count1)
+onoremap <silent> al& :call targets#o('&la', v:count1)
+onoremap <silent> an& :call targets#o('&na', v:count1)
+onoremap <silent> a& :call targets#o('&ca', v:count1)
+onoremap <silent> aL| :call targets#o('|La', v:count1)
+onoremap <silent> aN| :call targets#o('|Na', v:count1)
+onoremap <silent> al| :call targets#o('|la', v:count1)
+onoremap <silent> an| :call targets#o('|na', v:count1)
+onoremap <silent> a| :call targets#o('|ca', v:count1)
+onoremap <silent> aL\ :call targets#o('\La', v:count1)
+onoremap <silent> aN\ :call targets#o('\Na', v:count1)
+onoremap <silent> al\ :call targets#o('\la', v:count1)
+onoremap <silent> an\ :call targets#o('\na', v:count1)
+onoremap <silent> a\ :call targets#o('\ca', v:count1)
+onoremap <silent> aL/ :call targets#o('/La', v:count1)
+onoremap <silent> aN/ :call targets#o('/Na', v:count1)
+onoremap <silent> al/ :call targets#o('/la', v:count1)
+onoremap <silent> an/ :call targets#o('/na', v:count1)
+onoremap <silent> a/ :call targets#o('/ca', v:count1)
+onoremap <silent> aL# :call targets#o('#La', v:count1)
+onoremap <silent> aN# :call targets#o('#Na', v:count1)
+onoremap <silent> al# :call targets#o('#la', v:count1)
+onoremap <silent> an# :call targets#o('#na', v:count1)
+onoremap <silent> a# :call targets#o('#ca', v:count1)
+onoremap <silent> aL* :call targets#o('*La', v:count1)
+onoremap <silent> aN* :call targets#o('*Na', v:count1)
+onoremap <silent> al* :call targets#o('*la', v:count1)
+onoremap <silent> an* :call targets#o('*na', v:count1)
+onoremap <silent> a* :call targets#o('*ca', v:count1)
+onoremap <silent> aL_ :call targets#o('_La', v:count1)
+onoremap <silent> aN_ :call targets#o('_Na', v:count1)
+onoremap <silent> al_ :call targets#o('_la', v:count1)
+onoremap <silent> an_ :call targets#o('_na', v:count1)
+onoremap <silent> a_ :call targets#o('_ca', v:count1)
+onoremap <silent> aL~ :call targets#o('~La', v:count1)
+onoremap <silent> aN~ :call targets#o('~Na', v:count1)
+onoremap <silent> al~ :call targets#o('~la', v:count1)
+onoremap <silent> an~ :call targets#o('~na', v:count1)
+onoremap <silent> a~ :call targets#o('~ca', v:count1)
+onoremap <silent> aL= :call targets#o('=La', v:count1)
+onoremap <silent> aN= :call targets#o('=Na', v:count1)
+onoremap <silent> al= :call targets#o('=la', v:count1)
+onoremap <silent> an= :call targets#o('=na', v:count1)
+onoremap <silent> a= :call targets#o('=ca', v:count1)
+onoremap <silent> aL- :call targets#o('-La', v:count1)
+onoremap <silent> aN- :call targets#o('-Na', v:count1)
+onoremap <silent> al- :call targets#o('-la', v:count1)
+onoremap <silent> an- :call targets#o('-na', v:count1)
+onoremap <silent> a- :call targets#o('-ca', v:count1)
+onoremap <silent> aL+ :call targets#o('+La', v:count1)
+onoremap <silent> aN+ :call targets#o('+Na', v:count1)
+onoremap <silent> al+ :call targets#o('+la', v:count1)
+onoremap <silent> an+ :call targets#o('+na', v:count1)
+onoremap <silent> a+ :call targets#o('+ca', v:count1)
+onoremap <silent> aL: :call targets#o(':La', v:count1)
+onoremap <silent> aN: :call targets#o(':Na', v:count1)
+onoremap <silent> al: :call targets#o(':la', v:count1)
+onoremap <silent> an: :call targets#o(':na', v:count1)
+onoremap <silent> a: :call targets#o(':ca', v:count1)
+onoremap <silent> aL; :call targets#o(';La', v:count1)
+onoremap <silent> aN; :call targets#o(';Na', v:count1)
+onoremap <silent> al; :call targets#o(';la', v:count1)
+onoremap <silent> an; :call targets#o(';na', v:count1)
+onoremap <silent> a; :call targets#o(';ca', v:count1)
+onoremap <silent> aL. :call targets#o('.La', v:count1)
+onoremap <silent> aN. :call targets#o('.Na', v:count1)
+onoremap <silent> al. :call targets#o('.la', v:count1)
+onoremap <silent> an. :call targets#o('.na', v:count1)
+onoremap <silent> a. :call targets#o('.ca', v:count1)
+onoremap <silent> aL, :call targets#o(',La', v:count1)
+onoremap <silent> aN, :call targets#o(',Na', v:count1)
+onoremap <silent> al, :call targets#o(',la', v:count1)
+onoremap <silent> an, :call targets#o(',na', v:count1)
+onoremap <silent> a, :call targets#o(',ca', v:count1)
+onoremap <silent> aL` :call targets#o('`La', v:count1)
+onoremap <silent> aN` :call targets#o('`Na', v:count1)
+onoremap <silent> al` :call targets#o('`la', v:count1)
+onoremap <silent> an` :call targets#o('`na', v:count1)
+onoremap <silent> a` :call targets#o('`ca', v:count1)
+onoremap <silent> aL' :call targets#o('''La', v:count1)
+onoremap <silent> aN' :call targets#o('''Na', v:count1)
+onoremap <silent> al' :call targets#o('''la', v:count1)
+onoremap <silent> an' :call targets#o('''na', v:count1)
+onoremap <silent> a' :call targets#o('''ca', v:count1)
+onoremap <silent> aL" :call targets#o('"La', v:count1)
+onoremap <silent> aN" :call targets#o('"Na', v:count1)
+onoremap <silent> al" :call targets#o('"la', v:count1)
+onoremap <silent> an" :call targets#o('"na', v:count1)
+onoremap <silent> a" :call targets#o('"ca', v:count1)
+onoremap <silent> alt :call targets#o('tla', v:count1)
+onoremap <silent> ant :call targets#o('tna', v:count1)
+onoremap <silent> at :call targets#o('tca', v:count1)
+onoremap <silent> al> :call targets#o('>la', v:count1)
+onoremap <silent> an> :call targets#o('>na', v:count1)
+onoremap <silent> a> :call targets#o('>ca', v:count1)
+onoremap <silent> al< :call targets#o('<la', v:count1)
+onoremap <silent> an< :call targets#o('<na', v:count1)
+onoremap <silent> a< :call targets#o('<ca', v:count1)
+onoremap <silent> al] :call targets#o(']la', v:count1)
+onoremap <silent> an] :call targets#o(']na', v:count1)
+onoremap <silent> a] :call targets#o(']ca', v:count1)
+onoremap <silent> al[ :call targets#o('[la', v:count1)
+onoremap <silent> an[ :call targets#o('[na', v:count1)
+onoremap <silent> a[ :call targets#o('[ca', v:count1)
+onoremap <silent> alB :call targets#o('Bla', v:count1)
+onoremap <silent> anB :call targets#o('Bna', v:count1)
+onoremap <silent> aB :call targets#o('Bca', v:count1)
+onoremap <silent> al} :call targets#o('}la', v:count1)
+onoremap <silent> an} :call targets#o('}na', v:count1)
+onoremap <silent> a} :call targets#o('}ca', v:count1)
+onoremap <silent> al{ :call targets#o('{la', v:count1)
+onoremap <silent> an{ :call targets#o('{na', v:count1)
+onoremap <silent> a{ :call targets#o('{ca', v:count1)
+onoremap <silent> alb :call targets#o('bla', v:count1)
+onoremap <silent> anb :call targets#o('bna', v:count1)
+onoremap <silent> ab :call targets#o('bca', v:count1)
+onoremap <silent> al) :call targets#o(')la', v:count1)
+onoremap <silent> an) :call targets#o(')na', v:count1)
+onoremap <silent> a) :call targets#o(')ca', v:count1)
+onoremap <silent> al( :call targets#o('(la', v:count1)
+onoremap <silent> an( :call targets#o('(na', v:count1)
+onoremap <silent> a( :call targets#o('(ca', v:count1)
 nmap cgc <Plug>ChangeCommentary
 nmap cS <Plug>CSurround
 nmap cs <Plug>Csurround
@@ -574,275 +426,138 @@ xmap gc <Plug>Commentary
 xmap gS <Plug>VgSurround
 nnoremap gj j
 nnoremap gk k
-xnoremap <silent> i( :call targets#xmap('()', 'grow seekselectp drop')
-xnoremap <silent> i) :call targets#xmap('()', 'grow seekselectp drop')
-xnoremap <silent> ib :call targets#xmap('()', 'grow seekselectp drop')
-xnoremap <silent> in( :call targets#xmap('()', 'nextp selectp drop')
-xnoremap <silent> in) :call targets#xmap('()', 'nextp selectp drop')
-xnoremap <silent> inb :call targets#xmap('()', 'nextp selectp drop')
-xnoremap <silent> il( :call targets#xmap('()', 'lastp selectp drop')
-xnoremap <silent> il) :call targets#xmap('()', 'lastp selectp drop')
-xnoremap <silent> ilb :call targets#xmap('()', 'lastp selectp drop')
-xnoremap <silent> i{ :call targets#xmap('{}', 'grow seekselectp drop')
-xnoremap <silent> i} :call targets#xmap('{}', 'grow seekselectp drop')
-xnoremap <silent> iB :call targets#xmap('{}', 'grow seekselectp drop')
-xnoremap <silent> in{ :call targets#xmap('{}', 'nextp selectp drop')
-xnoremap <silent> in} :call targets#xmap('{}', 'nextp selectp drop')
-xnoremap <silent> inB :call targets#xmap('{}', 'nextp selectp drop')
-xnoremap <silent> il{ :call targets#xmap('{}', 'lastp selectp drop')
-xnoremap <silent> il} :call targets#xmap('{}', 'lastp selectp drop')
-xnoremap <silent> ilB :call targets#xmap('{}', 'lastp selectp drop')
-xnoremap <silent> i[ :call targets#xmap('[]', 'grow seekselectp drop')
-xnoremap <silent> i] :call targets#xmap('[]', 'grow seekselectp drop')
-onoremap <silent> ir :call targets#omap('[]', 'grow seekselectp drop')
-xnoremap <silent> ir :call targets#xmap('[]', 'grow seekselectp drop')
-xnoremap <silent> in[ :call targets#xmap('[]', 'nextp selectp drop')
-xnoremap <silent> in] :call targets#xmap('[]', 'nextp selectp drop')
-onoremap <silent> inr :call targets#omap('[]', 'nextp selectp drop')
-xnoremap <silent> inr :call targets#xmap('[]', 'nextp selectp drop')
-xnoremap <silent> il[ :call targets#xmap('[]', 'lastp selectp drop')
-xnoremap <silent> il] :call targets#xmap('[]', 'lastp selectp drop')
-onoremap <silent> ilr :call targets#omap('[]', 'lastp selectp drop')
-xnoremap <silent> ilr :call targets#xmap('[]', 'lastp selectp drop')
-xnoremap <silent> i< :call targets#xmap('<>', 'grow seekselectp drop')
-xnoremap <silent> i> :call targets#xmap('<>', 'grow seekselectp drop')
-xnoremap <silent> ia :call targets#xmap('<>', 'grow seekselectp drop')
-xnoremap <silent> in< :call targets#xmap('<>', 'nextp selectp drop')
-xnoremap <silent> in> :call targets#xmap('<>', 'nextp selectp drop')
-xnoremap <silent> ina :call targets#xmap('<>', 'nextp selectp drop')
-xnoremap <silent> il< :call targets#xmap('<>', 'lastp selectp drop')
-xnoremap <silent> il> :call targets#xmap('<>', 'lastp selectp drop')
-xnoremap <silent> ila :call targets#xmap('<>', 'lastp selectp drop')
-xnoremap <silent> it :call targets#xmap('t', 'grow seekselectt innert drop')
-xnoremap <silent> int :call targets#xmap('t', 'nextt selectp innert drop')
-xnoremap <silent> ilt :call targets#xmap('t', 'lastt selectp innert drop')
-xnoremap <silent> i" :call targets#xmap('"', 'quote seekselect drop')
-xnoremap <silent> in" :call targets#xmap('"', 'quote next select drop')
-xnoremap <silent> il" :call targets#xmap('"', 'quote last select drop')
-xnoremap <silent> iN" :call targets#xmap('"', 'quote double next select drop')
-xnoremap <silent> iL" :call targets#xmap('"', 'quote double last select drop')
-xnoremap <silent> i' :call targets#xmap('''', 'quote seekselect drop')
-xnoremap <silent> in' :call targets#xmap('''', 'quote next select drop')
-xnoremap <silent> il' :call targets#xmap('''', 'quote last select drop')
-xnoremap <silent> iN' :call targets#xmap('''', 'quote double next select drop')
-xnoremap <silent> iL' :call targets#xmap('''', 'quote double last select drop')
-xnoremap <silent> i` :call targets#xmap('`', 'quote seekselect drop')
-xnoremap <silent> in` :call targets#xmap('`', 'quote next select drop')
-xnoremap <silent> il` :call targets#xmap('`', 'quote last select drop')
-xnoremap <silent> iN` :call targets#xmap('`', 'quote double next select drop')
-xnoremap <silent> iL` :call targets#xmap('`', 'quote double last select drop')
-xnoremap <silent> i, :call targets#xmap(',', 'seekselect drop')
-xnoremap <silent> in, :call targets#xmap(',', 'next select drop')
-xnoremap <silent> il, :call targets#xmap(',', 'last select drop')
-xnoremap <silent> iN, :call targets#xmap(',', 'double next select drop')
-xnoremap <silent> iL, :call targets#xmap(',', 'double last select drop')
-xnoremap <silent> i. :call targets#xmap('.', 'seekselect drop')
-xnoremap <silent> in. :call targets#xmap('.', 'next select drop')
-xnoremap <silent> il. :call targets#xmap('.', 'last select drop')
-xnoremap <silent> iN. :call targets#xmap('.', 'double next select drop')
-xnoremap <silent> iL. :call targets#xmap('.', 'double last select drop')
-xnoremap <silent> i; :call targets#xmap(';', 'seekselect drop')
-xnoremap <silent> in; :call targets#xmap(';', 'next select drop')
-xnoremap <silent> il; :call targets#xmap(';', 'last select drop')
-xnoremap <silent> iN; :call targets#xmap(';', 'double next select drop')
-xnoremap <silent> iL; :call targets#xmap(';', 'double last select drop')
-xnoremap <silent> i: :call targets#xmap(':', 'seekselect drop')
-xnoremap <silent> in: :call targets#xmap(':', 'next select drop')
-xnoremap <silent> il: :call targets#xmap(':', 'last select drop')
-xnoremap <silent> iN: :call targets#xmap(':', 'double next select drop')
-xnoremap <silent> iL: :call targets#xmap(':', 'double last select drop')
-xnoremap <silent> i+ :call targets#xmap('+', 'seekselect drop')
-xnoremap <silent> in+ :call targets#xmap('+', 'next select drop')
-xnoremap <silent> il+ :call targets#xmap('+', 'last select drop')
-xnoremap <silent> iN+ :call targets#xmap('+', 'double next select drop')
-xnoremap <silent> iL+ :call targets#xmap('+', 'double last select drop')
-xnoremap <silent> i- :call targets#xmap('-', 'seekselect drop')
-xnoremap <silent> in- :call targets#xmap('-', 'next select drop')
-xnoremap <silent> il- :call targets#xmap('-', 'last select drop')
-xnoremap <silent> iN- :call targets#xmap('-', 'double next select drop')
-xnoremap <silent> iL- :call targets#xmap('-', 'double last select drop')
-xnoremap <silent> i= :call targets#xmap('=', 'seekselect drop')
-xnoremap <silent> in= :call targets#xmap('=', 'next select drop')
-xnoremap <silent> il= :call targets#xmap('=', 'last select drop')
-xnoremap <silent> iN= :call targets#xmap('=', 'double next select drop')
-xnoremap <silent> iL= :call targets#xmap('=', 'double last select drop')
-xnoremap <silent> i~ :call targets#xmap('~', 'seekselect drop')
-xnoremap <silent> in~ :call targets#xmap('~', 'next select drop')
-xnoremap <silent> il~ :call targets#xmap('~', 'last select drop')
-xnoremap <silent> iN~ :call targets#xmap('~', 'double next select drop')
-xnoremap <silent> iL~ :call targets#xmap('~', 'double last select drop')
-xnoremap <silent> i_ :call targets#xmap('_', 'seekselect drop')
-xnoremap <silent> in_ :call targets#xmap('_', 'next select drop')
-xnoremap <silent> il_ :call targets#xmap('_', 'last select drop')
-xnoremap <silent> iN_ :call targets#xmap('_', 'double next select drop')
-xnoremap <silent> iL_ :call targets#xmap('_', 'double last select drop')
-xnoremap <silent> i* :call targets#xmap('*', 'seekselect drop')
-xnoremap <silent> in* :call targets#xmap('*', 'next select drop')
-xnoremap <silent> il* :call targets#xmap('*', 'last select drop')
-xnoremap <silent> iN* :call targets#xmap('*', 'double next select drop')
-xnoremap <silent> iL* :call targets#xmap('*', 'double last select drop')
-xnoremap <silent> i# :call targets#xmap('#', 'seekselect drop')
-xnoremap <silent> in# :call targets#xmap('#', 'next select drop')
-xnoremap <silent> il# :call targets#xmap('#', 'last select drop')
-xnoremap <silent> iN# :call targets#xmap('#', 'double next select drop')
-xnoremap <silent> iL# :call targets#xmap('#', 'double last select drop')
-xnoremap <silent> i/ :call targets#xmap('/', 'seekselect drop')
-xnoremap <silent> in/ :call targets#xmap('/', 'next select drop')
-xnoremap <silent> il/ :call targets#xmap('/', 'last select drop')
-xnoremap <silent> iN/ :call targets#xmap('/', 'double next select drop')
-xnoremap <silent> iL/ :call targets#xmap('/', 'double last select drop')
-xnoremap <silent> i\ :call targets#xmap('\', 'seekselect drop')
-xnoremap <silent> in\ :call targets#xmap('\', 'next select drop')
-xnoremap <silent> il\ :call targets#xmap('\', 'last select drop')
-xnoremap <silent> iN\ :call targets#xmap('\', 'double next select drop')
-xnoremap <silent> iL\ :call targets#xmap('\', 'double last select drop')
-xnoremap <silent> i| :call targets#xmap('|', 'seekselect drop')
-xnoremap <silent> in| :call targets#xmap('|', 'next select drop')
-xnoremap <silent> il| :call targets#xmap('|', 'last select drop')
-xnoremap <silent> iN| :call targets#xmap('|', 'double next select drop')
-xnoremap <silent> iL| :call targets#xmap('|', 'double last select drop')
-xnoremap <silent> i& :call targets#xmap('&', 'seekselect drop')
-xnoremap <silent> in& :call targets#xmap('&', 'next select drop')
-xnoremap <silent> il& :call targets#xmap('&', 'last select drop')
-xnoremap <silent> iN& :call targets#xmap('&', 'double next select drop')
-xnoremap <silent> iL& :call targets#xmap('&', 'double last select drop')
-xnoremap <silent> i$ :call targets#xmap('$', 'seekselect drop')
-xnoremap <silent> in$ :call targets#xmap('$', 'next select drop')
-xnoremap <silent> il$ :call targets#xmap('$', 'last select drop')
-xnoremap <silent> iN$ :call targets#xmap('$', 'double next select drop')
-xnoremap <silent> iL$ :call targets#xmap('$', 'double last select drop')
 xnoremap <silent> <expr> i targets#e('i')
-onoremap <silent> ila :call targets#omap('<>', 'lastp selectp drop')
-onoremap <silent> ina :call targets#omap('<>', 'nextp selectp drop')
-onoremap <silent> ia :call targets#omap('<>', 'grow seekselectp drop')
-onoremap <silent> iL$ :call targets#omap('$', 'double last select drop')
-onoremap <silent> iN$ :call targets#omap('$', 'double next select drop')
-onoremap <silent> il$ :call targets#omap('$', 'last select drop')
-onoremap <silent> in$ :call targets#omap('$', 'next select drop')
-onoremap <silent> i$ :call targets#omap('$', 'seekselect drop')
-onoremap <silent> iL& :call targets#omap('&', 'double last select drop')
-onoremap <silent> iN& :call targets#omap('&', 'double next select drop')
-onoremap <silent> il& :call targets#omap('&', 'last select drop')
-onoremap <silent> in& :call targets#omap('&', 'next select drop')
-onoremap <silent> i& :call targets#omap('&', 'seekselect drop')
-onoremap <silent> iL| :call targets#omap('|', 'double last select drop')
-onoremap <silent> iN| :call targets#omap('|', 'double next select drop')
-onoremap <silent> il| :call targets#omap('|', 'last select drop')
-onoremap <silent> in| :call targets#omap('|', 'next select drop')
-onoremap <silent> i| :call targets#omap('|', 'seekselect drop')
-onoremap <silent> iL\ :call targets#omap('\', 'double last select drop')
-onoremap <silent> iN\ :call targets#omap('\', 'double next select drop')
-onoremap <silent> il\ :call targets#omap('\', 'last select drop')
-onoremap <silent> in\ :call targets#omap('\', 'next select drop')
-onoremap <silent> i\ :call targets#omap('\', 'seekselect drop')
-onoremap <silent> iL/ :call targets#omap('/', 'double last select drop')
-onoremap <silent> iN/ :call targets#omap('/', 'double next select drop')
-onoremap <silent> il/ :call targets#omap('/', 'last select drop')
-onoremap <silent> in/ :call targets#omap('/', 'next select drop')
-onoremap <silent> i/ :call targets#omap('/', 'seekselect drop')
-onoremap <silent> iL# :call targets#omap('#', 'double last select drop')
-onoremap <silent> iN# :call targets#omap('#', 'double next select drop')
-onoremap <silent> il# :call targets#omap('#', 'last select drop')
-onoremap <silent> in# :call targets#omap('#', 'next select drop')
-onoremap <silent> i# :call targets#omap('#', 'seekselect drop')
-onoremap <silent> iL* :call targets#omap('*', 'double last select drop')
-onoremap <silent> iN* :call targets#omap('*', 'double next select drop')
-onoremap <silent> il* :call targets#omap('*', 'last select drop')
-onoremap <silent> in* :call targets#omap('*', 'next select drop')
-onoremap <silent> i* :call targets#omap('*', 'seekselect drop')
-onoremap <silent> iL_ :call targets#omap('_', 'double last select drop')
-onoremap <silent> iN_ :call targets#omap('_', 'double next select drop')
-onoremap <silent> il_ :call targets#omap('_', 'last select drop')
-onoremap <silent> in_ :call targets#omap('_', 'next select drop')
-onoremap <silent> i_ :call targets#omap('_', 'seekselect drop')
-onoremap <silent> iL~ :call targets#omap('~', 'double last select drop')
-onoremap <silent> iN~ :call targets#omap('~', 'double next select drop')
-onoremap <silent> il~ :call targets#omap('~', 'last select drop')
-onoremap <silent> in~ :call targets#omap('~', 'next select drop')
-onoremap <silent> i~ :call targets#omap('~', 'seekselect drop')
-onoremap <silent> iL= :call targets#omap('=', 'double last select drop')
-onoremap <silent> iN= :call targets#omap('=', 'double next select drop')
-onoremap <silent> il= :call targets#omap('=', 'last select drop')
-onoremap <silent> in= :call targets#omap('=', 'next select drop')
-onoremap <silent> i= :call targets#omap('=', 'seekselect drop')
-onoremap <silent> iL- :call targets#omap('-', 'double last select drop')
-onoremap <silent> iN- :call targets#omap('-', 'double next select drop')
-onoremap <silent> il- :call targets#omap('-', 'last select drop')
-onoremap <silent> in- :call targets#omap('-', 'next select drop')
-onoremap <silent> i- :call targets#omap('-', 'seekselect drop')
-onoremap <silent> iL+ :call targets#omap('+', 'double last select drop')
-onoremap <silent> iN+ :call targets#omap('+', 'double next select drop')
-onoremap <silent> il+ :call targets#omap('+', 'last select drop')
-onoremap <silent> in+ :call targets#omap('+', 'next select drop')
-onoremap <silent> i+ :call targets#omap('+', 'seekselect drop')
-onoremap <silent> iL: :call targets#omap(':', 'double last select drop')
-onoremap <silent> iN: :call targets#omap(':', 'double next select drop')
-onoremap <silent> il: :call targets#omap(':', 'last select drop')
-onoremap <silent> in: :call targets#omap(':', 'next select drop')
-onoremap <silent> i: :call targets#omap(':', 'seekselect drop')
-onoremap <silent> iL; :call targets#omap(';', 'double last select drop')
-onoremap <silent> iN; :call targets#omap(';', 'double next select drop')
-onoremap <silent> il; :call targets#omap(';', 'last select drop')
-onoremap <silent> in; :call targets#omap(';', 'next select drop')
-onoremap <silent> i; :call targets#omap(';', 'seekselect drop')
-onoremap <silent> iL. :call targets#omap('.', 'double last select drop')
-onoremap <silent> iN. :call targets#omap('.', 'double next select drop')
-onoremap <silent> il. :call targets#omap('.', 'last select drop')
-onoremap <silent> in. :call targets#omap('.', 'next select drop')
-onoremap <silent> i. :call targets#omap('.', 'seekselect drop')
-onoremap <silent> iL, :call targets#omap(',', 'double last select drop')
-onoremap <silent> iN, :call targets#omap(',', 'double next select drop')
-onoremap <silent> il, :call targets#omap(',', 'last select drop')
-onoremap <silent> in, :call targets#omap(',', 'next select drop')
-onoremap <silent> i, :call targets#omap(',', 'seekselect drop')
-onoremap <silent> iL` :call targets#omap('`', 'quote double last select drop')
-onoremap <silent> iN` :call targets#omap('`', 'quote double next select drop')
-onoremap <silent> il` :call targets#omap('`', 'quote last select drop')
-onoremap <silent> in` :call targets#omap('`', 'quote next select drop')
-onoremap <silent> i` :call targets#omap('`', 'quote seekselect drop')
-onoremap <silent> iL' :call targets#omap('''', 'quote double last select drop')
-onoremap <silent> iN' :call targets#omap('''', 'quote double next select drop')
-onoremap <silent> il' :call targets#omap('''', 'quote last select drop')
-onoremap <silent> in' :call targets#omap('''', 'quote next select drop')
-onoremap <silent> i' :call targets#omap('''', 'quote seekselect drop')
-onoremap <silent> iL" :call targets#omap('"', 'quote double last select drop')
-onoremap <silent> iN" :call targets#omap('"', 'quote double next select drop')
-onoremap <silent> il" :call targets#omap('"', 'quote last select drop')
-onoremap <silent> in" :call targets#omap('"', 'quote next select drop')
-onoremap <silent> i" :call targets#omap('"', 'quote seekselect drop')
-onoremap <silent> ilt :call targets#omap('t', 'lastt selectp innert drop')
-onoremap <silent> int :call targets#omap('t', 'nextt selectp innert drop')
-onoremap <silent> it :call targets#omap('t', 'grow seekselectt innert drop')
-onoremap <silent> il> :call targets#omap('<>', 'lastp selectp drop')
-onoremap <silent> in> :call targets#omap('<>', 'nextp selectp drop')
-onoremap <silent> i> :call targets#omap('<>', 'grow seekselectp drop')
-onoremap <silent> il< :call targets#omap('<>', 'lastp selectp drop')
-onoremap <silent> in< :call targets#omap('<>', 'nextp selectp drop')
-onoremap <silent> i< :call targets#omap('<>', 'grow seekselectp drop')
-onoremap <silent> il] :call targets#omap('[]', 'lastp selectp drop')
-onoremap <silent> in] :call targets#omap('[]', 'nextp selectp drop')
-onoremap <silent> i] :call targets#omap('[]', 'grow seekselectp drop')
-onoremap <silent> il[ :call targets#omap('[]', 'lastp selectp drop')
-onoremap <silent> in[ :call targets#omap('[]', 'nextp selectp drop')
-onoremap <silent> i[ :call targets#omap('[]', 'grow seekselectp drop')
-onoremap <silent> ilB :call targets#omap('{}', 'lastp selectp drop')
-onoremap <silent> inB :call targets#omap('{}', 'nextp selectp drop')
-onoremap <silent> iB :call targets#omap('{}', 'grow seekselectp drop')
-onoremap <silent> il} :call targets#omap('{}', 'lastp selectp drop')
-onoremap <silent> in} :call targets#omap('{}', 'nextp selectp drop')
-onoremap <silent> i} :call targets#omap('{}', 'grow seekselectp drop')
-onoremap <silent> il{ :call targets#omap('{}', 'lastp selectp drop')
-onoremap <silent> in{ :call targets#omap('{}', 'nextp selectp drop')
-onoremap <silent> i{ :call targets#omap('{}', 'grow seekselectp drop')
-onoremap <silent> ilb :call targets#omap('()', 'lastp selectp drop')
-onoremap <silent> inb :call targets#omap('()', 'nextp selectp drop')
-onoremap <silent> ib :call targets#omap('()', 'grow seekselectp drop')
-onoremap <silent> il) :call targets#omap('()', 'lastp selectp drop')
-onoremap <silent> in) :call targets#omap('()', 'nextp selectp drop')
-onoremap <silent> i) :call targets#omap('()', 'grow seekselectp drop')
-onoremap <silent> il( :call targets#omap('()', 'lastp selectp drop')
-onoremap <silent> in( :call targets#omap('()', 'nextp selectp drop')
-onoremap <silent> i( :call targets#omap('()', 'grow seekselectp drop')
+onoremap <silent> ila :call targets#o('ali', v:count1)
+onoremap <silent> ina :call targets#o('ani', v:count1)
+onoremap <silent> ia :call targets#o('aci', v:count1)
+onoremap <silent> iL$ :call targets#o('$Li', v:count1)
+onoremap <silent> iN$ :call targets#o('$Ni', v:count1)
+onoremap <silent> il$ :call targets#o('$li', v:count1)
+onoremap <silent> in$ :call targets#o('$ni', v:count1)
+onoremap <silent> i$ :call targets#o('$ci', v:count1)
+onoremap <silent> iL& :call targets#o('&Li', v:count1)
+onoremap <silent> iN& :call targets#o('&Ni', v:count1)
+onoremap <silent> il& :call targets#o('&li', v:count1)
+onoremap <silent> in& :call targets#o('&ni', v:count1)
+onoremap <silent> i& :call targets#o('&ci', v:count1)
+onoremap <silent> iL| :call targets#o('|Li', v:count1)
+onoremap <silent> iN| :call targets#o('|Ni', v:count1)
+onoremap <silent> il| :call targets#o('|li', v:count1)
+onoremap <silent> in| :call targets#o('|ni', v:count1)
+onoremap <silent> i| :call targets#o('|ci', v:count1)
+onoremap <silent> iL\ :call targets#o('\Li', v:count1)
+onoremap <silent> iN\ :call targets#o('\Ni', v:count1)
+onoremap <silent> il\ :call targets#o('\li', v:count1)
+onoremap <silent> in\ :call targets#o('\ni', v:count1)
+onoremap <silent> i\ :call targets#o('\ci', v:count1)
+onoremap <silent> iL/ :call targets#o('/Li', v:count1)
+onoremap <silent> iN/ :call targets#o('/Ni', v:count1)
+onoremap <silent> il/ :call targets#o('/li', v:count1)
+onoremap <silent> in/ :call targets#o('/ni', v:count1)
+onoremap <silent> i/ :call targets#o('/ci', v:count1)
+onoremap <silent> iL# :call targets#o('#Li', v:count1)
+onoremap <silent> iN# :call targets#o('#Ni', v:count1)
+onoremap <silent> il# :call targets#o('#li', v:count1)
+onoremap <silent> in# :call targets#o('#ni', v:count1)
+onoremap <silent> i# :call targets#o('#ci', v:count1)
+onoremap <silent> iL* :call targets#o('*Li', v:count1)
+onoremap <silent> iN* :call targets#o('*Ni', v:count1)
+onoremap <silent> il* :call targets#o('*li', v:count1)
+onoremap <silent> in* :call targets#o('*ni', v:count1)
+onoremap <silent> i* :call targets#o('*ci', v:count1)
+onoremap <silent> iL_ :call targets#o('_Li', v:count1)
+onoremap <silent> iN_ :call targets#o('_Ni', v:count1)
+onoremap <silent> il_ :call targets#o('_li', v:count1)
+onoremap <silent> in_ :call targets#o('_ni', v:count1)
+onoremap <silent> i_ :call targets#o('_ci', v:count1)
+onoremap <silent> iL~ :call targets#o('~Li', v:count1)
+onoremap <silent> iN~ :call targets#o('~Ni', v:count1)
+onoremap <silent> il~ :call targets#o('~li', v:count1)
+onoremap <silent> in~ :call targets#o('~ni', v:count1)
+onoremap <silent> i~ :call targets#o('~ci', v:count1)
+onoremap <silent> iL= :call targets#o('=Li', v:count1)
+onoremap <silent> iN= :call targets#o('=Ni', v:count1)
+onoremap <silent> il= :call targets#o('=li', v:count1)
+onoremap <silent> in= :call targets#o('=ni', v:count1)
+onoremap <silent> i= :call targets#o('=ci', v:count1)
+onoremap <silent> iL- :call targets#o('-Li', v:count1)
+onoremap <silent> iN- :call targets#o('-Ni', v:count1)
+onoremap <silent> il- :call targets#o('-li', v:count1)
+onoremap <silent> in- :call targets#o('-ni', v:count1)
+onoremap <silent> i- :call targets#o('-ci', v:count1)
+onoremap <silent> iL+ :call targets#o('+Li', v:count1)
+onoremap <silent> iN+ :call targets#o('+Ni', v:count1)
+onoremap <silent> il+ :call targets#o('+li', v:count1)
+onoremap <silent> in+ :call targets#o('+ni', v:count1)
+onoremap <silent> i+ :call targets#o('+ci', v:count1)
+onoremap <silent> iL: :call targets#o(':Li', v:count1)
+onoremap <silent> iN: :call targets#o(':Ni', v:count1)
+onoremap <silent> il: :call targets#o(':li', v:count1)
+onoremap <silent> in: :call targets#o(':ni', v:count1)
+onoremap <silent> i: :call targets#o(':ci', v:count1)
+onoremap <silent> iL; :call targets#o(';Li', v:count1)
+onoremap <silent> iN; :call targets#o(';Ni', v:count1)
+onoremap <silent> il; :call targets#o(';li', v:count1)
+onoremap <silent> in; :call targets#o(';ni', v:count1)
+onoremap <silent> i; :call targets#o(';ci', v:count1)
+onoremap <silent> iL. :call targets#o('.Li', v:count1)
+onoremap <silent> iN. :call targets#o('.Ni', v:count1)
+onoremap <silent> il. :call targets#o('.li', v:count1)
+onoremap <silent> in. :call targets#o('.ni', v:count1)
+onoremap <silent> i. :call targets#o('.ci', v:count1)
+onoremap <silent> iL, :call targets#o(',Li', v:count1)
+onoremap <silent> iN, :call targets#o(',Ni', v:count1)
+onoremap <silent> il, :call targets#o(',li', v:count1)
+onoremap <silent> in, :call targets#o(',ni', v:count1)
+onoremap <silent> i, :call targets#o(',ci', v:count1)
+onoremap <silent> iL` :call targets#o('`Li', v:count1)
+onoremap <silent> iN` :call targets#o('`Ni', v:count1)
+onoremap <silent> il` :call targets#o('`li', v:count1)
+onoremap <silent> in` :call targets#o('`ni', v:count1)
+onoremap <silent> i` :call targets#o('`ci', v:count1)
+onoremap <silent> iL' :call targets#o('''Li', v:count1)
+onoremap <silent> iN' :call targets#o('''Ni', v:count1)
+onoremap <silent> il' :call targets#o('''li', v:count1)
+onoremap <silent> in' :call targets#o('''ni', v:count1)
+onoremap <silent> i' :call targets#o('''ci', v:count1)
+onoremap <silent> iL" :call targets#o('"Li', v:count1)
+onoremap <silent> iN" :call targets#o('"Ni', v:count1)
+onoremap <silent> il" :call targets#o('"li', v:count1)
+onoremap <silent> in" :call targets#o('"ni', v:count1)
+onoremap <silent> i" :call targets#o('"ci', v:count1)
+onoremap <silent> ilt :call targets#o('tli', v:count1)
+onoremap <silent> int :call targets#o('tni', v:count1)
+onoremap <silent> it :call targets#o('tci', v:count1)
+onoremap <silent> il> :call targets#o('>li', v:count1)
+onoremap <silent> in> :call targets#o('>ni', v:count1)
+onoremap <silent> i> :call targets#o('>ci', v:count1)
+onoremap <silent> il< :call targets#o('<li', v:count1)
+onoremap <silent> in< :call targets#o('<ni', v:count1)
+onoremap <silent> i< :call targets#o('<ci', v:count1)
+onoremap <silent> il] :call targets#o(']li', v:count1)
+onoremap <silent> in] :call targets#o(']ni', v:count1)
+onoremap <silent> i] :call targets#o(']ci', v:count1)
+onoremap <silent> il[ :call targets#o('[li', v:count1)
+onoremap <silent> in[ :call targets#o('[ni', v:count1)
+onoremap <silent> i[ :call targets#o('[ci', v:count1)
+onoremap <silent> ilB :call targets#o('Bli', v:count1)
+onoremap <silent> inB :call targets#o('Bni', v:count1)
+onoremap <silent> iB :call targets#o('Bci', v:count1)
+onoremap <silent> il} :call targets#o('}li', v:count1)
+onoremap <silent> in} :call targets#o('}ni', v:count1)
+onoremap <silent> i} :call targets#o('}ci', v:count1)
+onoremap <silent> il{ :call targets#o('{li', v:count1)
+onoremap <silent> in{ :call targets#o('{ni', v:count1)
+onoremap <silent> i{ :call targets#o('{ci', v:count1)
+onoremap <silent> ilb :call targets#o('bli', v:count1)
+onoremap <silent> inb :call targets#o('bni', v:count1)
+onoremap <silent> ib :call targets#o('bci', v:count1)
+onoremap <silent> il) :call targets#o(')li', v:count1)
+onoremap <silent> in) :call targets#o(')ni', v:count1)
+onoremap <silent> i) :call targets#o(')ci', v:count1)
+onoremap <silent> il( :call targets#o('(li', v:count1)
+onoremap <silent> in( :call targets#o('(ni', v:count1)
+onoremap <silent> i( :call targets#o('(ci', v:count1)
 nnoremap j gj
 nnoremap k gk
 nmap ySS <Plug>YSsurround
@@ -853,17 +568,14 @@ nmap ys <Plug>Ysurround
 nnoremap <silent> <Plug>NetrwBrowseX :call netrw#NetrwBrowseX(expand("<cWORD>"),0)
 nmap <silent> <Plug>CommentaryUndo <Plug>Commentary<Plug>Commentary
 nnoremap <silent> <Plug>SurroundRepeat .
-snoremap <silent> <Del> c
-snoremap <silent> <BS> c
-snoremap <silent> <C-Tab> :call UltiSnips#ListSnippets()
-xmap <BS> "-d
+vmap <BS> "-d
 vmap <D-x> "*d
 vmap <D-c> "*y
 vmap <D-v> "-d"*P
 nmap <D-v> "*P
 imap S <Plug>ISurround
 imap s <Plug>Isurround
-inoremap <silent> 	 =UltiSnips#ExpandSnippetOrJump()
+imap 	 <Plug>SuperTabForward
 imap  <Plug>Isurround
 cabbr rename =getcmdpos() == 1 && getcmdtype() == ":" ? "Rename" : "rename"
 cnoreabbr <expr> help getcmdtype() == ":" && getcmdline() == "help" ? "vertical help" : "help"
@@ -880,7 +592,7 @@ set hidden
 set incsearch
 set pumheight=20
 set ruler
-set runtimepath=~/.vim,~/.vim/bundle/vundle,~/.vim/bundle/tabular,~/.vim/bundle/smartfile,~/.vim/bundle/rename.vim,~/.vim/bundle/vim-colorschemes,~/.vim/bundle/vim-colors-solarized,~/.vim/bundle/clang_complete,~/.vim/bundle/supertab,~/.vim/bundle/ultisnips,~/.vim/bundle/vim-snippets,~/.vim/bundle/vim-markdown,~/.vim/bundle/vim-surround,~/.vim/bundle/targets.vim,~/.vim/bundle/vim-repeat,~/.vim/bundle/vim-commentary,/opt/local/share/vim/vimfiles,/opt/local/share/vim/vim74,/opt/local/share/vim/vimfiles/after,~/.vim/after,~/.vim/bundle/vundle/after,~/.vim/bundle/tabular/after,~/.vim/bundle/smartfile/after,~/.vim/bundle/rename.vim/after,~/.vim/bundle/vim-colorschemes/after,~/.vim/bundle/vim-colors-solarized/after,~/.vim/bundle/clang_complete/after,~/.vim/bundle/supertab/after,~/.vim/bundle/ultisnips/after,~/.vim/bundle/vim-snippets/after,~/.vim/bundle/vim-markdown/after,~/.vim/bundle/vim-surround/after,~/.vim/bundle/targets.vim/after,~/.vim/bundle/vim-repeat/after,~/.vim/bundle/vim-commentary/after
+set runtimepath=~/.vim,~/.vim/bundle/Vundle.vim,~/.vim/bundle/vim-colorschemes,~/.vim/bundle/vim-colors-solarized,~/.vim/bundle/xoria_lite,~/.vim/bundle/vim-markdown,~/.vim/bundle/clang_complete,~/.vim/bundle/supertab,~/.vim/bundle/vim-snippets,~/.vim/bundle/smartfile,~/.vim/bundle/tabular,~/.vim/bundle/rename.vim,~/.vim/bundle/vim-surround,~/.vim/bundle/targets.vim,~/.vim/bundle/vim-repeat,~/.vim/bundle/vim-commentary,/opt/local/share/vim/vimfiles,/opt/local/share/vim/vim74,/opt/local/share/vim/vimfiles/after,~/.vim/after,~/.vim/bundle/Vundle.vim,~/.vim/bundle/Vundle.vim/after,~/.vim/bundle/vim-colorschemes/after,~/.vim/bundle/vim-colors-solarized/after,~/.vim/bundle/xoria_lite/after,~/.vim/bundle/vim-markdown/after,~/.vim/bundle/clang_complete/after,~/.vim/bundle/supertab/after,~/.vim/bundle/vim-snippets/after,~/.vim/bundle/smartfile/after,~/.vim/bundle/tabular/after,~/.vim/bundle/rename.vim/after,~/.vim/bundle/vim-surround/after,~/.vim/bundle/targets.vim/after,~/.vim/bundle/vim-repeat/after,~/.vim/bundle/vim-commentary/a
 set scrolloff=999
 set sessionoptions=blank,buffers,folds,help,options,tabpages,winsize,sesdir
 set showcmd
@@ -897,28 +609,63 @@ if expand('%') == '' && !&modified && line('$') <= 1 && getline(1) == ''
   let s:wipebuf = bufnr('%')
 endif
 set shortmess=aoO
-badd +1 include/ccbase/mpl/functional.hpp
-badd +1 include/ccbase/mpl
-badd +11 include/ccbase/mpl.hpp
-badd +11 include/ccbase/mpl/parse_wsv.hpp
-badd +408 include/ccbase/mpl/list.hpp
-badd +1 include/ccbase/mpl/constant.hpp
-badd +95 include/ccbase/mpl/sequence_operations.hpp
-badd +1 source/test/mpl_test.cpp
-badd +478 include/ccbase/format/format_argument.hpp
-badd +529 include/ccbase/format/format.hpp
+badd +1 include/ccbase/dynamic/load.hpp
+badd +1 include/ccbase/dynamic/visibility.hpp
+badd +1 include/ccbase/error/expected.hpp
+badd +1 include/ccbase/filesystem/directory_entry.hpp
+badd +1 include/ccbase/filesystem/directory_iterator.hpp
+badd +1 include/ccbase/filesystem/glob_matcher.hpp
+badd +1 include/ccbase/filesystem/range.hpp
+badd +1 include/ccbase/filesystem/system_call.hpp
+badd +1 include/ccbase/format/argument_wrapper.hpp
 badd +1 include/ccbase/format/attribute.hpp
-badd +43 include/ccbase/format/argument_wrapper.hpp
-badd +112 include/ccbase/format/formatter.hpp
-badd +49 source/test/formatter_test.cpp
+badd +1 include/ccbase/format/format.hpp
+badd +1 include/ccbase/format/formatter.hpp
+badd +1 include/ccbase/format/format_argument.hpp
+badd +1 include/ccbase/format/printable_types.hpp
+badd +1 include/ccbase/mpl/constant.hpp
+badd +219 include/ccbase/mpl/functional.hpp
+badd +1 include/ccbase/mpl/list.hpp
+badd +1 include/ccbase/platform/attributes.hpp
+badd +1 include/ccbase/platform/bswap.hpp
+badd +1 include/ccbase/platform/definitions.hpp
+badd +1 include/ccbase/platform/identification.hpp
+badd +1 include/ccbase/platform/rotate.hpp
+badd +1 include/ccbase/platform/yield_execution.hpp
+badd +1 include/ccbase/unit_test/module.hpp
+badd +1 include/ccbase/unit_test/module_list.hpp
+badd +1 include/ccbase/unit_test/result.hpp
+badd +1 include/ccbase/unit_test/unit_test.hpp
+badd +1 include/ccbase/utility/accessors.hpp
+badd +1 include/ccbase/utility/bytes.hpp
+badd +1 include/ccbase/utility/enum_bitmask.hpp
+badd +1 source/test/dynamic_test.cpp
+badd +1 source/test/expected_test.cpp
+badd +1 source/test/filesystem_test.cpp
+badd +1 source/test/formatter_test.cpp
 badd +1 source/test/format_argument_test.cpp
-badd +26 include/ccbase/mpl/parse_natural.hpp
+badd +19 source/test/mpl_test.cpp
+badd +1 source/test/platform_test.cpp
+badd +1 source/test/unit_test_test.cpp
+badd +1 .gitignore
+badd +52 README.md
 badd +11 Rakefile
-badd +0 include/ccbase/platform/rotate.hpp
+badd +27 scratch.hpp
+badd +1741 ~/scratch/meta.hpp
+badd +119 include/ccbase/mpl/operations.hpp
+badd +1 include/ccbase/mpl/list_operations.hpp
+badd +14 include/ccbase/mpl.hpp
 argglobal
 silent! argdel *
-argadd ~/projects/c++/ccbase/master/include/ccbase/mpl/functional.hpp
-edit include/ccbase/platform/rotate.hpp
+argadd ~/projects/infancy/ndmath/ccbase/source/test/dynamic_test.cpp
+argadd ~/projects/infancy/ndmath/ccbase/source/test/expected_test.cpp
+argadd ~/projects/infancy/ndmath/ccbase/source/test/filesystem_test.cpp
+argadd ~/projects/infancy/ndmath/ccbase/source/test/formatter_test.cpp
+argadd ~/projects/infancy/ndmath/ccbase/source/test/format_argument_test.cpp
+argadd ~/projects/infancy/ndmath/ccbase/source/test/mpl_test.cpp
+argadd ~/projects/infancy/ndmath/ccbase/source/test/platform_test.cpp
+argadd ~/projects/infancy/ndmath/ccbase/source/test/unit_test_test.cpp
+edit include/ccbase/mpl/list_operations.hpp
 set splitbelow splitright
 wincmd _ | wincmd |
 vsplit
@@ -930,6 +677,7 @@ set winheight=1 winwidth=1
 exe 'vert 1resize ' . ((&columns * 101 + 102) / 204)
 exe 'vert 2resize ' . ((&columns * 102 + 102) / 204)
 argglobal
+edit include/ccbase/mpl/list_operations.hpp
 snoremap <buffer> <silent> 	 :python updateSnips()
 nnoremap <buffer> <silent> 	 :python updateSnips()
 xnoremap <buffer> <silent> 	 :python updateSnips()
@@ -1040,20 +788,33 @@ setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
-let s:l = 1 - ((0 * winheight(0) + 26) / 52)
+let s:l = 154 - ((45 * winheight(0) + 26) / 52)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-1
-normal! 0
+154
+normal! 022|
 wincmd w
 argglobal
-edit source/test/mpl_test.cpp
-snoremap <buffer> <silent> 	 :python updateSnips()
-nnoremap <buffer> <silent> 	 :python updateSnips()
-xnoremap <buffer> <silent> 	 :python updateSnips()
-onoremap <buffer> <silent> 	 :python updateSnips()
-nnoremap <buffer> <silent>  
+edit README.md
+let s:cpo_save=&cpo
+set cpo&vim
+vmap <buffer> [] <Plug>Markdown_MoveToPreviousSiblingHeader
+nmap <buffer> [] <Plug>Markdown_MoveToPreviousSiblingHeader
+vmap <buffer> [[ <Plug>Markdown_MoveToPreviousHeader
+nmap <buffer> [[ <Plug>Markdown_MoveToPreviousHeader
+vmap <buffer> ]c <Plug>Markdown_MoveToCurHeader
+nmap <buffer> ]c <Plug>Markdown_MoveToCurHeader
+vmap <buffer> ]u <Plug>Markdown_MoveToParentHeader
+nmap <buffer> ]u <Plug>Markdown_MoveToParentHeader
+vmap <buffer> ][ <Plug>Markdown_MoveToNextSiblingHeader
+nmap <buffer> ][ <Plug>Markdown_MoveToNextSiblingHeader
+vmap <buffer> ]] <Plug>Markdown_MoveToNextHeader
+nmap <buffer> ]] <Plug>Markdown_MoveToNextHeader
+vmap <buffer> gx <Plug>Markdown_OpenUrlUnderCursor
+nmap <buffer> gx <Plug>Markdown_OpenUrlUnderCursor
+let &cpo=s:cpo_save
+unlet s:cpo_save
 setlocal keymap=
 setlocal noarabic
 setlocal autoindent
@@ -1061,12 +822,12 @@ setlocal nobinary
 setlocal bufhidden=
 setlocal buflisted
 setlocal buftype=
-setlocal cindent
+setlocal nocindent
 setlocal cinkeys=0{,0},0),:,0#,!^F,o,O,e
 setlocal cinoptions=
 setlocal cinwords=if,else,while,do,for,switch
 setlocal colorcolumn=
-setlocal comments=s0:/*,mb:**,ex:*/,b://
+setlocal comments=s0:<!--,mb:\ \ **,ex:-->
 setlocal commentstring=/*%s*/
 setlocal complete=.,w,b,u,t,i
 set concealcursor=vin
@@ -1086,8 +847,8 @@ setlocal nodiff
 setlocal equalprg=
 setlocal errorformat=
 setlocal noexpandtab
-if &filetype != 'cpp'
-setlocal filetype=cpp
+if &filetype != 'mkd'
+setlocal filetype=mkd
 endif
 setlocal foldcolumn=0
 setlocal foldenable
@@ -1100,7 +861,7 @@ setlocal foldminlines=1
 setlocal foldnestmax=20
 setlocal foldtext=foldtext()
 setlocal formatexpr=
-setlocal formatoptions=2croql
+setlocal formatoptions=tqo2r
 setlocal formatlistpat=^\\s*\\d\\+[\\]:.)}\\t\ ]\\s*
 setlocal grepprg=
 setlocal iminsert=0
@@ -1123,7 +884,7 @@ setlocal modifiable
 setlocal nrformats=octal,hex
 setlocal nonumber
 setlocal numberwidth=4
-setlocal omnifunc=ccomplete#Complete
+setlocal omnifunc=
 setlocal path=
 setlocal nopreserveindent
 setlocal nopreviewwindow
@@ -1135,7 +896,7 @@ setlocal rightleftcmd=search
 setlocal noscrollbind
 setlocal shiftwidth=8
 setlocal noshortname
-setlocal smartindent
+setlocal nosmartindent
 setlocal softtabstop=0
 setlocal nospell
 setlocal spellcapcheck=[.?!]\\_[\\])'\"\	\ ]\\+
@@ -1145,8 +906,8 @@ setlocal statusline=
 setlocal suffixesadd=
 setlocal swapfile
 setlocal synmaxcol=3000
-if &syntax != 'cpp'
-setlocal syntax=cpp
+if &syntax != 'mkd'
+setlocal syntax=mkd
 endif
 setlocal tabstop=8
 setlocal tags=
@@ -1159,11 +920,11 @@ setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
-let s:l = 1 - ((0 * winheight(0) + 26) / 52)
+let s:l = 45 - ((35 * winheight(0) + 26) / 52)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-1
+45
 normal! 0
 wincmd w
 exe 'vert 1resize ' . ((&columns * 101 + 102) / 204)
