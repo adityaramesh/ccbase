@@ -7,28 +7,35 @@
 
 #include <type_traits>
 #include <ccbase/unit_test.hpp>
+#include <ccbase/mpl/list.hpp>
 #include <ccbase/mpl/functional.hpp>
+#include <ccbase/mpl/operations.hpp>
+
+namespace mpl = cc::mpl;
 
 module("test composition")
 {
-	using namespace cc::mpl;
-
-	using parse_natural = bind_back<
-		quote<foldl>,
-		int_<0>,
-		compose<
-			quote<list>,
-			uncurry<combine<
-				bind_front<quote<multiplies>, int_<10>>,
-				bind_back<quote<minus>, char_<'0'>>
+	/*
+	using parse_natural = mpl::bind_back<
+		mpl::quote<mpl::fold>,
+		mpl::int_<0>,
+		mpl::compose<
+			mpl::quote<mpl::list>,
+			mpl::uncurry<mpl::make_list<
+				mpl::bind_front<mpl::quote<mpl::multiplies>, mpl::int_<10>>,
+				mpl::bind_back<mpl::quote<mpl::minus>, mpl::char_<'0'>>
 			>>,
-			uncurry<quote<plus>>
+			mpl::uncurry<mpl::quote<mpl::plus>>
 		>
 	>;
+	*/
+
+	/*
 	using r1 = apply<
 		parse_natural,
 		to_types<std::integer_sequence<char, '1', '2', '3'>>
 	>;
+
 	static_assert(r1::value == 123, "");
 
 	using r2 = zip_with<
@@ -55,6 +62,7 @@ module("test composition")
 
 	using r5 = starts_with<list<size_t<1>>, l1>;
 	static_assert(r5::value == true, "");
+	*/
 }
 
 /*

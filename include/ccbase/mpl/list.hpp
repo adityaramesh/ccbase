@@ -344,8 +344,8 @@ using replace_at = replace_at_c<Index::value, T, List>;
 ** `contains`
 */
 
-template <class T, class List>
-using contains = bool_<!std::is_same<find_first<T, List>, npos>::value>;
+template <class List, class T>
+using in = bool_<!std::is_same<find_first<T, List>, npos>::value>;
 
 /*
 ** `reverse`
