@@ -78,36 +78,25 @@ using back = at_c<List::size - 1, List>;
 namespace detail {
 
 template <class Head, class Tail>
-struct cat_impl;
+struct cat_helper;
 
 template <class... Ts, class... Us, class... Lists>
-struct cat_impl<mpl::list<Ts...>, mpl::list<mpl::list<Us...>, Lists...>>
+struct cat_helper<mpl::list<Ts...>, mpl::list<mpl::list<Us...>, Lists...>>
 {
-	using type = typename cat_impl<
+	using type = typename cat_helper<
 		mpl::list<Ts..., Us...>,
 		mpl::list<Lists...>
 	>::type;
 };
 
 template <class Head>
-struct cat_impl<Head, mpl::list<>>
+struct cat_helper<Head, mpl::list<>>
 { using type = Head; };
-
-template <class... Lists>
-struct cat_helper
-{
-	static_assert(
-		sizeof...(Lists) >= 2,
-		"cat must be called with at least two arguments."
-	);
-
-	using type = typename cat_impl<mpl::list<>, mpl::list<Lists...>>::type;
-};
 
 }
 
 template <class... Lists>
-using cat = typename detail::cat_helper<Lists...>::type;
+using cat = typename detail::cat_helper<list<>, list<Lists...>>::type;
 
 /*
 ** `prepend`, `append`
@@ -267,7 +256,7 @@ struct insert_at_impl<Index, Index, T, Head, list<>>
 template <list_index Index, class T, class List>
 struct insert_at_helper
 {
-	static_assert(Index < List::size, "Index out of bounds.");
+	static_assert(Index <= List::size, "Index out of bounds.");
 	using type = typename insert_at_impl<0, Index, T, list<>, List>::type;
 };
 
