@@ -65,19 +65,6 @@ struct defer
 { using type = C<Ts...>; };
 
 /*
-** AFAICT, the purpose of lazy metafunctions is to allow us to inherit from them
-** when writing helper structs.
-*/
-#define nd_make_lazy(name)                       \
-	namespace lazy {                         \
-		template <class... Ts>           \
-		using name = defer<name, Ts...>; \
-	}
-
-nd_make_lazy(list)
-nd_make_lazy(apply)
-
-/*
 ** Turns an ordinary class template into a metafunction class.
 */
 template <template <class...> class C>
@@ -152,10 +139,10 @@ struct bind_back
 	using apply = apply<F, Us..., Ts...>;
 };
 
-namespace lazy {
+namespace detail {
 
 template <class F, class List>
-struct apply_list;
+struct apply_list_helper;
 
 /*
 ** XXX: For some reasons, clang refuses to use this template specialization
@@ -164,8 +151,8 @@ struct apply_list;
 ** have time to debug this right now.
 */
 template <class F, class... Ts>
-struct apply_list<F, ::cc::mpl::list<Ts...>> :
-lazy::apply<F, Ts...> {};
+struct apply_list_helper<F, ::cc::mpl::list<Ts...>>
+{ using type = apply<F, Ts...>; };
 
 }
 
@@ -173,7 +160,7 @@ lazy::apply<F, Ts...> {};
 ** Applies `C` to the values that result from unpacking `List`.
 */
 template <class C, class List>
-using apply_list = _t<lazy::apply_list<C, List>>;
+using apply_list = _t<detail::apply_list_helper<C, List>>;
 
 /*
 ** Returns a function that applies `F` by packing `Ts...` into a type list.
@@ -200,7 +187,8 @@ struct make_list
 {
 private:
 	template <class... Ts>
-	struct helper : lazy::list<apply<Fs, Ts>...> {};
+	struct helper
+	{ using type = list<apply<Fs, Ts>...>; };
 public:
 	template <class... Ts>
 	using apply = _t<helper<Ts...>>;
@@ -227,8 +215,8 @@ struct reverse_fold_helper<list<>, State, F>
 { using type = State; };
 
 template <class Head, class... Tail, class State, class F>
-struct reverse_fold_helper<list<Head, Tail...>, State, F> :
-lazy::apply<F, _t<reverse_fold_helper<list<Tail...>, State, F>>, Head> {};
+struct reverse_fold_helper<list<Head, Tail...>, State, F>
+{ using type = apply<F, _t<reverse_fold_helper<list<Tail...>, State, F>>, Head>; };
 
 }
 
@@ -323,5 +311,4 @@ struct is_specialization_of<F, F<Args...>> : std::true_type {};
 
 }}
 
-#undef nd_make_lazy
 #endif
