@@ -17,6 +17,9 @@ namespace mpl {
 
 using list_index = std::size_t;
 
+template <list_index N>
+using list_index_c = std::integral_constant<list_index, N>;
+
 template <class... Ts>
 struct list
 {
@@ -25,7 +28,7 @@ struct list
 };
 
 template <class List>
-using size = std::integral_constant<list_index, List::size>;
+using size = list_index_c<List::size>;
 
 template <class List>
 using empty = bool_<List::size == 0>;
@@ -135,32 +138,32 @@ template <class Value, class List>
 using append = typename detail::append_helper<Value, List>::type;
 
 /*
-** `find_first`
+** `find`
 */
 
-using npos = intmax_t<-1>;
+using no_match = intmax_t<-1>;
 
 namespace detail {
 
 template <list_index Index, class Value, class List>
-struct find_first_helper;
+struct find_helper;
 
 template <list_index Index, class Value, class Head, class... Tail>
-struct find_first_helper<Index, Value, list<Head, Tail...>> :
-find_first_helper<Index + 1, Value, list<Tail...>> {};
+struct find_helper<Index, Value, list<Head, Tail...>> :
+find_helper<Index + 1, Value, list<Tail...>> {};
 
 template <list_index Index, class Value, class... Tail>
-struct find_first_helper<Index, Value, list<Value, Tail...>>
+struct find_helper<Index, Value, list<Value, Tail...>>
 { using type = intmax_t<Index>; };
 
 template <list_index Index, class Value>
-struct find_first_helper<Index, Value, list<>>
-{ using type = npos; };
+struct find_helper<Index, Value, list<>>
+{ using type = no_match; };
 
 }
 
 template <class Value, class List>
-using find_first = typename detail::find_first_helper<0, Value, List>::type;
+using find = typename detail::find_helper<0, Value, List>::type;
 
 /*
 ** `set_at`
@@ -345,7 +348,7 @@ using replace_at = replace_at_c<Index::value, T, List>;
 */
 
 template <class List, class T>
-using in = bool_<!std::is_same<find_first<T, List>, npos>::value>;
+using in = bool_<!std::is_same<find<T, List>, no_match>::value>;
 
 /*
 ** `reverse`
@@ -395,10 +398,10 @@ struct repeat_n_helper<1, T>
 
 }
 
-template <list_index N, class T = void>
+template <list_index N, class T>
 using repeat_nc = typename detail::repeat_n_helper<N, T>::type;
 
-template <class N, class T = void>
+template <class N, class T>
 using repeat_n = repeat_nc<N::value, T>;
 
 /*

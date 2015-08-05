@@ -8,6 +8,9 @@
 #ifndef ZFB104DF5_DA46_48F6_AB72_C0C0584EA365
 #define ZFB104DF5_DA46_48F6_AB72_C0C0584EA365
 
+#include <ccbase/mpl/list.hpp>
 #include <ccbase/mpl/functional.hpp>
+#include <ccbase/mpl/operations.hpp>
+#include <ccbase/mpl/list_operations.hpp>
 
 #endif

@@ -1,0 +1,162 @@
+/*
+** File Name: list_operations.hpp
+** Author:    Aditya Ramesh
+** Date:      08/05/2015
+** Contact:   _@adityaramesh.com
+**
+** Advanced list operations that are easier to implement using `functional.hpp`.
+*/
+
+#ifndef ZA52A5035_94F1_4F4E_9587_BD2A3D87A4E3
+#define ZA52A5035_94F1_4F4E_9587_BD2A3D87A4E3
+
+namespace cc {
+namespace mpl {
+
+/*
+** Functions for subindexing.
+*/
+
+/*
+** Creates a new list from the elements at the given indices in the given list.
+*/
+template <class List, class... Indices>
+using select = fold<
+	list<Indices...>,
+	list<>,
+	compose<
+		quote<list>,
+		quote<reverse>,
+		uncurry<make_list<
+			bind_back<quote<at>, List>,
+			quote_trait<id>
+		>>,
+		uncurry<quote<append>>
+	>
+>;
+
+template <class List, list_index... Indices>
+using select_c = select<List, list_index_c<Indices>...>;
+
+template <class Start, class End>
+using range = fold<
+	repeat_n<minus<End, Start>, void>,
+	list<Start>,
+	compose<
+		quote<list>,
+		bind_back<quote<select>, list_index_c<0>, list_index_c<0>>,
+		uncurry<make_list<
+			compose<quote<back>, quote<inc>>,
+			quote_trait<id>
+		>>,
+		uncurry<quote<append>>
+	>
+>;
+
+template <class T, T Start, T End>
+using range_c = range<
+	std::integral_constant<T, Start>,
+	std::integral_constant<T, End>
+>;
+
+template <class Start, class End, class List>
+using slice = apply_list<
+	bind_front<quote<select>, List>,
+	range<Start, End>
+>;
+
+template <list_index Start, list_index End, class List>
+using slice_c = slice<list_index_c<Start>, list_index_c<End>, List>;
+
+/*
+** Generalizations of basic list operations.
+**
+** TODO:
+** - erase_if
+** - replace_if
+** - find_all
+** - sort, unique
+*/
+
+namespace detail {
+
+template <list_index Index, class Func, class List>
+struct find_if_helper;
+
+template <list_index Index, class Func>
+struct find_if_helper<Index, Func, list<>>
+{ using type = no_match; };
+
+template <list_index Index, class Func, class Head, class... Tail>
+struct find_if_helper<Index, Func, list<Head, Tail...>> :
+if_<
+	apply<Func, Head>, id<list_index_c<Index>>,
+	find_if_helper<Index + 1, Func, list<Tail...>>
+> {};
+
+}
+
+template <class Func, class List>
+using find_if = _t<detail::find_if_helper<0, Func, List>>;
+
+/*
+** List comparison.
+*/
+
+//namespace detail {
+//
+//template <bool LengthsEqual, class List1, class List2>
+//struct lists_same_helper;
+//
+//template <class List1, class List2>
+//struct lists_same_helper<false, List1, List2>
+//{ using type = bool_<false>; };
+//
+//template <class List1, class List2>
+//struct lists_same_helper<true, List1, List2>
+//{
+//	using type = foldl<
+//		transform<
+//			zip<list<List1, List2>>,
+//			uncurry<quote<is_same>>
+//		>,
+//		bool_<true>,
+//		quote<logical_and>
+//	>;
+//};
+//
+//}
+//
+//template <class List1, class List2>
+//using lists_same = eval<detail::lists_same_helper<
+//	List1::size() == List2::size(), List1, List2
+//>>;
+//
+//namespace detail {
+//
+//template <bool MatchPossible, class Query, class List>
+//struct starts_with_helper;
+//
+//template <class Query, class List>
+//struct starts_with_helper<false, Query, List>
+//{ using type = bool_<false>; };
+//
+//template <class Query, class List>
+//struct starts_with_helper<true, Query, List>
+//{
+//	using type = lists_same<
+//		Query,
+//		slice_c<0, Query::size() - 1, List>
+//	>;
+//};
+//
+//}
+//
+//template <class Query, class List>
+//using starts_with = eval<detail::starts_with_helper<
+//	Query::size() <= List::size(), Query, List
+//>>;
+//
+}}
+
+#endif

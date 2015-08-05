@@ -50,7 +50,7 @@ mpl_make_nary_op(bit_xor)
 mpl_define_binary_arithmetic_op(-, minus)
 mpl_define_binary_arithmetic_op(/, divides)
 mpl_define_binary_arithmetic_op(%, modulus)
-mpl_define_binary_arithmetic_op(<<, shift_left)
+mpl_define_binary_arithmetic_op(<<, left_shift)
 
 #undef mpl_define_binary_arithmetic_op
 
@@ -76,7 +76,7 @@ struct right_shift_helper
 }
 
 template <class T, class U>
-using shift_right = std::integral_constant<
+using right_shift = std::integral_constant<
 	decltype(T::type::value >> U::type::value),
 	detail::right_shift_helper<
 		typename T::type, typename U::type,
@@ -140,11 +140,18 @@ using all_equal = apply<make_nary<quote<equal_to>>, Ts...>;
 template <class T>
 using not_ = bool_<!T::value>;
 
+/*
+** Miscellaneous boolean traits.
+*/
+
 template <bool V, class A, class B>
 using if_c = std::conditional_t<V, A, B>;
 
 template <class T, class A, class B>
 using if_ = if_c<T::value, A, B>;
+
+template <class T1, class T2>
+using is_same = bool_<std::is_same<T1, T2>::value>;
 
 }}
 

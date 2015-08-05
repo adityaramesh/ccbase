@@ -10,6 +10,7 @@
 #include <ccbase/mpl/list.hpp>
 #include <ccbase/mpl/functional.hpp>
 #include <ccbase/mpl/operations.hpp>
+#include <ccbase/mpl/list_operations.hpp>
 
 namespace mpl = cc::mpl;
 
