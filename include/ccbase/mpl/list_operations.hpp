@@ -68,6 +68,18 @@ using slice = apply_list<
 template <list_index Start, list_index End, class List>
 using slice_c = slice<list_index_c<Start>, list_index_c<End>, List>;
 
+template <class N, class List>
+using erase_front_n = slice<N, dec<size<List>>, List>;
+
+template <class N, class List>
+using erase_back_n = slice<list_index_c<0>, minus<dec<size<List>>, N>, List>;
+
+template <list_index N, class List>
+using erase_front_nc = erase_front_n<list_index_c<N>, List>;
+
+template <list_index N, class List>
+using erase_back_nc = erase_back_n<list_index_c<N>, List>;
+
 /*
 ** Generalizations of basic list operations.
 **
@@ -103,60 +115,46 @@ using find_if = _t<detail::find_if_helper<0, Func, List>>;
 ** List comparison.
 */
 
-//namespace detail {
-//
-//template <bool LengthsEqual, class List1, class List2>
-//struct lists_same_helper;
-//
-//template <class List1, class List2>
-//struct lists_same_helper<false, List1, List2>
-//{ using type = bool_<false>; };
-//
-//template <class List1, class List2>
-//struct lists_same_helper<true, List1, List2>
-//{
-//	using type = foldl<
-//		transform<
-//			zip<list<List1, List2>>,
-//			uncurry<quote<is_same>>
-//		>,
-//		bool_<true>,
-//		quote<logical_and>
-//	>;
-//};
-//
-//}
-//
-//template <class List1, class List2>
-//using lists_same = eval<detail::lists_same_helper<
-//	List1::size() == List2::size(), List1, List2
-//>>;
-//
-//namespace detail {
-//
-//template <bool MatchPossible, class Query, class List>
-//struct starts_with_helper;
-//
-//template <class Query, class List>
-//struct starts_with_helper<false, Query, List>
-//{ using type = bool_<false>; };
-//
-//template <class Query, class List>
-//struct starts_with_helper<true, Query, List>
-//{
-//	using type = lists_same<
-//		Query,
-//		slice_c<0, Query::size() - 1, List>
-//	>;
-//};
-//
-//}
-//
-//template <class Query, class List>
-//using starts_with = eval<detail::starts_with_helper<
-//	Query::size() <= List::size(), Query, List
-//>>;
-//
+namespace detail {
+
+template <bool LengthsEqual, class List1, class List2>
+struct lists_same_helper;
+
+template <class List1, class List2>
+struct lists_same_helper<false, List1, List2>
+{ using type = bool_<false>; };
+
+template <class... Ts, class... Us>
+struct lists_same_helper<true, list<Ts...>, list<Us...>>
+{ using type = and_c<std::is_same<Ts, Us>::value...>; };
+
+}
+
+template <class List1, class List2>
+using lists_same = _t<detail::lists_same_helper<
+	List1::size == List2::size, List1, List2
+>>;
+
+namespace detail {
+
+template <bool MatchPossible, class Query, class List>
+struct starts_with_helper;
+
+template <class Query, class List>
+struct starts_with_helper<false, Query, List>
+{ using type = bool_<false>; };
+
+template <class Query, class List>
+struct starts_with_helper<true, Query, List>
+{ using type = lists_same<Query, slice_c<0, Query::size - 1, List>>; };
+
+}
+
+template <class Query, class List>
+using starts_with = _t<detail::starts_with_helper<
+	Query::size <= List::size, Query, List
+>>;
+
 }}
 
 #endif

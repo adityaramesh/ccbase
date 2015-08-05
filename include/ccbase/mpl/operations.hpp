@@ -116,10 +116,10 @@ mpl_make_nary_op(or_)
 #undef mpl_make_nary_op
 
 template <bool... Ts>
-using and_c = and_<list<bool_<Ts>...>>;
+using and_c = and_<bool_<Ts>...>;
 
 template <bool... Ts>
-using or_c = or_<list<bool_<Ts>...>>;
+using or_c = or_<bool_<Ts>...>;
 
 #define mpl_define_binary_relational_op(symbol, name)     \
 template <class T, class U>                               \
