@@ -1,5 +1,5 @@
 /*
-** File Name: circular_shift.hpp
+** File Name: rotate.hpp
 ** Author:    Aditya Ramesh
 ** Date:      03/20/2015
 ** Contact:   _@adityaramesh.com
