@@ -93,6 +93,19 @@ template <class T>
 using dec = std::integral_constant<std::remove_cv_t<decltype(T::value)>,
       T::value - 1>;
 
+namespace detail {
+
+template <class A, class B>
+using min = std::conditional_t<A::value <= B::value, A, B>;
+
+template <class A, class B>
+using max = std::conditional_t<A::value >= B::value, A, B>;
+
+}
+
+mpl_make_nary_op(min)
+mpl_make_nary_op(max)
+
 /*
 ** Logical operations.
 */
