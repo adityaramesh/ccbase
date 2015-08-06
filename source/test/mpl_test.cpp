@@ -59,6 +59,11 @@ module("test composition")
 
 	using r6 = mpl::starts_with<mpl::list<mpl::size_t<1>>, l1>;
 	static_assert(r6::value == true, "");
+
+	using r7 = mpl::max<mpl::int_<0>, mpl::int_<-1>, mpl::int_<1>>;
+	using r8 = mpl::min<mpl::int_<0>, mpl::int_<-1>, mpl::int_<1>>;
+	static_assert(r7::value == 1, "");
+	static_assert(r8::value == -1, "");
 }
 
 /*
