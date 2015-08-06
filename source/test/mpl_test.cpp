@@ -119,7 +119,7 @@ module("test composition")
 ** 	>>,
 ** 	mpl::select_c<1, 0>,
 ** 	mpl::uncurry<mpl::bind_back<
-** 		mpl::quote<mpl::foldl>,
+** 		mpl::quote<mpl::fold>,
 ** 		mpl::compose<
 ** 			mpl::combine<
 ** 				mpl::quote<mpl::list>,
