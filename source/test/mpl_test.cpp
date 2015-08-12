@@ -11,6 +11,7 @@
 #include <ccbase/mpl/functional.hpp>
 #include <ccbase/mpl/operations.hpp>
 #include <ccbase/mpl/list_operations.hpp>
+#include <ccbase/mpl/string_literal.hpp>
 
 namespace mpl = cc::mpl;
 
