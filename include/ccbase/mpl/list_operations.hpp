@@ -38,25 +38,26 @@ using select = fold<
 template <class List, list_index... Indices>
 using select_c = select<List, list_index_c<Indices>...>;
 
-template <class Start, class End>
+template <class Start, class End, class Inc = mpl::int_<1>>
 using range = fold<
-	repeat_n<minus<End, Start>, void>,
+	repeat_n<divides<minus<End, Start>, Inc>, void>,
 	list<Start>,
 	compose<
 		quote<list>,
 		bind_back<quote<select>, list_index_c<0>, list_index_c<0>>,
 		uncurry<make_list<
-			compose<quote<back>, quote<inc>>,
+			compose<quote<back>, bind_back<quote<plus>, Inc>>,
 			quote_trait<id>
 		>>,
 		uncurry<quote<append>>
 	>
 >;
 
-template <class T, T Start, T End>
+template <class T, T Start, T End, T Inc = 1>
 using range_c = range<
 	std::integral_constant<T, Start>,
-	std::integral_constant<T, End>
+	std::integral_constant<T, End>,
+	std::integral_constant<T, Inc>
 >;
 
 template <class Start, class End, class List>
