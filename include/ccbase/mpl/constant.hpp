@@ -17,6 +17,9 @@ namespace mpl {
 template <bool N>
 using bool_ = std::integral_constant<bool, N>;
 
+using true_ = bool_<true>;
+using false_ = bool_<false>;
+
 template <char N>
 using char_ = std::integral_constant<char, N>;
 
