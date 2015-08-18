@@ -166,8 +166,27 @@ using if_c = std::conditional_t<V, A, B>;
 template <class T, class A, class B>
 using if_ = if_c<T::value, A, B>;
 
-template <class T1, class T2>
-using is_same = bool_<std::is_same<T1, T2>::value>;
+namespace detail {
+
+template <bool V, class T, class... Ts>
+struct is_same_helper;
+
+template <bool V, class T, class U, class... Ts>
+struct is_same_helper<V, T, U, Ts...> :
+is_same_helper<V && std::is_same<T, U>::value, Ts...> {};
+
+template <bool V, class T>
+struct is_same_helper<V, T>
+{ using type = bool_<V>; };
+
+}
+
+/*
+** We use template specialization instead of `fold` because the latter somehow
+** results in an ICE on clang 3.6. I don't have the time to make an MWE now.
+*/
+template <class T, class... Ts>
+using is_same = _t<detail::is_same_helper<true, T, Ts...>>;
 
 }}
 

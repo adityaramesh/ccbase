@@ -65,6 +65,11 @@ module("test composition")
 	using r8 = mpl::min<mpl::int_<0>, mpl::int_<-1>, mpl::int_<1>>;
 	static_assert(r7::value == 1, "");
 	static_assert(r8::value == -1, "");
+	
+	using r9 = mpl::is_same<int, int, int>;
+	using r10 = mpl::is_same<int, float, int>;
+	static_assert(r9::value == true, "");
+	static_assert(r10::value == false, "");
 }
 
 /*
