@@ -173,7 +173,7 @@ struct is_same_helper;
 
 template <bool V, class T, class U, class... Ts>
 struct is_same_helper<V, T, U, Ts...> :
-is_same_helper<V && std::is_same<T, U>::value, Ts...> {};
+is_same_helper<V && std::is_same<T, U>::value, T, Ts...> {};
 
 template <bool V, class T>
 struct is_same_helper<V, T>
