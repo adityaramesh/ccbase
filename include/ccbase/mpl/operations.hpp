@@ -185,8 +185,8 @@ struct is_same_helper<V, T>
 ** We use template specialization instead of `fold` because the latter somehow
 ** results in an ICE on clang 3.6. I don't have the time to make an MWE now.
 */
-template <class T, class... Ts>
-using is_same = _t<detail::is_same_helper<true, T, Ts...>>;
+template <class... Ts>
+using is_same = _t<detail::is_same_helper<true, Ts...>>;
 
 }}
 
