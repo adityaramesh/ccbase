@@ -457,7 +457,7 @@ public:
 		** Make sure we release any resources before potentially
 		** throwing because this object was not dismissed.
 		*/
-		if (*this) {
+		if (!!(m_state & expected_state::valid)) {
 			m_val.~storage();
 		}
 		else {
