@@ -236,7 +236,7 @@ public:
 		noexcept(noexcept(assign_storage(rhs.m_val)))
 	#endif
 	{
-		check_if_dismissed();
+		enforce_dismissed();
 
 		if (*this) {
 			if (rhs) {
@@ -284,7 +284,7 @@ public:
 		noexcept(noexcept(assign_storage(std::move(rhs.m_val))))
 	#endif
 	{
-		check_if_dismissed();
+		enforce_dismissed();
 
 		if (*this) {
 			if (rhs) {
@@ -336,7 +336,7 @@ public:
 	#endif
 	-> typename std::enable_if<B, expected&>::type
 	{
-		check_if_dismissed();
+		enforce_dismissed();
 
 		if (*this) {
 			assign_storage(std::move(rhs));
@@ -367,7 +367,7 @@ public:
 	#endif
 	-> typename std::enable_if<B, expected&>::type
 	{
-		check_if_dismissed();
+		enforce_dismissed();
 
 		if (*this) {
 			assign_storage(std::move(rhs));
@@ -395,7 +395,7 @@ public:
 	#endif
 	-> typename std::enable_if<B, expected&>::type
 	{
-		check_if_dismissed();
+		enforce_dismissed();
 
 		if (*this) {
 			m_val = storage{rhs};
@@ -419,7 +419,7 @@ public:
 		noexcept
 	#endif
 	{
-		check_if_dismissed();
+		enforce_dismissed();
 		if (!*this) m_ptr.~exception_ptr();
 		::new(&m_ptr) std::exception_ptr{ptr};
 
@@ -436,7 +436,7 @@ public:
 		noexcept
 	#endif
 	{
-		check_if_dismissed();
+		enforce_dismissed();
 		if (!*this) m_ptr.~exception_ptr();
 		::new(&m_ptr) std::exception_ptr{std::move(ptr)};
 
@@ -463,7 +463,7 @@ public:
 		else {
 			m_ptr.~exception_ptr();
 		}
-		check_if_dismissed();
+		enforce_dismissed();
 	}
 private:
 	template <bool B = std::is_copy_assignable<storage>::value>
@@ -500,7 +500,7 @@ private:
 		::new((void*)std::addressof(m_val)) storage{std::move(rhs)};
 	}
 
-	void check_if_dismissed() const
+	void enforce_dismissed() const
 	#ifdef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 		noexcept
 	#endif
@@ -858,7 +858,7 @@ public:
 		noexcept
 	#endif
 	{
-		check_if_dismissed();
+		enforce_dismissed();
 
 		if (*this) {
 			if (!rhs) {
@@ -891,7 +891,7 @@ public:
 		noexcept
 	#endif
 	{
-		check_if_dismissed();
+		enforce_dismissed();
 
 		if (*this) {
 			if (!rhs) {
@@ -924,7 +924,7 @@ public:
 		noexcept
 	#endif
 	{
-		check_if_dismissed();
+		enforce_dismissed();
 		if (!*this) m_ptr.~exception_ptr();
 		::new(&m_ptr) std::exception_ptr{ptr};
 
@@ -941,7 +941,7 @@ public:
 		noexcept
 	#endif
 	{
-		check_if_dismissed();
+		enforce_dismissed();
 		if (!*this) m_ptr.~exception_ptr();
 		::new(&m_ptr) std::exception_ptr{std::move(ptr)};
 
@@ -962,13 +962,13 @@ public:
 		** Make sure we release any resources before potentially
 		** throwing because this object was not dismissed.
 		*/
-		if (!*this) {
+		if (!!(m_state & expected_state::valid)) {
 			m_ptr.~exception_ptr();
 		}
-		check_if_dismissed();
+		enforce_dismissed();
 	}
 private:
-	void check_if_dismissed() const
+	void enforce_dismissed() const
 	#ifdef CC_EXPECTED_DONT_ENFORCE_DISMISSAL
 		noexcept
 	#endif
