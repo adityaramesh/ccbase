@@ -32,9 +32,9 @@ lib_ppflags   = "-DCCBASE_EXPORT_SYMBOLS"
 lib_confflags = ""
 
 if RUBY_PLATFORM.include? "linux"
-	lib_confflags = "-shared -fpic -fvisibility=hidden -fvisibility-inlines-hidden"
+	lib_confflags = "-shared -fpic -fvisibility=hidden"
 elsif RUBY_PLATFORM.include? "darwin"
-	lib_confflags = "-dynamiclib -fvisibility=hidden -fvisibility-inlines-hidden"
+	lib_confflags = "-dynamiclib -fvisibility=hidden"
 end
 
 lib_cxxopts  = "#{langflags} #{wflags} #{archflags} #{incflags} #{lib_optflags}"
